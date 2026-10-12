@@ -95,7 +95,7 @@ Status legend: 📝 Planned · 🚧 In progress · ✅ Complete · 🔍 Reviewed
 |---|---|---|
 | Chat & agent models | **Groq**: `openai/gpt-oss-20b`, `openai/gpt-oss-120b` · **Ollama** local models | **OpenAI** benchmark: `gpt-6-luna` (cheap), `gpt-6.1-sol` (quality ceiling). Low-cost option: **Gemini** free tier ([comparison](docs/paid-benchmark-openai-vs-gemini.md)) |
 | Web search | **Groq built-in browser search** (no extra key) | **Tavily** (1,000 free credits/month, then paid) ([comparison](docs/web-search-groq-vs-tavily.md)) |
-| Long-running agents | **Deep Agents** (open source) on Groq, or the Gemini free tier (an officially suggested Deep Agents model) · local Docker sandbox | Managed sandboxes (LangSmith, Daytona, Modal, …) · OpenAI benchmark |
+| Long-running agents (Module 10) | **Deep Agents** (open source) on the **Gemini free tier** by default (`gemini-3.6-flash`, an officially suggested Deep Agents model; public/synthetic data only) · Groq as the documented option · local Docker sandbox | Managed sandboxes (LangSmith, Daytona, Modal, …) · OpenAI benchmark |
 | Vision | Groq `qwen/qwen3.8-27b` (preview ⚠️) · local vision models | OpenAI / Gemini multimodal models |
 | Speech | Groq **Whisper** (STT) and **Orpheus** (TTS, preview ⚠️), low per-use cost | Specialized voice providers |
 | Embeddings | Local Hugging Face / sentence-transformers, Ollama | Hosted embedding APIs |

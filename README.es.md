@@ -97,7 +97,7 @@ Leyenda: 📝 Planificado · 🚧 En progreso · ✅ Completo · 🔍 Revisado (
 |---|---|---|
 | Modelos de chat y agentes | **Groq**: `openai/gpt-oss-20b`, `openai/gpt-oss-120b` · modelos locales con **Ollama** | Referencia de calidad con **OpenAI**: `gpt-6-luna` (económico), `gpt-6.1-sol` (techo de calidad). Alternativa de bajo costo: plan gratuito de **Gemini** ([comparación](docs/paid-benchmark-openai-vs-gemini.md)) |
 | Búsqueda web | **Búsqueda integrada de Groq** (*browser search*, sin clave extra) | **Tavily** (1.000 créditos gratis al mes, luego pago) ([comparación](docs/web-search-groq-vs-tavily.md)) |
-| Agentes de larga duración | **Deep Agents** (código abierto) sobre Groq, o el plan gratuito de Gemini (un modelo sugerido oficialmente para Deep Agents) · *sandbox* local con Docker | *Sandboxes* administrados (LangSmith, Daytona, Modal, …) · referencia de OpenAI |
+| Agentes de larga duración (Módulo 10) | **Deep Agents** (código abierto) sobre el **plan gratuito de Gemini** por defecto (`gemini-3.6-flash`, un modelo sugerido oficialmente para Deep Agents; solo datos públicos o sintéticos) · Groq como opción documentada · *sandbox* local con Docker | *Sandboxes* administrados (LangSmith, Daytona, Modal, …) · referencia de OpenAI |
 | Visión | `qwen/qwen3.8-27b` en Groq (*preview* ⚠️) · modelos de visión locales | Modelos multimodales de OpenAI / Gemini |
 | Voz | **Whisper** (voz a texto) y **Orpheus** (texto a voz, *preview* ⚠️) en Groq, bajo costo por uso | Proveedores de voz especializados |
 | Embeddings | Hugging Face / sentence-transformers locales, Ollama | APIs de embeddings alojadas |

@@ -1,9 +1,9 @@
 # Paid Quality Benchmark: OpenAI vs Google Gemini
 
-> Used in **Lesson 00.06** (provider decision framework) and every "paid contrast" stretch goal.
+> Used in **Lesson 00.06** (provider decision framework), every "paid contrast" stretch goal, and **Module 10**, where Gemini is the default model (see [below](#module-10-gemini-is-the-default-for-deep-agents)).
 > **Prices and model IDs verified on October 11, 2026.** They change often: re-check the linked pages before you spend money, and log what you find in [decision-log.md](decision-log.md).
 
-The course runs on **free Groq models** by default. A *paid benchmark* is a stronger model you run on the same prompts to answer one question: *"Is the free model good enough here, or am I leaving quality on the table?"* You only need it for comparisons, stretch goals, and LLM-as-judge evaluators. A few dollars cover the whole course if you keep prompts small.
+The course runs on **free Groq models** by default (Module 10, Deep Agents, is the one exception: it defaults to Gemini's free tier). A *paid benchmark* is a stronger model you run on the same prompts to answer one question: *"Is the free model good enough here, or am I leaving quality on the table?"* You only need it for comparisons, stretch goals, and LLM-as-judge evaluators. A few dollars cover the whole course if you keep prompts small.
 
 ## TL;DR
 
@@ -30,9 +30,28 @@ The course runs on **free Groq models** by default. A *paid benchmark* is a stro
 
 - **For benchmarking prompts, agents, and RAG answers:** `gpt-6-luna` is the cheapest strong paid baseline. One full course module of comparisons is usually a few cents.
 - **For LLM-as-judge evaluators (Module 12):** use the quality ceiling (`gpt-6.1-sol`) on small datasets. Judges should be stronger than the model they grade.
-- **For deep agents (Module 10):** long-horizon runs use far more tokens than a single chat call, and the Deep Agents docs publish their own list of suggested models (it includes `gemini-3.6-flash`, `gpt-5.5`, and `gpt-5.4`). Benchmark with `gpt-6-luna` as usual, but check that list first: [Deep Agents models](https://docs.langchain.com/oss/python/deepagents/models).
+- **For deep agents (Module 10):** Gemini is the **default model** there, not just a benchmark. See the next section.
 - **If you cannot or will not add a card:** use Gemini's free tier with **public or synthetic data only**. Swap it in by changing one config value (see below).
 - **Pricing gotcha:** Gemini 3.8 Flash's list price **doubles on January 1, 2027**. OpenAI prices go up 2× input / 1.5× output for prompts over 272K tokens. Neither matters for the course, but both matter in production.
+
+## Module 10: Gemini is the default for deep agents
+
+Deep agents run long loops of model calls and spawn subagents, so one run can use tens of thousands of tokens. The Deep Agents docs publish a list of **suggested models** that pass their eval suite; Groq models are not on it, and Groq's free tier (8K tokens/minute, 200K tokens/day for `gpt-oss-*`) is too small for full runs. So Module 10 uses **`google_genai:gemini-3.6-flash`** for the orchestrator and subagents, and keeps Groq as a documented option. OpenAI `gpt-6-luna` stays the paid benchmark (the docs also suggest `gpt-5.5` and `gpt-5.4`).
+
+| Fact (verified October 11, 2026) | Value | Source |
+|---|---|---|
+| Model ID | `gemini-3.6-flash` (LangChain string `google_genai:gemini-3.6-flash`) | [Model card](https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash) |
+| Stable or preview? | **Stable.** Released July 21, 2026, no shutdown date announced. Google now calls it its "previous generation Flash model" (`gemini-3.8-flash` is newer, same price, but not on the Deep Agents suggested list yet) | [Models](https://ai.google.dev/gemini-api/docs/models) · [Deprecations](https://ai.google.dev/gemini-api/docs/deprecations) |
+| On the Deep Agents suggested list? | Yes (with `gemini-3.1-pro-preview`, which is preview and paid only) | [Deep Agents models](https://docs.langchain.com/oss/python/deepagents/models) |
+| Capabilities | Function calling, structured outputs, thinking, caching; text/image/video/audio/PDF input; 1,048,576 input / 65,536 output tokens | [Model card](https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash) |
+| Free tier | Input and output **free of charge**, no billing account. *Grounding with Google Search* is **not available** on the free tier, so search stays a tool (Groq browser search or Tavily) | [Pricing](https://ai.google.dev/gemini-api/docs/pricing) |
+| Free-tier limits | **Not published as fixed numbers.** Per project (not per key) and per model, measured in RPM, input TPM, and RPD (RPD resets at midnight Pacific). View your live limits in Google AI Studio; Google says they "are not guaranteed" | [Rate limits](https://ai.google.dev/gemini-api/docs/rate-limits) |
+| Free-tier data use | Google uses prompts and responses to improve its products, and **human reviewers may read them**. "Do not submit sensitive, confidential, or personal information." Paid usage is not used for product improvement | [Terms](https://ai.google.dev/gemini-api/terms) · [Pricing](https://ai.google.dev/gemini-api/docs/pricing) |
+| Paid price per 1M tokens | $0.75 input / $3.75 output (thinking tokens count as output) through Dec 31, 2026; **$1.50 / $7.50 from Jan 1, 2027** | [Pricing](https://ai.google.dev/gemini-api/docs/pricing) |
+| LangChain package | `langchain-google-genai` **4.4.1** (PyPI, Oct 10, 2026), already a dependency of `deepagents` 0.7.23 (`>=4.4.0,<5`); key in `GOOGLE_API_KEY` | [PyPI](https://pypi.org/project/langchain-google-genai/) · [ChatGoogleGenerativeAI](https://docs.langchain.com/oss/python/integrations/chat/google_generative_ai) |
+
+> ⚠️ **Production note: the Gemini free tier is a learning shortcut.**
+> Free-tier prompts may be read by human reviewers, limits are not guaranteed, and there is no SLA. Use it with public or synthetic data only. In production: a paid tier, the exact stable model ID pinned in config (never a `-latest` alias), a budget alert, retries with backoff on `429 RESOURCE_EXHAUSTED`, per-run token and call limits, and a tested fallback model. Re-check the [deprecations page](https://ai.google.dev/gemini-api/docs/deprecations) at every research checkpoint, since `gemini-3.6-flash` is no longer Google's newest Flash.
 
 ## How the course switches providers
 
@@ -45,6 +64,7 @@ from langchain.chat_models import init_chat_model
 free_model = init_chat_model("groq:openai/gpt-oss-20b")        # course default
 paid_benchmark = init_chat_model("openai:gpt-6-luna")          # needs OPENAI_API_KEY
 optional_gemini = init_chat_model("google_genai:gemini-3.8-flash")  # needs GOOGLE_API_KEY
+deep_agent_model = "google_genai:gemini-3.6-flash"  # Module 10 default, passed to create_deep_agent(model=...)
 ```
 
 > ⚠️ **Production note: benchmark models are not a free pass.**

@@ -38,8 +38,11 @@ langchain-huggingface>=1.2.3,<2
 # https://docs.langchain.com/oss/python/deepagents/changelog-py
 # The course allows patch updates within 0.7.x. In production, pin the exact
 # version (deepagents==0.7.23) in a lock file and upgrade behind your evals.
-# deepagents already pulls in langchain-anthropic and langchain-google-genai.
 deepagents>=0.7.23,<0.8
+# Gemini integration: Module 10's default model (google_genai:gemini-3.6-flash).
+# deepagents already depends on it (>=4.4.0,<5); listed explicitly because the
+# course imports it directly. Verified on PyPI 2026-10-11: 4.4.1 (2026-10-10).
+langchain-google-genai>=4.4.1,<5
 # Interpreters + dynamic subagents (Lesson 10.09, beta). Installed in that lesson.
 # langchain-quickjs>=0.3.8,<0.4
 # Managed sandbox providers (optional, Lesson 10.09). Pick one if you try it.
@@ -72,8 +75,7 @@ jupytext>=1.19.6,<2
 # psycopg[binary]>=3.3.6,<4
 
 # --- Optional providers (uncomment when a lesson asks for them) ------------
-# Paid benchmark (default): OpenAI. Optional low-cost/free-tier alternative: Gemini.
+# Paid benchmark (default): OpenAI. Gemini (langchain-google-genai) is active above.
 # langchain-openai>=1.7.0,<2
-# langchain-google-genai>=4.4.1,<5
 # langchain-anthropic>=1.7.5,<2
 # langchain-ollama>=1.1.0,<2

@@ -22,7 +22,7 @@
    - Reference: [uv docs](https://docs.astral.sh/uv/) · [Installation](https://docs.astral.sh/uv/getting-started/installation/) · [Install Python](https://docs.astral.sh/uv/guides/install-python/) · [Projects](https://docs.astral.sh/uv/guides/projects/) · [pip interface](https://docs.astral.sh/uv/pip/environments/) · [uv + Jupyter](https://docs.astral.sh/uv/guides/integration/jupyter/) · [Comparison doc](PYTHON_ENVIRONMENTS_COMPARED.md#uv-one-fast-tool-for-almost-everything)
 7. **Git hooks:** `nbstripout --install`, pre-commit
    - Reference: [nbstripout](https://github.com/kynan/nbstripout), [pre-commit](https://pre-commit.com/)
-8. **Accounts and API keys:** Groq and LangSmith (required); optional OpenAI (paid benchmark), Gemini (free-tier alternative), Tavily (web search comparison), Hugging Face (see `.env.example`)
+8. **Accounts and API keys:** Groq and LangSmith (required); optional OpenAI (paid benchmark), Gemini (required for Module 10 Deep Agents; free tier, optional benchmark elsewhere), Tavily (web search comparison), Hugging Face (see `.env.example`)
 9. **Local extras:** Docker Desktop with the WSL 2 backend (Lab 10B sandbox and Module 13), Ollama on Windows (Module 14)
    - Reference: [Docker Desktop on Windows](https://docs.docker.com/desktop/setup/install/windows-install/) · [Ollama on Windows](https://docs.ollama.com/windows)
 10. **Troubleshooting:** kernel not found, `%pip` vs `pip` mismatch, SSL/proxy issues, long path issues on Windows
