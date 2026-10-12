@@ -68,4 +68,20 @@
 - Trade-offs: `.bind()` bypasses LangChain's tool conversion, so the agent can't mix it with local tools in one call.
 - Revisit: when a `langchain-groq` release supports built-in tools in `bind_tools`.
 
+### D-007 · Persistence and local embeddings for Module 03 · 2026-10-12
+- Context: Module 03 needs memory that survives kernel restarts on a Windows laptop, and the project's stretch asks for semantic memory search with free, local embeddings.
+- Options: persistence (A) SQLite (`langgraph-checkpoint-sqlite`: `SqliteSaver` + `SqliteStore`), (B) Postgres in Docker; embeddings (C) `fastembed` (ONNX Runtime, no PyTorch), (D) `langchain-huggingface` + `sentence-transformers` (PyTorch), (E) Ollama embeddings.
+- Decision: A for Modules 03 and 08 (one file per kind of memory under git-ignored `data/outputs/memory/`; Postgres in Module 13). C for Module 03 as an optional `[embeddings]` extra, wrapped by `mastery.memory.local_embeddings()` with `BAAI/bge-small-en-v1.5` (384 dims), cached in `~/.cache/fastembed`. Offline cells and tests use `HashingEmbeddings` (deterministic, no download).
+- Evidence: PyPI 2026-10-12: langgraph-checkpoint-sqlite 3.1.1 (requires aiosqlite, sqlite-vec), fastembed 0.9.0 (onnxruntime, no torch). `langchain-huggingface[full]` 1.2.3 pins `sentence-transformers<6` while 6.1.0 is current, and pulls PyTorch (hundreds of MB). Measured on the box: fastembed model load + 3 embeddings ≈ 2 s on CPU; `SqliteStore` vector search via sqlite-vec works.
+- Trade-offs: fastembed is not the embedding stack of Module 06 (sentence-transformers / Ollama, compared there). SQLite is single-process; `SqliteSaver` turns on WAL (`-wal`/`-shm` files); Windows locks open files (`close()` first).
+- Revisit: in Module 06 (pick one local embedding stack for the course), or when `langchain-huggingface` supports sentence-transformers 6.
+
+### D-008 · Per-call response format with tools on Groq · 2026-10-12
+- Context: Lesson 03.05 changes the response format per call (`@wrap_model_call` + `request.override(response_format=...)`), the pattern shown in the context-engineering docs.
+- Options: (A) override with a bare Pydantic class (docs example); (B) override with an undeclared `ToolStrategy(...)`; (C) declare `ToolStrategy(Schema)` in `create_agent(response_format=...)` and override to `None` (or select it) per call.
+- Decision: C.
+- Evidence: measured with langchain 1.4.4 against the local Groq stand-in: A falls back to provider JSON-schema mode, which Groq rejects together with tools (400, see D-005); B raises `ValueError: ToolStrategy specifies tool '...' which wasn't declared in the original response format when creating the agent`; C works both ways.
+- Trade-offs: every format you may select must be declared up front (a `Union[...]` for several).
+- Revisit: when Groq supports JSON schema with tools, or when `create_agent` accepts new formats at call time.
+
 <!-- Add your decisions below this line -->

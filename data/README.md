@@ -4,7 +4,7 @@
 |---|---|---|
 | `samples/` | ✅ Yes (small files only, < 1 MB each) | Sample CSVs, short texts, tiny audio clips used by lessons |
 | `raw/` | ❌ Gitignored | Downloaded corpora (created by notebook cells) |
-| `outputs/` | ❌ Gitignored | Generated results, audio, charts, checkpoints |
+| `outputs/` | ❌ Gitignored | Generated results, audio, charts, checkpoints. Module 03: `outputs/memory/*.sqlite` (conversations and learner memories: personal data, never commit) and `outputs/scratch/` (the 03.01 autoreload demo module) |
 | `vectorstores/` | ❌ Gitignored | Persisted Chroma and other indexes |
 
 Never commit personal or confidential documents. Use public or synthetic data for anything you'll publish.

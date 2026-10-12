@@ -68,6 +68,13 @@ This happens often. In 2026 alone Groq retired `qwen/qwen3-32b`, `qwen/qwen3.6-2
 | 02.07, Project 02 | `langgraph dev` + Studio with tracing on, on sample data | Development only. Real user data: `LANGSMITH_TRACING=false` or redaction (Module 04); deployments use a persistent Agent Server or the Module 13 service |
 | Project 02 | Static, illustrative FX rates; synthetic expenses; OFFLINE DEMO stand-in models | Dated rates from a trusted source with the `as_of` shown to users; real evaluation on representative data; demo scores are never evidence |
 | 03, 08 | `InMemorySaver` / SQLite checkpointers | Use a durable database (Postgres checkpointer) with backups |
+| 03.01, 03.02 | Thread ids like `"ana-s1"` chosen in code; conversations kept forever | Server-generated thread ids (`uuid4`) stored with their owner and checked on every request; retention (`prune`, `delete_thread`), `EncryptedSerializer` at rest |
+| 03.02, Project 03 | SQLite checkpointer and store files in `data/outputs/memory/` (one process) | Postgres checkpointer/store (Module 13) or LangSmith Deployment persistence; backups; one database per environment |
+| 03.03 | `count_tokens_approximately` (≈4 chars/token) as the token budget | Reconcile with provider `usage_metadata`, keep a margin below input **and** tokens-per-minute limits, cap tool output size |
+| 03.03, Project 03 | Summaries written by a small model and trusted as memory | Keep identity, permissions and key facts out of summaries (context/store); log summaries for audit; evaluate summary quality (Module 12) |
+| 03.04, Project 03 | Model-written memories (`remember_fact`) re-injected into prompts | Length caps, typed `kind`, never store instructions, mark memories as data, user-visible "what you remember" + delete, TTLs, write audit log |
+| 03.04 | `HashingEmbeddings` (word overlap) in demos; one local fastembed model | A real embedding model chosen by evaluation; record model + dims with the store and re-embed on change; pgvector in production |
+| 03.05 | Tools hidden from the model with `wrap_model_call` | Hiding is not authorization: enforce permissions in the tool or `wrap_tool_call` too |
 | 06 | `InMemoryVectorStore`, local Chroma folder | Use a managed or server-mode vector store with backups and access control |
 | 07.06 | `langgraph dev` in-memory server | Not a production server. Self-host with FastAPI + Docker (Module 13) or use LangSmith Deployment |
 | 13 | Single-container Docker Compose on your laptop | Add a reverse proxy with TLS, health checks, resource limits, log shipping, and a deployment pipeline |

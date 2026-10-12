@@ -43,6 +43,18 @@ llm = [
 studio = [
     "langgraph-cli[inmem]>=0.4.33,<1",
 ]
+# Memory (Module 03): SqliteSaver / SqliteStore for mastery.memory.
+# VERIFIED 2026-10-12: langgraph-checkpoint-sqlite 3.1.1 is current on PyPI;
+# it pulls aiosqlite and sqlite-vec (vector search inside SQLite).
+memory = [
+    "langgraph-checkpoint-sqlite>=3.1.1,<4",
+]
+# Optional local embeddings for semantic memory search (Module 03 stretch).
+# NOT in [dev]: ~150 MB of wheels (onnxruntime) + a ~70 MB model download.
+# VERIFIED 2026-10-12: fastembed 0.9.0 is current on PyPI (ONNX, no PyTorch).
+embeddings = [
+    "fastembed>=0.9.0,<1",
+]
 # Developer tools: `python -m pip install -e ".[dev]"`
 # Includes the llm extra so every unit test runs (offline, with fake models).
 dev = [
@@ -54,6 +66,8 @@ dev = [
     "mastery[llm]",
     # Module 02: `langgraph dev` for Studio (Lesson 02.07), so one install covers it.
     "mastery[studio]",
+    # Module 03: SQLite checkpointer/store, so every memory test runs offline.
+    "mastery[memory]",
 ]
 
 [tool.setuptools.packages.find]

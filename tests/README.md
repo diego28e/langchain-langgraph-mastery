@@ -30,6 +30,12 @@ Module 01 adds (all offline):
 | `unit/test_agents.py` | `ScriptedChatModel` (script, callables, streaming tool calls, `repeat_last`), `execute_tool_calls` error paths, `run_tool_loop` limits, transcript/stream formatting, `create_agent` end to end | `ScriptedChatModel`: no network |
 | `unit/test_notebook_structure.py` | Module 01+ lessons have every template section; title states the docs-verified date; every live model call is guarded by a `HAVE_*_KEY`/`LIVE` flag or marked 🧪 | Notebooks read as JSON |
 
+Module 03 adds (all offline):
+
+| File | Tests | How it stays offline |
+|---|---|---|
+| `unit/test_memory.py` | `thread_config`, `memory_dir`; in-memory checkpointer keeps threads apart; **SQLite checkpointer read back from a new Python process**; `make_store` (memory and SQLite) put/get/prefix search and semantic search with an index; SQLite store reopened; TTL arg rules; `safe_label` / `learner_namespace` reject unsafe ids; `HashingEmbeddings` stable and normalised; `count_tokens`; a `create_agent` tool writing to `runtime.store` with users kept apart | `tmp_path` SQLite files, `ScriptedChatModel`, `HashingEmbeddings` (no model download) |
+
 ## Maintainer QA (not part of `pytest`)
 
 Notebooks are executed with **nbclient** twice before release, in memory (outputs never written back):
@@ -39,6 +45,9 @@ cd _maintainer/tools/qa
 python run_notebooks.py ../../../modules/01-models-messages-prompts/*.ipynb                 # no keys: 💸 cells must skip
 python run_notebooks.py --mock ../../../modules/01-models-messages-prompts/*.ipynb          # live code paths vs a local stand-in
 python run_notebooks.py --mock ../../../modules/02-tools-and-agents/*.ipynb ../../../modules/02-tools-and-agents/project/*.ipynb ../../../modules/02-tools-and-agents/project/solutions/*.ipynb
+python run_notebooks.py --mock ../../../modules/03-memory-and-context/*.ipynb ../../../modules/03-memory-and-context/project/*.ipynb ../../../modules/03-memory-and-context/project/solutions/*.ipynb
 ```
+
+Module 03 notebooks write SQLite files under `data/outputs/memory/` (git-ignored); delete that folder after QA runs.
 
 `--mock` starts [`mock_groq.py`](../_maintainer/tools/qa/mock_groq.py), a local HTTP server that imitates the Groq API (chat, streaming with reasoning, `json_schema`/tool calls, 401, 429 + `retry-after`, decommissioned models, images, rate-limit headers, job-posting answers with deliberate mistakes; since Module 02 an **agent mode** that picks a tool from the question, fills arguments, makes one call per turn and answers `ToolStrategy` schemas from tool results; a 400 for `json_schema` + tools, as Groq documents; built-in `browser_search` with `executed_tools`) and accepts LangSmith uploads, then points `GROQ_BASE_URL`/`LANGSMITH_ENDPOINT` at it. It proves the code paths run; it says nothing about real model quality.

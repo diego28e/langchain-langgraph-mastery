@@ -122,11 +122,11 @@ from pathlib import Path
 
 from langgraph.checkpoint.memory import InMemorySaver
 
-# Where persistent checkpoints live. Gitignored (see .gitignore → data/).
-CHECKPOINT_DIR = Path("data/outputs/checkpoints")
+# Where persistent memory files live. Gitignored (see .gitignore → data/outputs/).
+MEMORY_DIR = Path("data/outputs/memory")
 
 
-def get_checkpointer(kind: str = "memory"):
+def make_checkpointer(kind: str = "memory"):
     """Return a checkpointer for agents and graphs.
 
     Args:
