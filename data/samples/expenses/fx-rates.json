@@ -1,0 +1,11 @@
+{
+  "_about": "ILLUSTRATIVE static exchange rates for Project 02. Not live, not financial data. 1 unit of the currency = rate units of COP.",
+  "as_of": "2026-10-01",
+  "base": "COP",
+  "rates_to_base": {
+    "COP": 1.0,
+    "USD": 4000.0,
+    "EUR": 4350.0,
+    "MXN": 215.0
+  }
+}

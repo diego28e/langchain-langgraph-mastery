@@ -52,4 +52,20 @@
 - Trade-offs: Gemini's free tier may use prompts for product improvement and human reviewers may read them, so only public or synthetic data. Free-tier limits are not published as fixed numbers (check AI Studio). Web search stays a tool (Groq or Tavily) because Google Search grounding is paid only.
 - Revisit: when `gemini-3.6-flash` gets a shutdown date, when the Deep Agents suggested list changes, or on 2027-01-01 (price change).
 
+### D-005 · Structured output strategy for Groq agents · 2026-10-12
+- Context: Agents with tools must also return a validated object (Lesson 02.05, Project 02). `ChatGroq` reports `structured_output: True` in its model profile, so a bare `response_format=Schema` makes `create_agent` pick `ProviderStrategy` (JSON-schema mode).
+- Options: (A) bare schema (auto); (B) `ProviderStrategy` explicitly; (C) `ToolStrategy` explicitly.
+- Decision: C whenever the agent has tools. B only for tool-less extraction agents, never streamed.
+- Evidence: Groq structured outputs page ("Streaming and tool use are not currently supported with Structured Outputs"): https://console.groq.com/docs/structured-outputs; LangChain structured output docs (auto selection from the model profile): https://docs.langchain.com/oss/python/langchain/structured-output; the auto path reproduced against the course's local Groq stand-in. Not yet confirmed against the live API: Lesson 02.05 has a 💸 cell for that.
+- Trade-offs: `ToolStrategy` forces `tool_choice="any"` and adds one tool schema to every request (more input tokens).
+- Revisit: when Groq supports JSON schema together with tools, or when `ChatGroq`'s profile changes.
+
+### D-006 · Groq `browser_search` from LangChain · 2026-10-12
+- Context: D-003 makes Groq `browser_search` the default web search. In `langchain-groq` 1.1.3, `bind_tools([{"type": "browser_search"}])` (and `create_agent(tools=[...])` with that dict) raises `ValueError: Unsupported function`, because the tool converter only passes through tool types it knows.
+- Options: (A) `model.bind(tools=[{"type": "browser_search"}], tool_choice="required")` (raw request parameters); (B) Tavily as a normal client-side tool; (C) `ChatOpenAI` pointed at Groq's OpenAI-compatible URL.
+- Decision: A for direct calls (Lesson 02.02), and wrapped in a small `@tool` when an agent needs it (Module 05). B stays the alternative when you need structured output, filters or non-Groq models.
+- Evidence: `langchain_groq/chat_models.py` and `langchain_core/utils/function_calling.py` (installed sources, 2026-10-12); https://console.groq.com/docs/tool-use/built-in-tools/browser-search. No matching GitHub issue found on 2026-10-12.
+- Trade-offs: `.bind()` bypasses LangChain's tool conversion, so the agent can't mix it with local tools in one call.
+- Revisit: when a `langchain-groq` release supports built-in tools in `bind_tools`.
+
 <!-- Add your decisions below this line -->

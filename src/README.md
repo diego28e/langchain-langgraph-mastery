@@ -2,7 +2,7 @@
 
 This package grows module by module. Whenever code is needed in a second notebook, it moves here (with a unit test in `tests/unit/`). By the end of the course, it is a small, production-style toolkit you understand line by line.
 
-> **Status:** Modules 00–01 code is in place (`config.py`, `doctor.py`, `groq_catalog.py`, `models.py`, `pricing.py`, `display.py`), with unit tests in [`tests/unit/`](../tests/unit/).
+> **Status:** Modules 00–02 code is in place (`config.py`, `doctor.py`, `groq_catalog.py`, `models.py`, `pricing.py`, `display.py`, `tools/`, `agents.py`, `testing.py`), with unit tests in [`tests/unit/`](../tests/unit/).
 
 ## Install once (Git Bash, course env active, repo root)
 
@@ -26,7 +26,9 @@ Step-by-step with troubleshooting: [Lesson 00.02 guide](../modules/00-foundation
 | 01 | `mastery/models.py` | `get_model(role, provider)`: model IDs from config, never hard-coded; `provider="benchmark"` for the paid benchmark (OpenAI by default, Gemini optional). `PreviewModelWarning`, `explain_model_error()` (one classifier for SDK and `langchain_core` exceptions), `describe_model()` |
 | 01 | `mastery/pricing.py` | Dated price table and `estimate_cost()` / `cost_report()` from `usage_metadata` |
 | 01 | `mastery/display.py` | Safe (HTML-escaped) message cards for Jupyter: `show_message()`, testable `render_message_html()` |
-| 02 | `mastery/tools/` | Reusable, tested tools |
+| 02 | `mastery/tools/` | Reusable, tested tools: `calculator` (AST allow-list, no `eval`), date tools (`get_today`, `days_between`, `add_days`), `make_csv_lookup_tool` for one CSV file |
+| 02 | `mastery/agents.py` | `execute_tool_calls` / `run_tool_loop` (the hand-written loop, tested), `format_transcript`, `agent_stats`, `format_stream_part` (v2 stream parts) |
+| 02 | `mastery/testing.py` | `ScriptedChatModel`: offline chat model with `bind_tools` and tool-call streaming, for 🧪 cells and unit tests |
 | 03 | `mastery/memory.py` | Checkpointer and store factories |
 | 04 | `mastery/middleware/` | Token budget guard, audit logger, role-based tool filter |
 | 05 | `mastery/mcp.py`, `mastery/mcp_servers/`, `mastery/tools/web_search.py` | MCP helpers, the course's FastMCP server, and a web search switch (Groq browser search by default, Tavily optional) |
@@ -46,7 +48,8 @@ Notebooks import it after the editable install above (packaging is defined in [`
 |---|---|---|
 | (none) | `python-dotenv`, `httpx` | Enough for Module 00 (`config`, `groq_catalog`) |
 | `[llm]` | `langchain`, `langchain-core`, `langchain-groq` | `models`, `pricing`, `display` import LangChain **lazily**, so `import mastery` works without it |
-| `[dev]` | `pytest`, `nbformat` + `[llm]` | Every unit test runs, offline |
+| `[studio]` | `langgraph-cli[inmem]` | `langgraph dev` for LangSmith Studio (Lesson 02.07); pulls the local Agent Server (Python ≥ 3.11) |
+| `[dev]` | `pytest`, `nbformat`, `nbconvert` + `[llm]` + `[studio]` | Every unit test runs, offline; notebook tooling; `langgraph dev` |
 
 Other providers are installed only when you use them: `python -m pip install "langchain-openai>=1.7.0,<2"` (paid benchmark) or `"langchain-google-genai>=4.4.1,<5"`. `get_model()` tells you the exact command if one is missing.
 

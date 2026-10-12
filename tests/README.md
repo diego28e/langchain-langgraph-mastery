@@ -26,6 +26,8 @@ Module 01 adds (all offline):
 | `unit/test_doctor.py` | Bad `SSL_CERT_FILE` gives `CertificateSettingError` with the fix, from `get_model` and `load_settings` | `monkeypatch` sets a non-existent path; offline. `conftest.py` also prints an SSL warning in the pytest header |
 | `unit/test_pricing.py` | Price lookup (`provider:model` and bare IDs), `estimate_cost`, `cost_report` | Pure functions |
 | `unit/test_display.py` | `message_summary`, HTML rendering, escaping of model output | `AIMessage` objects built by hand |
+| `unit/test_tools.py` | `safe_eval` allow-list and limits, `calculator` errors as `ToolMessage`s, date tools (fixed "today"), `CsvTable` (BOM, row cap) and `make_csv_lookup_tool` (column enum, artifact, caps) | Pure functions and a temporary CSV |
+| `unit/test_agents.py` | `ScriptedChatModel` (script, callables, streaming tool calls, `repeat_last`), `execute_tool_calls` error paths, `run_tool_loop` limits, transcript/stream formatting, `create_agent` end to end | `ScriptedChatModel`: no network |
 | `unit/test_notebook_structure.py` | Module 01+ lessons have every template section; title states the docs-verified date; every live model call is guarded by a `HAVE_*_KEY`/`LIVE` flag or marked 🧪 | Notebooks read as JSON |
 
 ## Maintainer QA (not part of `pytest`)
@@ -36,6 +38,7 @@ Notebooks are executed with **nbclient** twice before release, in memory (output
 cd _maintainer/tools/qa
 python run_notebooks.py ../../../modules/01-models-messages-prompts/*.ipynb                 # no keys: 💸 cells must skip
 python run_notebooks.py --mock ../../../modules/01-models-messages-prompts/*.ipynb          # live code paths vs a local stand-in
+python run_notebooks.py --mock ../../../modules/02-tools-and-agents/*.ipynb ../../../modules/02-tools-and-agents/project/*.ipynb ../../../modules/02-tools-and-agents/project/solutions/*.ipynb
 ```
 
-`--mock` starts [`mock_groq.py`](../_maintainer/tools/qa/mock_groq.py), a local HTTP server that imitates the Groq API (chat, streaming with reasoning, `json_schema`/tool calls, 401, 429 + `retry-after`, decommissioned models, images, rate-limit headers, job-posting answers with deliberate mistakes) and accepts LangSmith uploads, then points `GROQ_BASE_URL`/`LANGSMITH_ENDPOINT` at it. It proves the code paths run; it says nothing about real model quality.
+`--mock` starts [`mock_groq.py`](../_maintainer/tools/qa/mock_groq.py), a local HTTP server that imitates the Groq API (chat, streaming with reasoning, `json_schema`/tool calls, 401, 429 + `retry-after`, decommissioned models, images, rate-limit headers, job-posting answers with deliberate mistakes; since Module 02 an **agent mode** that picks a tool from the question, fills arguments, makes one call per turn and answers `ToolStrategy` schemas from tool results; a 400 for `json_schema` + tools, as Groq documents; built-in `browser_search` with `executed_tools`) and accepts LangSmith uploads, then points `GROQ_BASE_URL`/`LANGSMITH_ENDPOINT` at it. It proves the code paths run; it says nothing about real model quality.

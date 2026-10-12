@@ -32,6 +32,7 @@ langchain-langgraph-mastery/
 │       ├── NN-LL-lesson-slug.ipynb
 │       ├── project/          # The module project (notebook + any app code)
 │       ├── labs/             # Use-case labs, when a module has them (Module 10: labs/10a-repo-cartographer/ …)
+│       ├── studio/           # A tiny `langgraph dev` app for a Studio lesson (langgraph.json + agent.py; Module 02: 02.07)
 │       └── assets/           # Small images/diagrams used by the notebooks
 ├── apps/                     # Deployable apps (langgraph.json / FastAPI) from Modules 07+
 ├── capstones/
@@ -70,6 +71,8 @@ Lab notebooks: `modules/10-deep-agents/labs/10a-repo-cartographer/10a-lab-repo-c
 Exercise solutions (if separated): `.../solutions/03-02-short-term-memory-solutions.ipynb`.
 Project solutions: `modules/00-foundations/project/solutions/00-project-groq-model-explorer-solution.ipynb`.
 Terminal-heavy lessons: a Markdown guide with the same `NN-LL-` prefix next to the notebook, e.g. `00-02-create-course-env.md`.
+
+**Studio apps** (from Module 02): a `studio/` folder next to the lesson with `langgraph.json` (`graphs` → `./agent.py:agent`, `env` → the repo's `.env`) and an importable `agent.py`. Start it from Git Bash in that folder with `langgraph dev` (the CLI comes with the `[dev]` extra). Its runtime folder `.langgraph_api/` is git-ignored.
 
 **Projects** have three files:
 - `project/README.md`: the spec (requirements, acceptance criteria, stretch goals, TODO list, rubric).
@@ -265,7 +268,7 @@ Course commands are written for **bash**. On Windows that means **Git Bash** (in
 | Topic | Rule |
 |---|---|
 | `conda` in Git Bash | Not on the PATH by default. Either run `source ~/anaconda3/etc/profile.d/conda.sh` in each new window, or run `conda init bash` once ([conda init](https://docs.conda.io/projects/conda/en/latest/commands/init.html)), which edits `~/.bash_profile`. Step-by-step: [00-02-create-course-env.md](modules/00-foundations/00-02-create-course-env.md) |
-| `SSL_CERT_FILE` in Git Bash | Anaconda's `openssl` Bash activation script on Windows sets `SSL_CERT_FILE` to `$CONDA_PREFIX/ssl/cacert.pem`, which does not exist (the real file is under `Library/`). Every API client then fails with `FileNotFoundError`. Fix once per env: `conda env config vars set SSL_CERT_FILE="$(cygpath -m "$CONDA_PREFIX")/Library/ssl/cacert.pem"`, then re-activate. `mastery.doctor` detects it. Details: [00-02-create-course-env.md, Step 4b](modules/00-foundations/00-02-create-course-env.md#step-4b) |
+| `SSL_CERT_FILE` in Git Bash | Anaconda's `openssl` Bash activation script on Windows sets `SSL_CERT_FILE` to `$CONDA_PREFIX/ssl/cacert.pem`, which does not exist (the real file is under `Library/`). Every API client then fails with `FileNotFoundError`. Fix once per env: `conda env config vars set SSL_CERT_FILE="$(cygpath -m "$CONDA_PREFIX")/Library/ssl/cacert.pem"`, then re-activate. `mastery.doctor` detects it. Details: [00-02-create-course-env.md, Step 4b](modules/00-foundations/00-02-create-course-env.md#step-4b--windows--git-bash-check-and-fix-the-certificate-path) |
 | Paths | Git Bash writes `C:\Users\Ana\repo` as `/c/Users/Ana/repo`. Use forward slashes. `cd ~` goes to `C:\Users\<you>`. `pwd -W` prints the Windows form |
 | Spaces in paths | Quote them: `cd "/c/Users/Ana Maria/Documents"` (or escape: `Ana\ Maria`) |
 | Quoting | Single quotes for literal text (commit messages, `-c 'python code'`). Quote pip extras: `python -m pip install -e ".[dev]"` |

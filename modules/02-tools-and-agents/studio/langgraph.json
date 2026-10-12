@@ -1,0 +1,7 @@
+{
+  "dependencies": ["."],
+  "graphs": {
+    "finance_agent": "./agent.py:agent"
+  },
+  "env": "../../../.env"
+}

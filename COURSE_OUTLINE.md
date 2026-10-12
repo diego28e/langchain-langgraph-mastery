@@ -324,7 +324,7 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 **Goal:** An agent that answers questions about your own (sample) expense CSV with safe, deterministic tools.
 - **Requirements**
   1. Tools: `load_expenses(month)`, `sum_by_category(month)`, `top_merchants(n, month)`, `convert_currency(amount, from, to)` (static rates file). Each has a docstring, typed args, and error handling.
-  2. `create_agent` with `openai/gpt-oss-20b`, a clear system prompt, and `response_format` → `FinanceAnswer(answer: str, figures: list[Figure], caveats: list[str])`.
+  2. `create_agent` with `openai/gpt-oss-20b`, a clear system prompt, and `response_format=ToolStrategy(FinanceAnswer)` → `FinanceAnswer(answer: str, figures: list[Figure], caveats: list[str], out_of_scope: bool)` (`ToolStrategy` explicitly: Groq can't combine JSON-schema output with tools). `mastery.tools.calculator` handles differences and ratios.
   3. Streams tool calls to the notebook. Traces go to `m02-finance-agent`.
   4. 10 test questions in a Markdown table with expected answers. At least 8 must be correct.
 - **Acceptance criteria:** No arithmetic done by the LLM (all numbers come from tools). The agent refuses questions outside the data scope. Restart & Run All passes.

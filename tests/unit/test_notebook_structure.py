@@ -38,7 +38,11 @@ LESSON_SECTIONS = (
     "Summary",
 )
 # A model call in a code cell, e.g. llm.invoke(...), model.stream(...), chain.batch(...).
-MODEL_CALL = re.compile(r"\b(llm|model|chain|structured|streamer|thinker|primary|backup)\w*\.(a?invoke|a?stream|a?batch)\(")
+# Module 02 adds agents (agent.invoke, finance_agent.stream_events, bound.invoke ...).
+MODEL_CALL = re.compile(
+    r"\b(llm|model|chain|structured|streamer|thinker|primary|backup|agent|bound|searcher|\w+_agent)\w*"
+    r"\.(a?invoke|a?stream|a?batch|a?stream_events)\("
+)
 
 
 def _ids(paths: list[Path]) -> list[str]:

@@ -37,6 +37,12 @@ llm = [
     "langchain-core>=1.6.9,<2",
     "langchain-groq>=1.1.3,<2",
 ]
+# LangSmith Studio / local Agent Server (Module 02, Lesson 02.07): `langgraph dev`.
+# VERIFIED 2026-10-12: langgraph-cli 0.4.33 is current on PyPI; the [inmem]
+# extra pulls langgraph-api (needs Python >= 3.11).
+studio = [
+    "langgraph-cli[inmem]>=0.4.33,<1",
+]
 # Developer tools: `python -m pip install -e ".[dev]"`
 # Includes the llm extra so every unit test runs (offline, with fake models).
 dev = [
@@ -46,6 +52,8 @@ dev = [
     # `jupyter nbconvert --clear-output --inplace` inside the course env.
     "nbconvert>=7.17.2,<8",
     "mastery[llm]",
+    # Module 02: `langgraph dev` for Studio (Lesson 02.07), so one install covers it.
+    "mastery[studio]",
 ]
 
 [tool.setuptools.packages.find]
