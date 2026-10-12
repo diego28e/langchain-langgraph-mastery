@@ -80,18 +80,33 @@ class RoleToolFilterMiddleware(AgentMiddleware):
         names = self.policy.get(role, frozenset()) if role else frozenset()
         return "*" in names or tool_name in names
 
-    def wrap_model_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+    def _filter(self, request: Any) -> Any:
         context = getattr(request.runtime, "context", None)
-        tools = [t for t in request.tools if self.allowed(context, _tool_name(t) or "")]
-        return handler(request.override(tools=tools))
+        return request.override(tools=[t for t in request.tools if self.allowed(context, _tool_name(t) or "")])
 
-    def wrap_tool_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+    def _refusal(self, request: Any) -> ToolMessage | None:
         context = getattr(getattr(request, "runtime", None), "context", None)
         name = request.tool_call["name"]
         if self.allowed(context, name):
-            return handler(request)
+            return None
         role = self.role_for(context) or "none"
         return ToolMessage(
             content=f"Tool '{name}' is not allowed for role '{role}'. Do not call it again.",
             tool_call_id=request.tool_call["id"], name=name, status="error",
         )
+
+    def wrap_model_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+        return handler(self._filter(request))
+
+    async def awrap_model_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+        """Async version (agents run with ``ainvoke``, e.g. with MCP tools in Module 05)."""
+        return await handler(self._filter(request))
+
+    def wrap_tool_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+        refusal = self._refusal(request)
+        return refusal if refusal is not None else handler(request)
+
+    async def awrap_tool_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+        """Async version of :meth:`wrap_tool_call`."""
+        refusal = self._refusal(request)
+        return refusal if refusal is not None else await handler(request)

@@ -55,6 +55,13 @@ memory = [
 embeddings = [
     "fastembed>=0.9.0,<1",
 ]
+# MCP and web search (Module 05): mastery.mcp_servers (FastMCP) and mastery.web_search.
+# VERIFIED 2026-10-12 on PyPI: langchain 1.4.4 ([mcp] pulls fastmcp>=4.0.11,<5; 4.1.0 current,
+# with mcp 2.3.0), langchain-tavily 0.2.18. Tavily needs TAVILY_API_KEY only when you call it.
+mcp = [
+    "langchain[mcp]>=1.4.4,<2",
+    "langchain-tavily>=0.2.18,<1",
+]
 # Developer tools: `python -m pip install -e ".[dev]"`
 # Includes the llm extra so every unit test runs (offline, with fake models).
 dev = [
@@ -68,6 +75,8 @@ dev = [
     "mastery[studio]",
     # Module 03: SQLite checkpointer/store, so every memory test runs offline.
     "mastery[memory]",
+    # Module 05: FastMCP servers, MCPAdapter and Tavily, so every MCP test runs offline.
+    "mastery[mcp]",
 ]
 
 [tool.setuptools.packages.find]

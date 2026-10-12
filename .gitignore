@@ -57,6 +57,9 @@ langgraph_dev_state/
 # --- Data, outputs, vector stores, local databases --------------------------
 data/raw/
 data/outputs/
+# Personal IDE MCP configs (contain local paths; Lesson 05.04)
+/.mcp.json
+/.cursor/mcp.json
 data/vectorstores/
 chroma/
 chroma_db/

@@ -39,7 +39,7 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
-Lesson 05.01 shows the LangChain version (`ChatGroq` with the built-in tool bound alongside your own tools) and checks how the result appears in the message. LangChain treats this as **server-side tool use** ([Tools: server-side tool use](https://docs.langchain.com/oss/python/langchain/tools)).
+Lesson 05.01 shows the LangChain version: `ChatGroq(...).bind(tools=[{"type": "browser_search"}], tool_choice="required")` (`bind_tools` can't convert built-in tools in `langchain-groq` 1.1.3, D-006), how the sources appear in `additional_kwargs["executed_tools"]`, and why a `.bind`-ed model can't also call your own tools: the course wraps the search in a normal `web_search` tool instead (`mastery.web_search`, D-016; checked 2026-10-12). LangChain treats this as **server-side tool use** ([Tools: server-side tool use](https://docs.langchain.com/oss/python/langchain/tools)).
 
 ## 2. Tavily (taught for comparison)
 

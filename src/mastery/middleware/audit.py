@@ -96,14 +96,7 @@ class AuditLogMiddleware(AgentMiddleware):
                     user=_preview(last.content) if last is not None else None)
         return None
 
-    def wrap_model_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
-        start = time.perf_counter()
-        try:
-            response = handler(request)
-        except Exception as error:
-            self.record("model_error", thread_id=_thread_id(request.runtime), model=_model_name(request.model),
-                        error=type(error).__name__)
-            raise
+    def _model_event(self, request: Any, response: Any, start: float) -> None:
         messages = getattr(response, "result", None) or []
         ai = next((m for m in messages if isinstance(m, AIMessage)), None)
         usage = (getattr(ai, "usage_metadata", None) or {}) if ai is not None else {}
@@ -111,21 +104,62 @@ class AuditLogMiddleware(AgentMiddleware):
                     n_messages=len(request.messages), tools_offered=len(request.tools),
                     tool_calls=[c["name"] for c in (ai.tool_calls if ai is not None else [])],
                     tokens=usage.get("total_tokens"), ms=round((time.perf_counter() - start) * 1000, 1))
+
+    def _model_error(self, request: Any, error: Exception) -> None:
+        self.record("model_error", thread_id=_thread_id(request.runtime), model=_model_name(request.model),
+                    error=type(error).__name__)
+
+    def _tool_event(self, request: Any, result: Any, start: float) -> None:
+        call = request.tool_call
+        status = getattr(result, "status", "success") if isinstance(result, ToolMessage) else "command"
+        self.record("tool_call", thread_id=_thread_id(getattr(request, "runtime", None)), tool=call["name"],
+                    args=call.get("args"), status=status, ms=round((time.perf_counter() - start) * 1000, 1))
+
+    def _tool_error(self, request: Any, error: Exception) -> None:
+        call = request.tool_call
+        self.record("tool_error", thread_id=_thread_id(getattr(request, "runtime", None)), tool=call["name"],
+                    args=call.get("args"), error=type(error).__name__)
+
+    def wrap_model_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+        start = time.perf_counter()
+        try:
+            response = handler(request)
+        except Exception as error:
+            self._model_error(request, error)
+            raise
+        self._model_event(request, response, start)
+        return response
+
+    async def awrap_model_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+        """Async version (agents run with ``ainvoke``, e.g. with MCP tools in Module 05)."""
+        start = time.perf_counter()
+        try:
+            response = await handler(request)
+        except Exception as error:
+            self._model_error(request, error)
+            raise
+        self._model_event(request, response, start)
         return response
 
     def wrap_tool_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
-        call = request.tool_call
         start = time.perf_counter()
-        thread = _thread_id(getattr(request, "runtime", None))
         try:
             result = handler(request)
         except Exception as error:
-            self.record("tool_error", thread_id=thread, tool=call["name"], args=call.get("args"),
-                        error=type(error).__name__)
+            self._tool_error(request, error)
             raise
-        status = getattr(result, "status", "success") if isinstance(result, ToolMessage) else "command"
-        self.record("tool_call", thread_id=thread, tool=call["name"], args=call.get("args"), status=status,
-                    ms=round((time.perf_counter() - start) * 1000, 1))
+        self._tool_event(request, result, start)
+        return result
+
+    async def awrap_tool_call(self, request: Any, handler: Callable[[Any], Any]) -> Any:
+        """Async version of :meth:`wrap_tool_call`."""
+        start = time.perf_counter()
+        try:
+            result = await handler(request)
+        except Exception as error:
+            self._tool_error(request, error)
+            raise
+        self._tool_event(request, result, start)
         return result
 
     def after_agent(self, state: Any, runtime: Any) -> dict[str, Any] | None:

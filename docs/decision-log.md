@@ -107,4 +107,30 @@
 - Decision: lessons and the project validate decisions (`check_decisions`) before `Command(resume=...)`, and tell learners to restart on a new `thread_id` if a thread is stuck.
 - Revisit: re-test on each langgraph upgrade; remove the warning when fixed.
 
+### D-013 · Async-only MCP tools; async middleware · 2026-10-12
+- Context: `langchain.mcp` (langchain 1.4.4, beta) builds async-only tools: sync `invoke` raises `NotImplementedError: StructuredTool does not support sync invocation.` Middleware that defines only sync `wrap_model_call` / `wrap_tool_call` raises `NotImplementedError` under `ainvoke`.
+- Decision: every MCP notebook uses top-level `await` and `agent.ainvoke`. `AuditLogMiddleware` and `RoleToolFilterMiddleware` gained `awrap_*` hooks (shared logic, same tests). The beta API is used directly in notebooks; reusable helpers in `mastery/mcp.py` don't import `langchain.mcp`, so a breaking beta change stays in notebook code.
+- Evidence: measured on the box 2026-10-12 (langchain 1.4.4, fastmcp 4.1.0, mcp 2.3.0); `tests/unit/test_mcp.py`.
+- Revisit: when `langchain.mcp` leaves beta or adds sync tools.
+
+### D-014 · An offline stand-in for the docs MCP server · 2026-10-12
+- Context: `https://docs.langchain.com/mcp` is free and keyless, but notebooks and tests must run offline and give stable results.
+- Decision: `mastery.mcp_servers.docs_standin` serves `search_docs_by_lang_chain` over `data/samples/mcp/docs-snapshot.json` (86 Python sections captured 2026-10-12) in the real server's `Title/Link/Page/Content` format. 🌐 cells try the real server and fall back with a ⚠️; Project 05 OFFLINE uses the stand-in, LIVE the real server.
+- Trade-offs: the snapshot ages; its ranking is word overlap, not the real search. The offline project reader scores 8/10 honestly (2 misses kept on purpose).
+- Revisit: refresh the snapshot (`_maintainer/tools/m05/data.py`) when docs URLs change; re-check the benchmark's `expected_page`s.
+
+### D-015 · Annotations are claims: allow-lists and fail-closed policies · 2026-10-12
+- Decision: `approval_policy` pauses every tool not marked read-only (no hint → pause). For servers we don't control, pass `trusted_read_only=[...]`: only reviewed names skip approval. `tool_fingerprint` pins reviewed definitions; `poisoned_descriptions` is a tripwire, not a wall. The project gives the agent only allowed tool names (no `submit_feedback`, no `delete_note`).
+- Evidence: MCP spec (tool annotations are hints from the server); 05.05 demo of a server that marks `wipe_disk` read-only.
+
+### D-016 · Web search: `.bind`, a `web_search` tool, and an unverified `executed_tools` parse · 2026-10-12
+- Context: `bind_tools` can't convert Groq's `browser_search` (D-006), browser search can't be combined with structured output, and a `.bind`-ed model can't also call local tools.
+- Decision: `mastery.web_search.make_web_search_tool()` runs the search as its own call inside a normal tool (fenced findings + `Sources:` list + URLs in the artifact), so agents mix it with MCP and local tools and the final answer is structured (two-step pattern). `MASTERY_WEB_SEARCH=tavily` switches backend. `groq_search_sources` reads `executed_tools[].search_results.results[].url`, `browser_results[].url` and URLs in `output`.
+- Evidence: field names from Groq's API schema (groq SDK types), 2026-10-12. **Not verified live** (no key on the build machine): 05.01 prints the live `executed_tools` types so learners can check.
+- Revisit: after the first live run (log the real shape in `docs/research-log.md`).
+
+### D-017 · `fastmcp` and `langchain-tavily` as an `[mcp]` extra in `[dev]` · 2026-10-12
+- Decision: new extra `mcp = ["langchain[mcp]>=1.4.4,<2", "langchain-tavily>=0.2.18,<1"]` (PyPI 2026-10-12: langchain 1.4.4 pulls fastmcp 4.1.0 + mcp 2.3.0; langchain-tavily 0.2.18), included in `[dev]`, so `pip install -e ".[dev]"` (the usual step) installs it and `pytest` covers MCP offline. `requirements.txt` already listed both.
+- Trade-offs: a slightly bigger dev install (fastmcp brings uvicorn/starlette/httpx, mostly already present).
+
 <!-- Add your decisions below this line -->

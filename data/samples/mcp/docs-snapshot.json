@@ -1,0 +1,522 @@
+{
+ "_note": "Search results captured from https://docs.langchain.com/mcp (short excerpts, LangChain docs are MIT-licensed). Offline stand-in data; refresh with _maintainer/tools/m05/data.py.",
+ "captured": "2026-10-12",
+ "pages": [
+  {
+   "title": "Connect to MCP servers",
+   "url": "https://docs.langchain.com/langsmith/python/managed-deep-agents-mcp-connectors",
+   "page": "langsmith/python/managed-deep-agents-mcp-connectors",
+   "content": "Connect a managed deep agent to remote [Model Context Protocol (MCP)](/oss/python/deepagents/mcp) servers to add their tools to the agent. Managed Deep Agents creates the MCP client and loads the tools. Most remote MCP servers require authentication. A [connection](/langsmith/python/managed-deep-agents-connections) supplies it, and declaring the connection as user-owned makes each caller authorize their own account. <Note> Managed Deep Agents is in **public [beta](/langsmith/release-stages)** on [LangSmith Cloud](/langsmith/cloud). </Note> Declare MCP servers in `tools/mcp.py`: ```text theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} my-agent/ agent.py tools/ mcp.py ```"
+  },
+  {
+   "title": "Authenticate requests",
+   "url": "https://docs.langchain.com/langsmith/python/managed-deep-agents-mcp-endpoint#authenticate-requests",
+   "page": "langsmith/python/managed-deep-agents-mcp-endpoint",
+   "content": "## Authenticate requests The MCP endpoint uses the deployment's [identity](/langsmith/python/managed-deep-agents-identity) configuration, the same as every other route on the deployment. Send the credential that matches the configured mode: | Identity mode | Header | | --------------------------- | -------------------------------------- | | LangSmith API key (default) | `x-api-key: <LANGSMITH_API_KEY>` | | Supabase | `Authorization: Bearer <access_token>` | For the LangSmith API-key default, the key must belong to the workspace that owns the deployment. A key that is valid for another workspace is rejected. Authentication failures return one of three responses: | Status | Body | Cause | | --"
+  },
+  {
+   "title": "Call the endpoint from code",
+   "url": "https://docs.langchain.com/langsmith/python/managed-deep-agents-mcp-endpoint#call-the-endpoint-from-code",
+   "page": "langsmith/python/managed-deep-agents-mcp-endpoint",
+   "content": "## Call the endpoint from code Load the agent's tool through an MCP client library, then pass the tools to a model or another agent: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} import os from fastmcp.client import Client from fastmcp.client.transports import StreamableHttpTransport from langchain.mcp import MCPAdapter async with MCPAdapter( Client( StreamableHttpTransport( \"<DEPLOYMENT_API_URL>/mcp\", headers={\"x-api-key\": os.environ[\"LANGSMITH_API_KEY\"]}, ) ) ) as adapter: tools = await adapter.list_tools() ``` Read credentials from the environment. Do not hard-code them in client code."
+  },
+  {
+   "title": "Add memory to Managed Deep Agents",
+   "url": "https://docs.langchain.com/langsmith/python/managed-deep-agents-memory",
+   "page": "langsmith/python/managed-deep-agents-memory",
+   "content": "Normally, a managed deep agent's conversational memory is scoped to a thread or session. Durable memory is optional knowledge that an agent can retain across threads, sessions, and deployments. Managed Deep Agents do not have durable memory by default. Durable memory is backed by the [Context Hub](/langsmith/use-the-context-hub) and comes in two independent layers. Enable either layer or both. <Note> Managed Deep Agents is in **public [beta](/langsmith/release-stages)** on [LangSmith Cloud](/langsmith/cloud). </Note> <Note> Memory layers require `managed-deepagents>=0.8.0`. Earlier versions declare a single deployment-shared scope instead. </Note> To enable durable memory, put a memory decla"
+  },
+  {
+   "title": "Add middleware",
+   "url": "https://docs.langchain.com/langsmith/python/managed-deep-agents-middleware#add-middleware",
+   "page": "langsmith/python/managed-deep-agents-middleware",
+   "content": "## Add middleware Use middleware to redact PII, enforce call limits, retry failures, fall back between models, select models dynamically, or log and inspect tool calls. <Steps> <Step title=\"Use prebuilt middleware\" id=\"use-prebuilt-middleware\"> You can use LangChain [prebuilt middleware](/oss/python/langchain/middleware/built-in) directly in the agent definition: ```python agent.py theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents.middleware import ModelCallLimitMiddleware, PIIMiddleware from managed_deepagents import define_deep_agent agent = define_deep_agent( name=\"support-agent\", model=\"openai:gpt-5.5\", middleware=[ PIIMiddleware(\"email\", strate"
+  },
+  {
+   "title": "Middleware",
+   "url": "https://docs.langchain.com/langsmith/python/managed-deep-agents-overview#middleware",
+   "page": "langsmith/python/managed-deep-agents-overview",
+   "content": "## Example agent A managed deep agent consists of a project folder that contains the business logic for its behavior: <Tabs> <Tab title=\"Model & configuration\"> ```python agent.py theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from managed_deepagents import define_deep_agent from middleware.audit import log_tool_calls from tools.search import internet_search agent = define_deep_agent( name=\"research-assistant\", model=\"openai:gpt-5.5\", tools=[internet_search], middleware=[log_tool_calls], ) ``` </Tab> <Tab title=\"Instructions\"> ```markdown instructions.md theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} # Assistant You are a helpful assistant. ```"
+  },
+  {
+   "title": "Add custom tools to Managed Deep Agents",
+   "url": "https://docs.langchain.com/langsmith/python/managed-deep-agents-tools",
+   "page": "langsmith/python/managed-deep-agents-tools",
+   "content": "Custom tools are application code the agent can call for fetching real-time data, querying databases, executing code, and taking actions. Unlike [instructions](/langsmith/python/managed-deep-agents-instructions) and [skills](/langsmith/python/managed-deep-agents-skills), MDA does not discover them automatically. To load tools from a remote MCP server, see [Connect to MCP servers](/langsmith/python/managed-deep-agents-mcp-connectors). <Note> Managed Deep Agents is in **public [beta](/langsmith/release-stages)** on [LangSmith Cloud](/langsmith/cloud). </Note> Put authored tools under `tools/`, import them into the agent entry, and pass them to the agent definition: ```text theme={\"theme\":{\"lig"
+  },
+  {
+   "title": "Memory overview",
+   "url": "https://docs.langchain.com/oss/python/concepts/memory",
+   "page": "oss/python/concepts/memory",
+   "content": "Memory overview Memory overview Memory is a system that remembers information about previous interactions. For AI agents, memory is crucial because it lets them remember previous interactions, learn from feedback, and adapt to user preferences. As agents tackle more complex tasks with numerous user interactions, this capability becomes essential for both efficiency and user satisfaction. This conceptual guide covers two types of memory, based on their recall scope: Short-term memory , or thread -scoped memory, tracks the ongoing conversation by maintaining message history within a session. LangGraph manages short-term memory as a part of your agent's state . State is persisted to a database "
+  },
+  {
+   "title": "Learn more",
+   "url": "https://docs.langchain.com/oss/python/concepts/memory#learn-more",
+   "page": "oss/python/concepts/memory",
+   "content": "## Learn more * [Context conceptual overview](/oss/python/concepts/context) * [Short-term memory in LangChain](/oss/python/langchain/short-term-memory) * [Memory in LangGraph](/oss/python/langgraph/add-memory) *** <div className=\"source-links\"> <Callout icon=\"terminal-2\"> [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers. </Callout> <Callout icon=\"edit\"> [Edit this page on GitHub](https://github.com/langchain-ai/docs/edit/main/src/oss/concepts/memory.mdx) or [file an issue](https://github.com/langchain-ai/docs/issues/new/choose). </Callout> </div>"
+  },
+  {
+   "title": "Checkpointers",
+   "url": "https://docs.langchain.com/oss/python/contributing/implement-langchain#checkpointers",
+   "page": "oss/python/contributing/implement-langchain",
+   "content": "Integration packages are Python packages that users can install for use in their projects. They implement one or more components that adhere to the LangChain interface standards. LangChain components are subclasses of base classes in [`langchain-core`](https://github.com/langchain-ai/langchain/tree/master/libs/core). Examples include [chat models](/oss/python/integrations/chat), [tools](/oss/python/integrations/tools), [retrievers](/oss/python/integrations/retrievers), and more. Your integration package will typically implement a subclass of at least one of these components. Expand the tabs below to see details on each. <Tabs> <Tab title=\"Chat Models\"> Chat models are subclasses of the [`Bas"
+  },
+  {
+   "title": "Long-term memory",
+   "url": "https://docs.langchain.com/oss/python/deepagents/context-engineering#long-term-memory",
+   "page": "oss/python/deepagents/context-engineering",
+   "content": "## Long-term memory When using the default filesystem, your deep agent stores its working memory files in agent state, which only persists within a single thread. Long-term memory enables your deep agent to persist information across different threads and conversations. Deep agents can use long-term memory for storing user preferences, accumulated knowledge, research progress, or any information that should persist beyond a single session. To use long-term memory, you must use a `CompositeBackend` that routes specific paths (typically `/memories/`) to a LangGraph Store, which provides durable cross-thread persistence. The `CompositeBackend` is a hybrid storage system where some files persist"
+  },
+  {
+   "title": "Summarization",
+   "url": "https://docs.langchain.com/oss/python/deepagents/context-engineering#summarization",
+   "page": "oss/python/deepagents/context-engineering",
+   "content": "### Summarization Every `create_deep_agent` call includes [`SummarizationMiddleware`](https://reference.langchain.com/python/langchain/agents/middleware/summarization/SummarizationMiddleware) in the [bare stack](/oss/python/deepagents/customization#bare-stack). When the context size crosses the model's context window limit (for example 85% of `max_input_tokens`), and there is no more context eligible for offloading, the deep agent summarizes the message history automatically. This process has two components: * **In-context summary**: An LLM generates a structured summary of the conversation including session intent, artifacts created, and next steps—which replaces the full conversation histo"
+  },
+  {
+   "title": "Adjust when summarization triggers",
+   "url": "https://docs.langchain.com/oss/python/deepagents/customization#adjust-when-summarization-triggers",
+   "page": "oss/python/deepagents/customization",
+   "content": "#### Examples <AccordionGroup> <Accordion title=\"Adjust when summarization triggers\" icon=\"adjustments\"> Override [`SummarizationMiddleware`](https://reference.langchain.com/python/langchain/agents/middleware/summarization/SummarizationMiddleware) with custom `trigger` and `keep` thresholds to compact conversation history earlier or later than the default, and control how many recent messages survive each compaction. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from deepagents import create_deep_agent from deepagents.backends import StateBackend from deepagents.middleware import SummarizationMiddleware backend = StateBackend() model = \"anthropic:claude-son"
+  },
+  {
+   "title": "Structured output",
+   "url": "https://docs.langchain.com/oss/python/deepagents/customization#structured-output",
+   "page": "oss/python/deepagents/customization",
+   "content": "## Structured output Deep Agents support [structured output](/oss/python/langchain/structured-output). You can set a desired structured output schema by passing it as the `response_format` argument to the call to `create_deep_agent()`. When the model generates the structured data, it's captured, validated, and returned in the 'structured\\_response' key of the deep agent's state. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} import os from typing import Literal from pydantic import BaseModel, Field from tavily import TavilyClient from deepagents import create_deep_agent tavily_client = TavilyClient(api_key=os.environ[\"TAVILY_API_KEY\"]) def internet_search( q"
+  },
+  {
+   "title": "Results",
+   "url": "https://docs.langchain.com/oss/python/deepagents/data-analysis#results",
+   "page": "oss/python/deepagents/data-analysis",
+   "content": "## Results The agent successfully analyzes the data and shares a comprehensive report with visualizations to Slack: <Frame caption=\"Agent-generated analysis report and visualization dashboard delivered to Slack\"> <img src=\"https://mintcdn.com/langchain-5e9cc07a/7KAsBk-8tguhrRJ6/images/data_analysis_slack_response.png?fit=max&auto=format&n=7KAsBk-8tguhrRJ6&q=85&s=b0a89738510117d55b35fc7a10265053\" alt=\"Sales analysis results in Slack\" data-og-width=\"514\" width=\"514\" data-og-height=\"961\" height=\"961\" data-path=\"images/data_analysis_slack_response.png\" data-optimize=\"true\" data-opv=\"3\" srcset=\"https://mintcdn.com/langchain-5e9cc07a/7KAsBk-8tguhrRJ6/images/data_analysis_slack_response.png?w=280&f"
+  },
+  {
+   "title": "Run the agent",
+   "url": "https://docs.langchain.com/oss/python/deepagents/data-analysis#run-the-agent",
+   "page": "oss/python/deepagents/data-analysis",
+   "content": "## Run the agent Let's instantiate an agent: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain_core.utils.uuid import uuid7 from deepagents import create_deep_agent from langchain.agents.middleware import TodoListMiddleware from langgraph.checkpoint.memory import InMemorySaver checkpointer = InMemorySaver() agent = create_deep_agent( model=\"google_genai:gemini-3.6-flash\", tools=[slack_send_message], backend=backend, checkpointer=checkpointer, middleware=[TodoListMiddleware()], ) thread_id = str(uuid7()) config = {\"configurable\": {\"thread_id\": thread_id}} ``` We include: * A choice of [model](/oss/python/deepagents/customization#model) * Our custo"
+  },
+  {
+   "title": "Progress tracking",
+   "url": "https://docs.langchain.com/oss/python/deepagents/frontend/subagent-streaming#progress-tracking",
+   "page": "oss/python/deepagents/frontend/subagent-streaming",
+   "content": "## Progress tracking Show a progress bar and counter so users know how many subagents have finished: ```tsx theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} function SubagentProgress({ subagents, }: { subagents: SubagentDiscoverySnapshot[]; }) { const completed = subagents.filter((s) => s.status === \"complete\").length; const total = subagents.length; const percentage = total > 0 ? Math.round((completed / total) * 100) : 0; return ( <div className=\"space-y-1\"> <div className=\"flex items-center justify-between text-xs text-gray-500\"> <span>Subagent progress</span> <span> {completed}/{total} complete </span> </div> <div className=\"h-2 overflow-hidden rounded-full bg-gray-2"
+  },
+  {
+   "title": "How it works",
+   "url": "https://docs.langchain.com/oss/python/deepagents/frontend/todo-list#how-it-works",
+   "page": "oss/python/deepagents/frontend/todo-list",
+   "content": "## How it works Deep agents can expose a **`todos` state** channel when you opt into [`TodoListMiddleware`](https://reference.langchain.com/python/langchain/agents/middleware/todo/TodoListMiddleware). That middleware adds the `write_todos` tool and persists task progress as the agent works through its plan. As the agent executes, it updates each todo's status from `\"pending\"` to `\"in_progress\"` to `\"completed\"`. The [`useStream`](https://reference.langchain.com/javascript/langchain-react/index/useStream) hook exposes this state via `stream.values.todos`, and your UI renders it reactively. <Note> Task planning is opt-in. Without [`TodoListMiddleware`](https://reference.langchain.com/python/la"
+  },
+  {
+   "title": "Human-in-the-loop",
+   "url": "https://docs.langchain.com/oss/python/deepagents/human-in-the-loop",
+   "page": "oss/python/deepagents/human-in-the-loop",
+   "content": "Some tool operations may be sensitive and require human approval before execution. Deep Agents support human-in-the-loop workflows through LangGraph's interrupt capabilities. You can configure which tools require approval using the `interrupt_on` parameter. When `interrupt_on` is set, `HumanInTheLoopMiddleware` is added to the [Deep Agents stack](/oss/python/deepagents/customization#deep-agents-stack). If a run is cancelled or interrupted before a tool returns a result, [`PatchToolCallsMiddleware`](https://reference.langchain.com/python/deepagents/middleware/patch_tool_calls/PatchToolCallsMiddleware) in the same stack repairs the message history automatically. ```mermaid theme={\"theme\":{\"lig"
+  },
+  {
+   "title": "Conditional interrupts",
+   "url": "https://docs.langchain.com/oss/python/deepagents/human-in-the-loop#conditional-interrupts",
+   "page": "oss/python/deepagents/human-in-the-loop",
+   "content": "## Conditional interrupts By default, every tool call listed in `interrupt_on` pauses for review. To pause only some calls, add a `when` predicate to a tool's `InterruptOnConfig`. The predicate receives a [ToolCallRequest](https://reference.langchain.com/python/langgraph.prebuilt/tool_node/ToolCallRequest) and returns `True` to interrupt or `False` to auto-approve, so you can gate on the tool's arguments. <Note> Conditional interrupts require `langchain>=1.3.3`. </Note> <CodeGroup> ```python Google theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from deepagents import create_deep_agent from langchain.agents.middleware import ToolCallRequest from langgraph.checkpoint.me"
+  },
+  {
+   "title": "Interrupts on tool calls",
+   "url": "https://docs.langchain.com/oss/python/deepagents/human-in-the-loop#interrupts-on-tool-calls",
+   "page": "oss/python/deepagents/human-in-the-loop",
+   "content": "### Interrupts on tool calls Each subagent can have its own `interrupt_on` configuration that overrides the main agent's settings: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} agent = create_deep_agent( model=\"google_genai:gemini-3.6-flash\", tools=[delete_file, read_file], interrupt_on={ \"delete_file\": True, \"read_file\": False, }, subagents=[{ \"name\": \"file-manager\", \"description\": \"Manages file operations\", \"system_prompt\": \"You are a file management assistant.\", \"tools\": [delete_file, read_file], \"interrupt_on\": { # Override: require approval for reads in this subagent \"delete_file\": True, \"read_file\": True, # Different from main agent! } }], checkpointe"
+  },
+  {
+   "title": "Memory",
+   "url": "https://docs.langchain.com/oss/python/deepagents/memory",
+   "page": "oss/python/deepagents/memory",
+   "content": "Memory lets your agent learn and improve across conversations. Deep Agents makes memory first class with filesystem-backed memory: the agent reads and writes memory as files, and you control where those files are stored using [backends](/oss/python/deepagents/backends). <Tip> To generate a repository wiki that coding agents discover through [`AGENTS.md`](https://agents.md/), see [OpenWiki](/oss/openwiki/overview). </Tip> <Note> This page covers **long-term memory**: memory that persists across conversations. For short-term memory (conversation history and scratch files within a single session), see the [context engineering](/oss/python/deepagents/context-engineering) guide. Short-term memory"
+  },
+  {
+   "title": "Agent-scoped memory",
+   "url": "https://docs.langchain.com/oss/python/deepagents/memory#agent-scoped-memory",
+   "page": "oss/python/deepagents/memory",
+   "content": "### Agent-scoped memory Give the agent its own persistent identity that evolves over time. Agent-scoped memory is shared across all users, so the agent builds up its own persona, accumulated knowledge, and learned preferences through every conversation. As it interacts with users, it develops expertise, refines its approach, and remembers what works. It can also learn and update [skills](/oss/python/deepagents/skills) when it has write access. The key is the backend namespace: setting it to `(assistant_id,)` means every conversation for this agent reads and writes to the same memory file. <Note> Accessing `rt.server_info` requires `deepagents>=0.5.0`. On older versions, read the assistant ID"
+  },
+  {
+   "title": "Human-in-the-loop",
+   "url": "https://docs.langchain.com/oss/python/deepagents/overview#human-in-the-loop",
+   "page": "oss/python/deepagents/overview",
+   "content": "### Human-in-the-loop Deep Agents integrate with LangGraph interrupts so you can pause for approval on sensitive tool calls. Enable this behavior with the `interrupt_on` parameter in `create_deep_agent`. `interrupt_on` accepts a mapping of tool names to interrupt configurations. For example, `interrupt_on={\"edit_file\": True}` pauses before every edit, letting you approve the call, add guidance, or modify tool inputs before execution. This gives you a runtime safety and control layer for destructive operations, expensive API calls, and interactive debugging. For more information, see [Human-in-the-loop](/oss/python/deepagents/human-in-the-loop)."
+  },
+  {
+   "title": "Pause for human approval",
+   "url": "https://docs.langchain.com/oss/python/deepagents/permissions#pause-for-human-approval",
+   "page": "oss/python/deepagents/permissions",
+   "content": "## Pause for human approval <Note> The `\"interrupt\"` mode requires `deepagents>=0.6.8`. </Note> Set `mode=\"interrupt\"` to pause for human approval instead of allowing or denying a matching operation outright. When the agent calls a built-in write tool (`write_file`, `edit_file`, `delete`) on a path that matches an interrupt-mode rule, `create_deep_agent` raises a human-in-the-loop interrupt rather than running the tool, and a reviewer can approve, edit, or reject the call. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from deepagents import FilesystemPermission, create_deep_agent from langgraph.checkpoint.memory import InMemorySaver agent = create_deep_agen"
+  },
+  {
+   "title": "Streaming",
+   "url": "https://docs.langchain.com/oss/python/deepagents/streaming",
+   "page": "oss/python/deepagents/streaming",
+   "content": "<Tip> For new applications, we recommend [event streaming](/oss/python/deepagents/event-streaming)—the typed-projection API introduced in Deep Agents v0.6. Event streaming gives you separate iterators per projection (subagents, messages, tool calls, values) so you can consume them independently instead of branching on `stream_mode` chunks. </Tip> Deep Agents build on LangGraph's streaming infrastructure with first-class support for subagent streams. When a deep agent delegates work to subagents, you can stream updates from each subagent independently—tracking progress, LLM tokens, and tool calls in real time. What's possible with deep agent streaming: * [**Stream subagent progress**](#subage"
+  },
+  {
+   "title": "Structured output",
+   "url": "https://docs.langchain.com/oss/python/deepagents/subagents#structured-output",
+   "page": "oss/python/deepagents/subagents",
+   "content": "## Structured output Subagents support [structured output](/oss/python/langchain/structured-output), so the parent agent receives predictable, parseable JSON instead of free-form text. <Note> Structured output for subagents requires `deepagents>=0.5.3`. </Note> Pass `response_format` on the subagent config. When the subagent finishes, its structured response is JSON-serialized and returned as the `ToolMessage` content to the parent agent. The schema accepts anything supported by [`create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent): Pydantic models, `ToolStrategy(...)`, `ProviderStrategy(...)`, or a raw schema type. <CodeGroup> ```python Google theme="
+  },
+  {
+   "title": "Custom tools",
+   "url": "https://docs.langchain.com/oss/python/deepagents/tools#custom-tools",
+   "page": "oss/python/deepagents/tools",
+   "content": "## Custom tools Pass any callable, such as plain functions, LangChain `@tool`-decorated functions, or tool dicts—directly to `tools=`. Deep Agents infers the tool schema from the function signature and docstring, so you don't need to define a separate schema in most cases. <CodeGroup> ```python Google theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} import os from typing import Literal from tavily import TavilyClient from deepagents import create_deep_agent tavily_client = TavilyClient(api_key=os.environ[\"TAVILY_API_KEY\"]) def internet_search( query: str, max_results: int = 5, topic: Literal[\"general\", \"news\", \"finance\"] = \"general\", include_raw_content: bool = False, )"
+  },
+  {
+   "title": "MCP tools",
+   "url": "https://docs.langchain.com/oss/python/deepagents/tools#mcp-tools",
+   "page": "oss/python/deepagents/tools",
+   "content": "## MCP tools <Note> Deep Agents fully support [Model Context Protocol (MCP)](/oss/python/langchain/mcp), the open standard for connecting agents to external services. Load tools from any MCP server and pass them directly to `create_deep_agent`. </Note> MCP is an open protocol that lets agents connect to a growing ecosystem of servers—databases, APIs, file systems, browsers, and more—through a standard interface. Instead of writing custom integration code for each service, you point Deep Agents at an MCP server and it gets all the tools that server exposes. Install LangChain with the `mcp` extra to connect to MCP servers: <CodeGroup> ```bash pip theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dar"
+  },
+  {
+   "title": "Share your middleware",
+   "url": "https://docs.langchain.com/oss/python/integrations/middleware/index#share-your-middleware",
+   "page": "oss/python/integrations/middleware/index",
+   "content": "## Share your middleware Middleware enables context engineering, harness customization, and runtime safety controls. It is a useful extension point in LangChain and we love highlighting what the community builds with it: <CardGroup cols={2}> <Card title=\"Add an official integration\" icon=\"package\" href=\"/oss/python/contributing/implement-langchain#middleware\"> Follow the contributing guide to build and publish a middleware package. </Card> <Card title=\"Share a community middleware\" icon=\"users\" href=\"https://github.com/langchain-ai/docs\"> Open a PR to the docs repo to add your middleware to the all integrations table. </Card> </CardGroup>"
+  },
+  {
+   "title": "Structured output",
+   "url": "https://docs.langchain.com/oss/python/langchain/agents#structured-output",
+   "page": "oss/python/langchain/agents",
+   "content": "### Structured output Return a validated schema from the agent using `response_format=`. See [Structured output](/oss/python/langchain/structured-output) for strategies and examples. <CodeGroup> ```python Google theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from pydantic import BaseModel from langchain.agents import create_agent class Answer(BaseModel): summary: str confidence: float agent = create_agent(model=\"google_genai:gemini-3.6-flash\", tools=tools, response_format=Answer) result = agent.invoke({\"messages\": [{\"role\": \"user\", \"content\": \"Summarize AI trends\"}]}) result[\"structured_response\"] # Answer(summary=..., confidence=...) ``` ```python OpenAI theme={\"them"
+  },
+  {
+   "title": "Example: Summarization",
+   "url": "https://docs.langchain.com/oss/python/langchain/context-engineering#example-summarization",
+   "page": "oss/python/langchain/context-engineering",
+   "content": "### Example: Summarization One of the most common life-cycle patterns is automatically condensing conversation history when it gets too long. Unlike the transient message trimming shown in [Model Context](#messages), summarization **persistently updates state** - permanently replacing old messages with a summary that's saved for all future turns. LangChain offers built-in middleware for this: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.agents.middleware import SummarizationMiddleware agent = create_agent( model=\"gpt-5.5\", tools=[...], middleware=[ SummarizationMiddleware( model=\"gpt-5.4-mini\", trigg"
+  },
+  {
+   "title": "Messages",
+   "url": "https://docs.langchain.com/oss/python/langchain/context-engineering#messages",
+   "page": "oss/python/langchain/context-engineering",
+   "content": "### Messages Messages make up the prompt that is sent to the LLM. It's critical to manage the content of messages to ensure that the LLM has the right information to respond well. <Tabs> <Tab title=\"State\"> Inject uploaded file context from State when relevant to current query: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.agents.middleware import wrap_model_call, ModelRequest, ModelResponse from typing import Callable @wrap_model_call def inject_file_context( request: ModelRequest, handler: Callable[[ModelRequest], ModelResponse] ) -> ModelResponse: \"\"\"Inject context about files user has uploaded thi"
+  },
+  {
+   "title": "Add context management",
+   "url": "https://docs.langchain.com/oss/python/langchain/deep-agent-from-scratch#add-context-management",
+   "page": "oss/python/langchain/deep-agent-from-scratch",
+   "content": "## Add context management After step 2, every tool result stays in the message history. A real analysis session (multiple plots, failed scripts, large `read_file` output) fills the context window quickly. [`SummarizationMiddleware`](https://reference.langchain.com/python/langchain/agents/middleware/summarization/SummarizationMiddleware) compresses older turns when history grows too large, so the agent keeps working without you manually trimming messages. This matters less on the first `sales.csv` question and more on follow-ups such as \"Now segment by product and plot monthly trends.\" Update your agent from step 2 by adding [`SummarizationMiddleware`](https://reference.langchain.com/python/l"
+  },
+  {
+   "title": "Custom interrupt forms",
+   "url": "https://docs.langchain.com/oss/python/langchain/frontend/human-in-the-loop#custom-interrupt-forms",
+   "page": "oss/python/langchain/frontend/human-in-the-loop",
+   "content": "## Custom interrupt forms The [resume flow](#the-resume-flow) uses `humanInTheLoopMiddleware`, which wraps a tool with a generic approve / reject / edit / respond card. Sometimes a single set of buttons is not enough: booking a flight, approving a refund, and reviewing a social post each need a *different* form, with their own fields, validation, and copy. For that, raise the `interrupt()` **from inside the tool** and let the payload describe the exact form the UI should render. Each tool can surface a completely different interface. <PatternEmbed pattern=\"hitl-interrupt-forms\" />"
+  },
+  {
+   "title": "Structured output",
+   "url": "https://docs.langchain.com/oss/python/langchain/frontend/structured-output",
+   "page": "oss/python/langchain/frontend/structured-output",
+   "content": "export const PatternEmbed = ({pattern, id, theme, height, minHeight = 400, maxHeight = 700, className, defaultView = \"preview\", defaultSdk = \"react\", defaultLanguage = \"js\", showCodeTab = true, agentServer = \"prod\", onError, onReady}) => { var VALID_GUEST_TYPES = new Set([\"READY\", \"RESIZE\", \"ERROR\", \"RUN_STARTED\", \"TRACE_URL\", \"THREAD_CLEARED\"]); function stub() { return { safeParse: data => ({ success: true, data }), optional: () => stub(), min: () => stub(), url: () => stub() }; } var z = { object: _shape => stub(), literal: _value => stub(), string: () => stub(), number: () => stub(), boolean: () => stub(), enum: _values => stub(), array: _el => stub(), union: _schemas => stub(), record: "
+  },
+  {
+   "title": "Human-in-the-loop",
+   "url": "https://docs.langchain.com/oss/python/langchain/guardrails#human-in-the-loop",
+   "page": "oss/python/langchain/guardrails",
+   "content": "### Human-in-the-loop LangChain provides built-in middleware for requiring human approval before executing sensitive operations. This is one of the most effective guardrails for high-stakes decisions. Human-in-the-loop middleware is helpful for cases such as financial transactions and transfers, deleting or modifying production data, sending communications to external parties, and any operation with significant business impact. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.agents.middleware import HumanInTheLoopMiddleware from langgraph.checkpoint.memory import InMemorySaver from langgraph.types impor"
+  },
+  {
+   "title": "Conditional interrupts",
+   "url": "https://docs.langchain.com/oss/python/langchain/human-in-the-loop#conditional-interrupts",
+   "page": "oss/python/langchain/human-in-the-loop",
+   "content": "## Conditional interrupts By default, every tool call listed in `interrupt_on` pauses for review. To pause only some calls, add a `when` predicate to a tool's `InterruptOnConfig`. The predicate receives a `ToolCallRequest` and returns `True` to interrupt or `False` to auto-approve, so you can gate on the tool's arguments. <Note> Conditional interrupts require `langchain>=1.3.3`. </Note> ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.agents.middleware import HumanInTheLoopMiddleware, ToolCallRequest from langgraph.checkpoint.memory import InMemorySaver def writes_outside_workspace(request: ToolCallReque"
+  },
+  {
+   "title": "Configuring interrupts",
+   "url": "https://docs.langchain.com/oss/python/langchain/human-in-the-loop#configuring-interrupts",
+   "page": "oss/python/langchain/human-in-the-loop",
+   "content": "## Configuring interrupts To use HITL, add the [middleware](/oss/python/langchain/middleware/built-in#human-in-the-loop) to the agent's `middleware` list when creating the agent. You configure it with a mapping of tool actions to the decision types that are allowed for each action. The middleware will interrupt execution when a tool call matches an action in the mapping. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.agents.middleware import HumanInTheLoopMiddleware # [!code highlight] from langgraph.checkpoint.memory import InMemorySaver # [!code highlight] agent = create_agent( model=\"gpt-5.5\", tools"
+  },
+  {
+   "title": "Responding to interrupts",
+   "url": "https://docs.langchain.com/oss/python/langchain/human-in-the-loop#responding-to-interrupts",
+   "page": "oss/python/langchain/human-in-the-loop",
+   "content": "## Responding to interrupts When you invoke the agent, it runs until it either completes or an interrupt is raised. An interrupt is triggered when a tool call matches the policy you configured in `interrupt_on`. With `version=\"v2\"`, the result is a `GraphOutput` with an `interrupts` attribute containing the actions that require review. You can then present those actions to a reviewer and resume execution once decisions are provided. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langgraph.types import Command # Human-in-the-loop leverages LangGraph's persistence layer. # You must provide a thread ID to associate the execution with a conversation thread,"
+  },
+  {
+   "title": "Long-term memory",
+   "url": "https://docs.langchain.com/oss/python/langchain/long-term-memory",
+   "page": "oss/python/langchain/long-term-memory",
+   "content": "Long-term memory lets your agent store and recall information across different conversations and sessions. Unlike [short-term memory](/oss/python/langchain/short-term-memory), which is scoped to a single thread, long-term memory persists across threads and can be recalled at any time. Long-term memory is built on [LangGraph stores](/oss/python/langgraph/stores), which save data as JSON documents organized by namespace and key."
+  },
+  {
+   "title": "Authentication",
+   "url": "https://docs.langchain.com/oss/python/langchain/mcp/auth",
+   "page": "oss/python/langchain/mcp/auth",
+   "content": "## Bearer token The simplest case: the server verifies a token you provisioned and adds it in the `Authorization: Bearer <token>` header. There is no discovery, browser, or refresh. Pass the token as the client's `auth`: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from fastmcp.client import Client from langchain.mcp import MCPAdapter async def load_tools_with_bearer(url: str, token: str) -> list: # `auth` accepts a bearer-token string, the literal \"oauth\" (full OAuth 2.1 # with dynamic client registration), or any `httpx.Auth`. async with MCPAdapter(Client(url, auth=token)) as adapter: return await adapter.list_tools() ``` The `auth` argument accepts a be"
+  },
+  {
+   "title": "Connections",
+   "url": "https://docs.langchain.com/oss/python/langchain/mcp/connections",
+   "page": "oss/python/langchain/mcp/connections",
+   "content": "<Note> The `langchain.mcp` namespace requires `langchain[mcp]>=1.4.0` and is in beta. The API may change. </Note> [`MCPAdapter`](https://reference.langchain.com/python/langchain/mcp/adapter/MCPAdapter) opens an MCP connection, discovers tools, and returns LangChain tools your agent can call. How you pass servers in, and how long you keep the adapter open, depends on the shape of your app. The connection itself is FastMCP's; this page covers the LangChain patterns and links out to FastMCP for transport and client details. Prefer the [default lifecycle](#connection-lifecycle) unless you are connecting to several servers or deploying many concurrent runs. For what a single target can be (URL, s"
+  },
+  {
+   "title": "Next steps",
+   "url": "https://docs.langchain.com/oss/python/langchain/mcp/index#next-steps",
+   "page": "oss/python/langchain/mcp/index",
+   "content": "## Next steps <CardGroup cols={2}> <Card title=\"Tools\" icon=\"tool\" href=\"/oss/python/langchain/mcp/tools\"> Load MCP tools into agents, control their execution, and handle their outputs. </Card> <Card title=\"Connections\" icon=\"plug\" href=\"/oss/python/langchain/mcp/connections\"> Connection lifecycle, multiple servers, protocol eras, and caching. </Card> <Card title=\"Authentication\" icon=\"lock\" href=\"/oss/python/langchain/mcp/auth\"> Bearer tokens, OAuth 2.1, and per-user server auth. </Card> </CardGroup> *** <div className=\"source-links\"> <Callout icon=\"terminal-2\"> [Connect these docs](/use-these-docs) to your agent of choice via MCP for real-time answers. </Callout> <Callout icon=\"edit\"> [Edi"
+  },
+  {
+   "title": "Quickstart",
+   "url": "https://docs.langchain.com/oss/python/langchain/mcp/index#quickstart",
+   "page": "oss/python/langchain/mcp/index",
+   "content": "## Quickstart Open an [`MCPAdapter`](https://reference.langchain.com/python/langchain/mcp/adapter/MCPAdapter), discover the server's tools with `list_tools()`, and build the agent inside the context. The tools hold the client, so the agent stays usable after the context exits: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.mcp import MCPAdapter async def main(): async with MCPAdapter(\"https://example.com/mcp\") as adapter: tools = await adapter.list_tools() agent = create_agent(\"claude-sonnet-5\", tools) return await agent.ainvoke({\"messages\": [{\"role\": \"user\", \"content\": \"...\"}]}) ``` <Card title=\"View "
+  },
+  {
+   "title": "Transports",
+   "url": "https://docs.langchain.com/oss/python/langchain/mcp/index#transports",
+   "page": "oss/python/langchain/mcp/index",
+   "content": "## Transports [`MCPAdapter`](https://reference.langchain.com/python/langchain/mcp/adapter/MCPAdapter) infers the transport from the target you provide. The target is the only difference between an in-process server, a local script over stdio, and a remote URL: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from pathlib import Path from langchain.mcp import MCPAdapter # An in-process FastMCP server: no subprocess, no socket. Ideal for tests. in_memory = MCPAdapter(server) # a FastMCP instance # A script path is launched over stdio, one subprocess per adapter. stdio = MCPAdapter(Path(\"weather_server.py\")) # A string must be an http(s) URL, reached over streama"
+  },
+  {
+   "title": "Human-in-the-loop",
+   "url": "https://docs.langchain.com/oss/python/langchain/mcp/tools#human-in-the-loop",
+   "page": "oss/python/langchain/mcp/tools",
+   "content": "## Human-in-the-loop Reading annotations lets you gate a tool based on what the server declares about it, rather than hardcoding tool names. The MCP annotation classifies the tool and LangChain's human-in-the-loop middleware enforces the approval policy. Read the destructive hint from metadata once during tool discovery. Then give the human-in-the-loop configuration a `when` predicate that receives each pending tool call and returns whether the call needs approval: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents.middleware import HumanInTheLoopMiddleware from langchain.agents.middleware.human_in_the_loop import InterruptOnConfig from lan"
+  },
+  {
+   "title": "Use MCP tools in an agent",
+   "url": "https://docs.langchain.com/oss/python/langchain/mcp/tools#use-mcp-tools-in-an-agent",
+   "page": "oss/python/langchain/mcp/tools",
+   "content": "## Use MCP tools in an agent Discover the server's catalog with [`MCPAdapter.list_tools`](https://reference.langchain.com/python/langchain/mcp/adapter/MCPAdapter/list_tools), then give the returned tools to [`create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent). From the agent's perspective, they behave like LangChain tools: the model chooses a tool, LangChain invokes it, and the resulting [`ToolMessage`](https://reference.langchain.com/python/langchain-core/messages/tool/ToolMessage) returns to the model. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.mcp import"
+  },
+  {
+   "title": "Human-in-the-loop",
+   "url": "https://docs.langchain.com/oss/python/langchain/middleware/built-in#human-in-the-loop",
+   "page": "oss/python/langchain/middleware/built-in",
+   "content": "### Human-in-the-loop Pause agent execution for human approval, editing, or rejection of tool calls before they execute. [Human-in-the-loop](/oss/python/langchain/human-in-the-loop) is useful for the following: * High-stakes operations requiring human approval (e.g. database writes, financial transactions). * Compliance workflows where human oversight is mandatory. * Long-running conversations where human feedback guides the agent. **API reference:** [`HumanInTheLoopMiddleware`](https://reference.langchain.com/python/langchain/agents/middleware/human_in_the_loop/HumanInTheLoopMiddleware) <Warning> Human-in-the-loop middleware requires a [checkpointer](/oss/python/langgraph/checkpointers#chec"
+  },
+  {
+   "title": "Short-term vs. long-term filesystem",
+   "url": "https://docs.langchain.com/oss/python/langchain/middleware/built-in#short-term-vs-long-term-filesystem",
+   "page": "oss/python/langchain/middleware/built-in",
+   "content": "#### Short-term vs. long-term filesystem By default, these tools write to a local \"filesystem\" in your graph state. To enable persistent storage across threads, configure a `CompositeBackend` that routes specific paths (like `/memories/`) to a `StoreBackend`. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from deepagents.middleware import FilesystemMiddleware from deepagents.backends import CompositeBackend, StateBackend, StoreBackend from langgraph.store.memory import InMemoryStore store = InMemoryStore() agent = create_agent( model=\"claude-sonnet-4-6\", store=store, middleware=[ FilesystemMiddleware( backend=Composi"
+  },
+  {
+   "title": "Summarization",
+   "url": "https://docs.langchain.com/oss/python/langchain/middleware/built-in#summarization",
+   "page": "oss/python/langchain/middleware/built-in",
+   "content": "### Summarization Automatically summarize conversation history when approaching token limits, preserving recent messages while compressing older context. Summarization is useful for the following: * Long-running conversations that exceed context windows. * Multi-turn dialogues with extensive history. * Applications where preserving full conversation context matters. <Note> Summarization is text-oriented context compression. It does not resize, downsample, or otherwise compress image/audio/video payloads. Recent messages retained by `keep` still include their original multimodal blocks, while older multimodal messages that are summarized are represented only by the generated text summary. For"
+  },
+  {
+   "title": "Composition with multiple middleware",
+   "url": "https://docs.langchain.com/oss/python/langchain/middleware/custom#composition-with-multiple-middleware",
+   "page": "oss/python/langchain/middleware/custom",
+   "content": "#### Composition with multiple middleware When multiple middleware layers return `ExtendedModelResponse`, their commands compose: * **Commands are applied through reducers:** Each `Command` becomes a separate state update. For messages, this means they are additive. * **Outer wins on conflicts:** For non-reducer state fields, commands are applied inner-first, then outer. The outermost middleware's value takes precedence on conflicting keys. * **Retry-safe:** If the outer middleware implements logic that can result in multiple calls to `handler()` again (for example, retry logic), commands from earlier calls are discarded. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppucci"
+  },
+  {
+   "title": "Node-style hooks",
+   "url": "https://docs.langchain.com/oss/python/langchain/middleware/custom#node-style-hooks",
+   "page": "oss/python/langchain/middleware/custom",
+   "content": "### Node-style hooks Run sequentially at specific execution points. Use for logging, validation, and state updates. Choose the hooks your middleware needs. You can choose between node-style hooks and wrap-style hooks. **Node-style hooks** run at specific execution points: | Hook | When it runs | | -------------- | ------------------------------------------- | | `before_agent` | Before agent starts (once per invocation) | | `before_model` | Before each model call | | `after_model` | After each model response | | `after_agent` | After agent completes (once per invocation) | **Wrap-style hooks** run around each call, giving you control over execution: | Hook | When it runs | | -----------------"
+  },
+  {
+   "title": "Middleware overview",
+   "url": "https://docs.langchain.com/oss/python/langchain/middleware/overview",
+   "page": "oss/python/langchain/middleware/overview",
+   "content": "Middleware provides a way to more tightly control what happens inside the agent. Middleware is useful for the following: * Tracking agent behavior with logging, analytics, and debugging. * Transforming prompts, [tool selection](/oss/python/langchain/middleware/built-in#llm-tool-selector), and output formatting. * Adding [retries](/oss/python/langchain/middleware/built-in#tool-retry), [fallbacks](/oss/python/langchain/middleware/built-in#model-fallback), and early termination logic. * Applying [rate limits](/oss/python/langchain/middleware/built-in#model-call-limit), guardrails, and [PII detection](/oss/python/langchain/middleware/built-in#pii-detection). Add middleware by passing them to [`c"
+  },
+  {
+   "title": "Use middleware inside a LangGraph workflow",
+   "url": "https://docs.langchain.com/oss/python/langchain/middleware/overview#use-middleware-inside-a-langgraph-workflow",
+   "page": "oss/python/langchain/middleware/overview",
+   "content": "## Use middleware inside a LangGraph workflow Middleware is not a separate runtime: hooks run inside the compiled [LangGraph](/oss/python/langgraph/overview) that [`create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent) returns. You can drop the whole agent (middleware and all) into a larger [StateGraph](https://reference.langchain.com/python/langgraph/graph/state/StateGraph) as a node or subgraph, and every middleware hook continues to run. Reach for this pattern when the surrounding topology is more than a standard \"loop until done\": classifying input before routing to one of several agents, fanning out work in parallel, or stitching agent calls togeth"
+  },
+  {
+   "title": "Subagent outputs",
+   "url": "https://docs.langchain.com/oss/python/langchain/multi-agent/subagents#subagent-outputs",
+   "page": "oss/python/langchain/multi-agent/subagents",
+   "content": "### Subagent outputs Customize what the main agent receives back so it can make good decisions. Two strategies: 1. **Prompt the sub-agent**: Specify exactly what should be returned. A common failure mode is that the sub-agent performs tool calls or reasoning but doesn't include results in its final message—remind it that the supervisor only sees the final output. 2. **Format in code**: Adjust or enrich the response before returning it. For example, pass specific state keys back in addition to the final text using a [`Command`](/oss/python/langgraph/graph-api#command). ```python Subagent outputs example expandable theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from typ"
+  },
+  {
+   "title": "6. Add human-in-the-loop review",
+   "url": "https://docs.langchain.com/oss/python/langchain/multi-agent/subagents-personal-assistant#6-add-human-in-the-loop-review",
+   "page": "oss/python/langchain/multi-agent/subagents-personal-assistant",
+   "content": "## 6. Add human-in-the-loop review It can be prudent to incorporate [human-in-the-loop review](/oss/python/langchain/human-in-the-loop) of sensitive actions. LangChain includes [built-in middleware](/oss/python/langchain/human-in-the-loop#configuring-interrupts) to review tool calls, in this case the tools invoked by sub-agents. Let's add human-in-the-loop review to both sub-agents: * We configure the `create_calendar_event` and `send_email` tools to interrupt, permitting all [response types](/oss/python/langchain/human-in-the-loop) (`approve`, `edit`, `reject`) * We add a [checkpointer](/oss/python/langchain/short-term-memory) **only to the top-level agent**. This is required to pause and r"
+  },
+  {
+   "title": "Short-term memory",
+   "url": "https://docs.langchain.com/oss/python/langchain/short-term-memory",
+   "page": "oss/python/langchain/short-term-memory",
+   "content": "Short-term memory Overview Memory is a system that remembers information about previous interactions. For AI agents, memory is crucial because it lets them remember previous interactions, learn from feedback, and adapt to user preferences. As agents tackle more complex tasks with numerous user interactions, this capability becomes essential for both efficiency and user satisfaction. Short term memory lets your application remember previous interactions within a single thread or conversation. A thread organizes multiple interactions in a session, similar to the way email groups messages in a single conversation. Conversation history is the most common form of short-term memory. Long conversat"
+  },
+  {
+   "title": "Usage",
+   "url": "https://docs.langchain.com/oss/python/langchain/short-term-memory#usage",
+   "page": "oss/python/langchain/short-term-memory",
+   "content": "## Usage To add short-term memory (thread-level persistence) to an agent, you need to specify a `checkpointer` when creating an agent. <Info> LangChain's agent manages short-term memory as a part of your agent's state. By storing these in the graph's state, the agent can access the full context for a given conversation while maintaining separation between different threads. State is persisted to a database (or memory) using a checkpointer so the thread can be resumed at any time. Short-term memory updates when the agent is invoked or a step (like a tool call) is completed, and the state is read at the start of each step. </Info> <CodeGroup> ```python Google theme={\"theme\":{\"light\":\"catppucci"
+  },
+  {
+   "title": "Agent progress",
+   "url": "https://docs.langchain.com/oss/python/langchain/streaming#agent-progress",
+   "page": "oss/python/langchain/streaming",
+   "content": "## Agent progress To stream agent progress, use the [`stream`](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.CompiledStateGraph.stream) or [`astream`](https://reference.langchain.com/python/langgraph/graphs/#langgraph.graph.state.CompiledStateGraph.astream) methods with `stream_mode=\"updates\"`. This emits an event after every agent step. For example, if you have an agent that calls a tool once, you should see the following updates: * **LLM node**: [`AIMessage`](https://reference.langchain.com/python/langchain-core/messages/ai/AIMessage) with tool call requests * **Tool node**: [`ToolMessage`](https://reference.langchain.com/python/langchain-core/messages/tool"
+  },
+  {
+   "title": "Structured output",
+   "url": "https://docs.langchain.com/oss/python/langchain/structured-output",
+   "page": "oss/python/langchain/structured-output",
+   "content": "Structured output allows agents to return data in a specific, predictable format. Instead of parsing natural language responses, you get structured data in the form of JSON objects, [Pydantic models](https://docs.pydantic.dev/latest/concepts/models/#basic-model-usage), or dataclasses that your application can use directly. <Tip> This page covers structured output with agents using `create_agent`. To use structured output directly on a model (outside of agents), see [Models - Structured output](/oss/python/langchain/models#structured-output). </Tip> LangChain's [`create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent) handles structured output automaticall"
+  },
+  {
+   "title": "Tool calling strategy",
+   "url": "https://docs.langchain.com/oss/python/langchain/structured-output#tool-calling-strategy",
+   "page": "oss/python/langchain/structured-output",
+   "content": "## Tool calling strategy For models that don't support native structured output, LangChain uses tool calling to achieve the same result. This works with all models that support tool calling (most modern models). To use this strategy, configure a `ToolStrategy`: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} class ToolStrategy(Generic[SchemaT]): schema: type[SchemaT] tool_message_content: str | None handle_errors: Union[ bool, str, type[Exception], tuple[type[Exception], ...], Callable[[Exception], str], ] ``` <ParamField path=\"schema\" required> The schema defining the structured output format. Supports: * **Pydantic models**: `BaseModel` subclasses with fiel"
+  },
+  {
+   "title": "Dynamic tool selection",
+   "url": "https://docs.langchain.com/oss/python/langchain/tools#dynamic-tool-selection",
+   "page": "oss/python/langchain/tools",
+   "content": "## Dynamic tool selection With dynamic tools, the set of tools available to the agent is modified at runtime rather than defined all upfront. Not every tool is appropriate for every situation. Too many tools may overwhelm the model (overload context) and increase errors; too few limit capabilities. Dynamic tool selection enables adapting the available toolset based on authentication state, user permissions, feature flags, or conversation stage. There are two approaches depending on whether tools are known ahead of time: <Tabs> <Tab title=\"Filtering pre-registered tools\"> When all possible tools are known at agent creation time, you can pre-register them and dynamically filter which ones are "
+  },
+  {
+   "title": "Runtime tool registration",
+   "url": "https://docs.langchain.com/oss/python/langchain/tools#runtime-tool-registration",
+   "page": "oss/python/langchain/tools",
+   "content": "## Dynamic tool selection With dynamic tools, the set of tools available to the agent is modified at runtime rather than defined all upfront. Not every tool is appropriate for every situation. Too many tools may overwhelm the model (overload context) and increase errors; too few limit capabilities. Dynamic tool selection enables adapting the available toolset based on authentication state, user permissions, feature flags, or conversation stage. There are two approaches depending on whether tools are known ahead of time: <Tabs> <Tab title=\"Filtering pre-registered tools\"> When all possible tools are known at agent creation time, you can pre-register them and dynamically filter which ones are "
+  },
+  {
+   "title": "Tools from MCP servers",
+   "url": "https://docs.langchain.com/oss/python/langchain/tools#tools-from-mcp-servers",
+   "page": "oss/python/langchain/tools",
+   "content": "## Tools from MCP servers [Model Context Protocol (MCP)](https://modelcontextprotocol.io) is an open protocol that standardizes how applications expose tools to language models. Rather than hand-authoring a tool, you connect to an MCP server and adapt the tools it advertises into LangChain tools, ready to pass to an agent like any other tool. [`MCPAdapter`](https://reference.langchain.com/python/langchain/mcp/adapter/MCPAdapter) discovers a server's tools and converts them into LangChain tools. Open the adapter, call `list_tools()`, and hand the result to [`create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent): ```python theme={\"theme\":{\"light\":\"catppuc"
+  },
+  {
+   "title": "Add long-term memory",
+   "url": "https://docs.langchain.com/oss/python/langgraph/add-memory#add-long-term-memory",
+   "page": "oss/python/langgraph/add-memory",
+   "content": "## Add long-term memory Use long-term memory to store user-specific or application-specific data across conversations. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langgraph.store.memory import InMemoryStore # [!code highlight] from langgraph.graph import StateGraph store = InMemoryStore() # [!code highlight] builder = StateGraph(...) graph = builder.compile(store=store) # [!code highlight] ```"
+  },
+  {
+   "title": "Add short-term memory",
+   "url": "https://docs.langchain.com/oss/python/langgraph/add-memory#add-short-term-memory",
+   "page": "oss/python/langgraph/add-memory",
+   "content": "## Add short-term memory **Short-term** memory (thread-level [persistence](/oss/python/langgraph/persistence)) enables agents to track multi-turn conversations. To add short-term memory: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langgraph.checkpoint.memory import InMemorySaver # [!code highlight] from langgraph.graph import StateGraph checkpointer = InMemorySaver() # [!code highlight] builder = StateGraph(...) graph = builder.compile(checkpointer=checkpointer) # [!code highlight] graph.invoke( {\"messages\": [{\"role\": \"user\", \"content\": \"hi! i am Bob\"}]}, {\"configurable\": {\"thread_id\": \"1\"}}, # [!code highlight] ) ```"
+  },
+  {
+   "title": "Delete all checkpoints for a thread",
+   "url": "https://docs.langchain.com/oss/python/langgraph/add-memory#delete-all-checkpoints-for-a-thread",
+   "page": "oss/python/langgraph/add-memory",
+   "content": "#### Delete all checkpoints for a thread ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} thread_id = \"1\" checkpointer.delete_thread(thread_id) ```"
+  },
+  {
+   "title": "Threads",
+   "url": "https://docs.langchain.com/oss/python/langgraph/checkpointers#threads",
+   "page": "oss/python/langgraph/checkpointers",
+   "content": "### Threads A thread is a unique ID or thread identifier assigned to each checkpoint saved by a checkpointer. It contains the accumulated state of a sequence of [runs](/langsmith/runs). When a run is executed, the [state](/oss/python/langgraph/graph-api#state) of the underlying graph of the assistant will be persisted to the thread. When invoking a graph with a checkpointer, you **must** specify a `thread_id` as part of the `configurable` portion of the config: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} {\"configurable\": {\"thread_id\": \"1\"}} ``` A thread's current and historical state can be retrieved. To persist state, a thread must be created prior to ex"
+  },
+  {
+   "title": "Resume after an interrupt",
+   "url": "https://docs.langchain.com/oss/python/langgraph/event-streaming#resume-after-an-interrupt",
+   "page": "oss/python/langgraph/event-streaming",
+   "content": "## Resume after an interrupt When a graph pauses for human input, inspect `stream.interrupted` and `stream.interrupts`, then resume by calling `stream_events(..., version=\"v3\")` again with `Command`. Resume requires a graph compiled with a checkpointer and a config carrying a thread ID — see [persistence](/oss/python/langgraph/persistence). ```py theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langgraph.types import Command stream = graph.stream_events(input, version=\"v3\") for message in stream.messages: print(message.text) if stream.interrupted: print(stream.interrupts) stream = graph.stream_events( Command(resume={\"decisions\": [{\"type\": \"approve\"}]}), version=\"v"
+  },
+  {
+   "title": "Use cases",
+   "url": "https://docs.langchain.com/oss/python/langgraph/frontend/custom-stream-channels#use-cases",
+   "page": "oss/python/langgraph/frontend/custom-stream-channels",
+   "content": "## Use cases Custom channels fit any server-side signal that does not map cleanly to messages, tool calls, or graph state: * **Compliance and redaction stats**: counts of scrubbed PII, blocked content, or policy hits, as in the example above. * **Progress reporting**: percentage complete or step labels emitted by a long-running tool. * **Live metrics**: token usage, latency, or cost accumulating during a run. * **Sources and citations**: retrieved documents pushed to a side panel as the agent grounds its answer. * **Domain events**: any structured update your backend wants to surface without changing the message transcript."
+  },
+  {
+   "title": "Short-term memory",
+   "url": "https://docs.langchain.com/oss/python/langgraph/functional-api#short-term-memory",
+   "page": "oss/python/langgraph/functional-api",
+   "content": "### Short-term memory When an `entrypoint` is defined with a `checkpointer`, it stores information between successive invocations on the same **thread id** in [checkpoints](/oss/python/langgraph/checkpointers#checkpoints). This allows accessing the state from the previous invocation using the `previous` parameter. By default, the `previous` parameter is the return value of the previous invocation. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} @entrypoint(checkpointer=checkpointer) def my_workflow(number: int, *, previous: Any = None) -> int: previous = previous or 0 return number + previous config = { \"configurable\": { \"thread_id\": \"some_thread_id\" } } my_w"
+  },
+  {
+   "title": "resume",
+   "url": "https://docs.langchain.com/oss/python/langgraph/graph-api#resume",
+   "page": "oss/python/langgraph/graph-api",
+   "content": "#### `resume` Use `Command(resume=...)` to provide a value and resume graph execution after an [interrupt](/oss/python/langgraph/interrupts). The value passed to `resume` becomes the return value of the `interrupt()` call inside the paused node: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from typing import TypedDict from langgraph.checkpoint.memory import InMemorySaver from langgraph.graph import END, START, StateGraph from langgraph.types import Command, interrupt class State(TypedDict): messages: list[dict] def human_review(state: State): # Pauses the graph and waits for a value answer = interrupt(\"Do you approve?\") return {\"messages\": [{\"role\": \"user\""
+  },
+  {
+   "title": "Resuming interrupts",
+   "url": "https://docs.langchain.com/oss/python/langgraph/interrupts#resuming-interrupts",
+   "page": "oss/python/langgraph/interrupts",
+   "content": "## Resuming interrupts After an interrupt pauses execution, you resume the graph by invoking it again with a `Command` that contains the resume value. The resume value is passed back to the `interrupt` call, allowing the node to continue execution with the external input. The recommended way to drive a graph that may interrupt is [event streaming](/oss/python/langgraph/event-streaming) — it surfaces interrupts via `stream.interrupts` and `stream.interrupted`, and exposes the final state through `stream.output`. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langgraph.types import Command # Initial run - hits the interrupt and pauses # thread_id is the p"
+  },
+  {
+   "title": "Checkpointer vs. store",
+   "url": "https://docs.langchain.com/oss/python/langgraph/persistence#checkpointer-vs-store",
+   "page": "oss/python/langgraph/persistence",
+   "content": "## Checkpointer vs. store | | Checkpointer | Store | | -------------- | ---------------------------------------------------------------------------- | --------------------------------------------------- | | Persists | Graph state snapshots | Application-defined key-value data | | Scope | A single thread | Across threads | | Memory type | Short-term, thread-scoped memory | Long-term, cross-thread memory | | Use for | Conversation continuity, human-in-the-loop, time travel, and fault tolerance | User preferences, facts, and shared knowledge | | Access pattern | Pass a `thread_id` in graph config | Read and write items from nodes or application code | | Full guide | [Checkpointers](/oss/python/"
+  },
+  {
+   "title": "Using in LangGraph",
+   "url": "https://docs.langchain.com/oss/python/langgraph/stores#using-in-langgraph",
+   "page": "oss/python/langgraph/stores",
+   "content": "## Using in LangGraph The store works hand-in-hand with the checkpointer: the checkpointer saves state to threads, as discussed above, and the store allows you to store arbitrary information for access *across* threads. Compile the graph with both the checkpointer and the store as follows. ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from dataclasses import dataclass from langgraph.checkpoint.memory import InMemorySaver @dataclass class Context: user_id: str # We need this because we want to enable threads (conversations) checkpointer = InMemorySaver() # ... Define the graph ... # Compile the graph with the checkpointer and store builder = StateGraph(Messa"
+  },
+  {
+   "title": "Try out your agent",
+   "url": "https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph#try-out-your-agent",
+   "page": "oss/python/langgraph/thinking-in-langgraph",
+   "content": "### Try out your agent Let's run our agent with an urgent billing issue that needs human review: <Accordion title=\"Testing the agent\" icon=\"flask\"> ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from typing import TypedDict from langgraph.checkpoint.memory import InMemorySaver from langgraph.graph import END, START, StateGraph from langgraph.types import Command, interrupt class EmailState(TypedDict): email_content: str response_text: str | None def human_review_node(state: EmailState): interrupt( { \"approved\": False, \"edited_response\": state.get(\"response_text\") or \"\", } ) return {\"response_text\": \"placeholder\"} app = ( StateGraph(EmailState) .add_node(\"hum"
+  },
+  {
+   "title": "Authentication",
+   "url": "https://docs.langchain.com/oss/python/migrate/langchain-mcp-adapters#authentication",
+   "page": "oss/python/migrate/langchain-mcp-adapters",
+   "content": "## Authentication Auth moved onto the `fastmcp.Client`. Instead of `auth` and `headers` on the connection config, build a client with `auth` set to a bearer token, the literal `\"oauth\"`, or any `httpx.Auth`, and pass that client to [`MCPAdapter`](https://reference.langchain.com/python/langchain/mcp/adapter/MCPAdapter). Per-server and per-user auth are both supported. See [Authentication](/oss/python/langchain/mcp/auth)."
+  },
+  {
+   "title": "Callbacks",
+   "url": "https://docs.langchain.com/oss/python/migrate/langchain-mcp-adapters#callbacks",
+   "page": "oss/python/migrate/langchain-mcp-adapters",
+   "content": "## Callbacks The `langchain-mcp-adapters` `Callbacks` object is gone, but the underlying handlers are not: FastMCP takes them directly on its `Client`. Build a `fastmcp.Client` with the handler you need and pass it to [`MCPAdapter`](https://reference.langchain.com/python/langchain/mcp/adapter/MCPAdapter). | `Callbacks` field | `langchain.mcp` | | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | | `on_elicitation` | Handled automatically as an interrupt; no handler needed. A prebuilt client's own `elicitation_handler` is honored in"
+  },
+  {
+   "title": "Migrate to create_agent",
+   "url": "https://docs.langchain.com/oss/python/migrate/langchain-v1#migrate-to-create_agent",
+   "page": "oss/python/migrate/langchain-v1",
+   "content": "## Migrate to `create_agent` Prior to v1.0, we recommended using [`langgraph.prebuilt.create_react_agent`](https://reference.langchain.com/python/langchain-classic/agents/react/agent/create_react_agent) to build agents. Now, we recommend you use [`langchain.agents.create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent) to build agents. The table below outlines what functionality has changed from [`create_react_agent`](https://reference.langchain.com/python/langchain-classic/agents/react/agent/create_react_agent) to [`create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent): | Section | TL;DR - What's changed | | -------"
+  },
+  {
+   "title": "Tool and provider strategies",
+   "url": "https://docs.langchain.com/oss/python/migrate/langchain-v1#tool-and-provider-strategies",
+   "page": "oss/python/migrate/langchain-v1",
+   "content": "#### Tool and provider strategies In v1, there are two new structured output strategies: * `ToolStrategy` uses artificial tool calling to generate structured output * `ProviderStrategy` uses provider-native structured output generation <CodeGroup> ```python v1 (new) theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.agents.structured_output import ToolStrategy, ProviderStrategy from pydantic import BaseModel class OutputSchema(BaseModel): summary: str sentiment: str # Using ToolStrategy agent = create_agent( model=\"gpt-5.4-mini\", tools=tools, # explicitly using tool strategy response_format=ToolStrategy(OutputSchema"
+  },
+  {
+   "title": "Migrate interrupt and resume flows",
+   "url": "https://docs.langchain.com/oss/python/migrate/langgraph-supervisor#migrate-interrupt-and-resume-flows",
+   "page": "oss/python/migrate/langgraph-supervisor",
+   "content": "## Migrate interrupt and resume flows A common `langgraph-supervisor` setup uses [`interrupt`](https://reference.langchain.com/python/langgraph/types/interrupt) inside a worker agent's tool to pause execution until an external service completes: ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} # Before: create_supervisor with a subgraph node # # Supervisor (create_supervisor) # └── ResearchAgent (subgraph node) # └── preview_tool # ├── fire_external_api() # kicks off async job # ├── result = interrupt(...) # pauses graph, waits for callback # └── render_results(result) # runs after resume ``` With the subagents pattern, the same flow works. [`interrupt`](https"
+  },
+  {
+   "title": "Sep 1, 2026",
+   "url": "https://docs.langchain.com/oss/python/releases/changelog#sep-1-2026",
+   "page": "oss/python/releases/changelog",
+   "content": "<Update label=\"Sep 1, 2026\" tags={[\"langchain\"]} rss={{ title: \"Sep 1, 2026 - langchain\" }}> ## `langchain` v1.4.0 MCP support now ships inside LangChain in the `langchain.mcp` namespace, built on [FastMCP](https://gofastmcp.com). It replaces the standalone `langchain-mcp-adapters` package. Install it with the `mcp` extra: <CodeGroup> ```bash pip theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} pip install \"langchain[mcp]\" ``` ```bash uv theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} uv add \"langchain[mcp]\" ``` </CodeGroup> <Note> The `langchain.mcp` namespace is in beta. Importing from it raises a `LangChainBetaWarning`. </Note> ### Features * *"
+  },
+  {
+   "title": "Custom middleware",
+   "url": "https://docs.langchain.com/oss/python/releases/langchain-v1#custom-middleware",
+   "page": "oss/python/releases/langchain-v1",
+   "content": "#### Custom middleware You can also build custom middleware to fit your needs. Middleware exposes hooks at each step in an agent's execution: <div style={{ display: \"flex\", justifyContent: \"center\" }}> <img src=\"https://mintcdn.com/langchain-5e9cc07a/RAP6mjwE5G00xYsA/oss/images/middleware_final.png?fit=max&auto=format&n=RAP6mjwE5G00xYsA&q=85&s=eb4404b137edec6f6f0c8ccb8323eaf1\" alt=\"Middleware flow diagram\" className=\"rounded-lg\" data-og-width=\"500\" width=\"500\" data-og-height=\"560\" height=\"560\" data-path=\"oss/images/middleware_final.png\" data-optimize=\"true\" data-opv=\"3\" srcset=\"https://mintcdn.com/langchain-5e9cc07a/RAP6mjwE5G00xYsA/oss/images/middleware_final.png?w=280&fit=max&auto=format&n"
+  },
+  {
+   "title": "Prebuilt middleware",
+   "url": "https://docs.langchain.com/oss/python/releases/langchain-v1#prebuilt-middleware",
+   "page": "oss/python/releases/langchain-v1",
+   "content": "#### Prebuilt middleware LangChain provides a few [prebuilt middlewares](/oss/python/langchain/middleware#built-in-middleware) for common patterns, including: * [`PIIMiddleware`](https://reference.langchain.com/python/langchain/agents/middleware/pii/PIIMiddleware): Redact sensitive information before sending to the model * [`SummarizationMiddleware`](https://reference.langchain.com/python/langchain/agents/middleware/summarization/SummarizationMiddleware): Condense conversation history when it gets too long * [`HumanInTheLoopMiddleware`](https://reference.langchain.com/python/langchain/agents/middleware/human_in_the_loop/HumanInTheLoopMiddleware): Require approval for sensitive tool calls ```"
+  },
+  {
+   "title": "Structured output",
+   "url": "https://docs.langchain.com/oss/python/releases/langchain-v1#structured-output",
+   "page": "oss/python/releases/langchain-v1",
+   "content": "### Structured output [`create_agent`](https://reference.langchain.com/python/langchain/agents/factory/create_agent) has improved structured output generation: * **Main loop integration**: Structured output is now generated in the main loop instead of requiring an additional LLM call * **Structured output strategy**: Models can choose between calling tools or using provider-side structured output generation * **Cost reduction**: Eliminates extra expense from additional LLM calls ```python theme={\"theme\":{\"light\":\"catppuccin-latte\",\"dark\":\"catppuccin-mocha\"}} from langchain.agents import create_agent from langchain.agents.structured_output import ToolStrategy from pydantic import BaseModel cl"
+  }
+ ]
+}

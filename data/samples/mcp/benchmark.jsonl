@@ -1,0 +1,10 @@
+{"id": "q01", "question": "How do I add short-term memory to a LangChain agent?", "expected_page": "oss/python/langchain/short-term-memory"}
+{"id": "q02", "question": "Which middleware pauses an agent so a human can approve a tool call?", "expected_page": "oss/python/langchain/human-in-the-loop"}
+{"id": "q03", "question": "How do I load tools from an MCP server into create_agent?", "expected_page": "oss/python/langchain/mcp"}
+{"id": "q04", "question": "How do I get structured output from an agent built with create_agent?", "expected_page": "oss/python/langchain/structured-output"}
+{"id": "q05", "question": "How do I stream an agent's progress and tokens?", "expected_page": "oss/python/langchain/streaming"}
+{"id": "q06", "question": "Which prebuilt middleware summarizes a long conversation?", "expected_page": "oss/python/langchain/middleware/built-in"}
+{"id": "q07", "question": "How do I store long-term memories that persist across threads?", "expected_page": "oss/python/langchain/long-term-memory"}
+{"id": "q08", "question": "How do I resume a LangGraph graph after an interrupt?", "expected_page": "oss/python/langgraph/interrupts"}
+{"id": "q09", "question": "How do I write custom middleware with before_model and wrap_tool_call hooks?", "expected_page": "oss/python/langchain/middleware/custom"}
+{"id": "q10", "question": "How do I authenticate to an MCP server with a bearer token in LangChain?", "expected_page": "oss/python/langchain/mcp/auth"}
