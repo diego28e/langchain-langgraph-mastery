@@ -1,6 +1,7 @@
 # Conventions
 
 > How this repository, its notebooks, its code, and its commits are organized. Following these from Module 00 keeps the course clean enough to publish.
+> **Shell:** every terminal command in the course is written for **Git Bash** on Windows, which is the same `bash` as on macOS and Linux (see [§10](#10-shells-git-bash-first)).
 
 ---
 
@@ -67,6 +68,13 @@ Example: `modules/03-memory-and-context/03-02-short-term-memory.ipynb`.
 Project notebooks: `modules/03-memory-and-context/project/03-project-study-buddy.ipynb`.
 Lab notebooks: `modules/10-deep-agents/labs/10a-repo-cartographer/10a-lab-repo-cartographer.ipynb`.
 Exercise solutions (if separated): `.../solutions/03-02-short-term-memory-solutions.ipynb`.
+Project solutions: `modules/00-foundations/project/solutions/00-project-groq-model-explorer-solution.ipynb`.
+Terminal-heavy lessons: a Markdown guide with the same `NN-LL-` prefix next to the notebook, e.g. `00-02-create-course-env.md`.
+
+**Projects** have three files:
+- `project/README.md`: the spec (requirements, acceptance criteria, stretch goals, TODO list, rubric).
+- `project/NN-project-<slug>.ipynb`: the **starter**. It runs top to bottom from day one; each unfinished part prints `❌ TODO n`, so learners always see what's left.
+- `project/solutions/NN-project-<slug>-solution.ipynb`: the **reference solution**, same structure and cell order as the starter so the two can be compared side by side.
 
 ## 3. Lesson notebook structure (template)
 
@@ -77,7 +85,7 @@ Every lesson notebook follows the same order, so learners (and video viewers) al
 | 1 | **Title** (Markdown) | `# 03.02 · Short-term memory with checkpointers`, plus module, est. time, prerequisites, "Docs verified: YYYY-MM-DD" |
 | 2 | **Learning objectives** | 3–5 bullets starting with a verb |
 | 3 | **Official reading** | Links from COURSE_OUTLINE.md for this lesson |
-| 4 | **Setup** (code) | Imports → `load_dotenv()` → key check (never print keys) → print versions of key packages → model IDs pulled from `mastery.models` |
+| 4 | **Setup** (code) | Imports → `load_env()` / `require_env()` from `mastery.config` → key check (never print keys) → print versions of key packages → model IDs from config (`mastery.config.load_settings()` in Module 00, `mastery.models` from Module 01) |
 | 5 | **Concept sections** | Repeat: Markdown explanation → small code cell(s) → **"What just happened?"** Markdown recap |
 | 6 | **Pitfalls** | Common errors and how to read them |
 | 7 | **Exercises** | 2–4 exercises, from easy to stretch. Solutions in a collapsed cell or in `solutions/` |
@@ -88,7 +96,8 @@ Every lesson notebook follows the same order, so learners (and video viewers) al
 - **Restart & Run All must pass** before every commit (with only the keys listed in the setup cell).
 - One idea per code cell. Keep cells under ~25 lines. Move longer code to `src/mastery`.
 - No hidden state: don't rely on cells executed out of order or deleted cells.
-- Every cell that costs money or calls a network API starts with a comment: `# 💸 Calls Groq (openai/gpt-oss-20b), ~1k tokens`.
+- Every cell that costs money or calls a network API starts with a comment: `# 💸 Calls Groq (openai/gpt-oss-20b), ~1k tokens`. Free network calls use `# 🌐`.
+- **Missing keys never crash Restart & Run All.** The setup cell sets a flag (e.g. `HAVE_GROQ_KEY`); each API cell checks it and prints `⏭️ Skipped: <why>` instead of failing. The rest of the notebook still runs.
 - Long-running cells print progress. Expensive results are cached to `data/outputs/`.
 - Notebooks set `LANGSMITH_PROJECT` to `mNN-<slug>` in the setup cell when tracing is on.
 - Every shortcut gets a **⚠️ Production note** callout right where it is used (see §9).
@@ -140,7 +149,7 @@ def get_checkpointer(kind: str = "memory"):
 4. **Step comments** (`# Step 1: ...`) in notebook code cells that do more than one thing.
 5. **Verification tags** for facts that can go stale:
    `# VERIFIED 2026-10-11: openai/gpt-oss-20b is a Groq production model (console.groq.com/docs/models)`
-6. **No hard-coded model IDs in notebooks.** Use `mastery.models.get_model(role=...)`, configured in one place.
+6. **No hard-coded model IDs in notebooks.** Use `mastery.models.get_model(role=...)` (from Module 01; in Module 00, `mastery.config.load_settings()`), configured in one place. A model ID that must appear in code (e.g. a retired ID used as an example) carries a `VERIFIED` comment.
 7. **No secrets in code or outputs.** Read from env. Never `print(os.environ[...])`.
 8. Constants in `UPPER_SNAKE_CASE` at the top. No magic numbers.
 9. Formatting and linting: `ruff format` + `ruff check` (introduced in Module 12).
@@ -149,22 +158,19 @@ def get_checkpointer(kind: str = "memory"):
 ## 5. Environment variables and `.env`
 
 - `.env.example` is committed and documents every variable (no real values).
-- `.env` is **never** committed (it's in `.gitignore`). Copy it with `copy .env.example .env` (Windows) and fill in only what the current module needs.
-- Load it at the top of each notebook:
+- `.env` is **never** committed (it's in `.gitignore`). Create it from the repo root with `cp .env.example .env` (Git Bash, macOS, Linux; in the Anaconda Prompt fallback: `copy .env.example .env`) and fill in only what the current module needs.
+- Load it and check keys at the top of each notebook with `mastery.config` (built in Lesson 00.04 on top of [python-dotenv](https://pypi.org/project/python-dotenv/)):
 
 ```python
-from dotenv import load_dotenv
+from mastery.config import MissingSettingError, load_env, require_env
 
-load_dotenv()  # Reads .env from the repo root (or the nearest parent directory)
-```
-
-- Check for keys without revealing them:
-
-```python
-import os
-
-missing = [k for k in ("GROQ_API_KEY",) if not os.getenv(k)]
-assert not missing, f"Missing env vars: {missing}. See .env.example."
+dotenv_path = load_env()          # Finds .env by walking up from the notebook's folder
+try:
+    require_env("GROQ_API_KEY", dotenv_path=dotenv_path)   # Friendly error, never prints the value
+    HAVE_GROQ_KEY = True
+except MissingSettingError as error:
+    HAVE_GROQ_KEY = False
+    print("⚠️", error)
 ```
 
 - Fallback for one-off sessions: `getpass.getpass()` (input is never echoed).
@@ -172,7 +178,7 @@ assert not missing, f"Missing env vars: {missing}. See .env.example."
 
 ## 6. Clearing outputs and keeping notebooks diff-friendly
 
-- **Before every commit:** in Jupyter, *Kernel → Restart Kernel and Run All Cells* (does it work?), then *Edit → Clear All Outputs* (Notebook 7 / JupyterLab), then save.
+- **Before every commit:** in Jupyter, *Kernel → Restart Kernel and Run All Cells…* (does it work?), then *Edit → Clear Outputs of All Cells* (Notebook 7 and JupyterLab), then save. `python -m pytest tests/unit/test_notebook_hygiene.py` fails if any notebook under `modules/` still has outputs.
 - **Recommended automation** (Lesson 00.03 bonus, formalized in Module 12): install `nbstripout` in the course env and run `nbstripout --install` in the repo. It strips outputs automatically when you `git add`, and `nbstripout --status` shows whether it's active.
 - Exception: notebooks meant to be read on GitHub *with* outputs (e.g., a final project report) are exported to `docs/reports/*.html` or `*.md` instead of committing outputs.
 - Optional (Module 09): pair notebooks with `.py` files via Jupytext for readable diffs.
@@ -210,6 +216,7 @@ ci(repo): add GitHub Actions workflow for unit tests
 ```
 
 **Rules**
+- **Use single quotes** around the message in Git Bash (and on macOS/Linux): `git commit -m 'feat(m00): add lesson 00.07'`. Inside double quotes, bash treats `!` as history expansion (`"fix!"` → `event not found`) and expands `$`/backticks. If the message contains an apostrophe, use several `-m` flags or `git commit` without `-m` to open the editor.
 - Summary in the imperative mood, lowercase, ≤ 72 characters, no trailing period.
 - Body (optional) explains *why*, and lists verified doc links when a fact changed.
 - One logical change per commit (e.g., one lesson notebook = one commit).
@@ -250,3 +257,19 @@ A course takes shortcuts so you can learn fast: free tiers, **preview models**, 
 **Always needs a Production note:** preview or experimental models · free tiers used for real data · in-memory or file-based persistence · secrets in `.env` · disabled security checks · hard-coded limits · "run it on your laptop" deployments.
 
 Every new note also gets a row in [docs/production-notes.md](docs/production-notes.md), which explains the general best practice: production/GA models, SLAs, deprecation policies, pinned model IDs, fallbacks, and monitoring.
+
+## 10. Shells: Git Bash first
+
+Course commands are written for **bash**. On Windows that means **Git Bash** (installed with [Git for Windows](https://gitforwindows.org/)); on macOS and Linux, your normal terminal (zsh on macOS accepts the same commands). The **Anaconda Prompt** (cmd) is a fallback only; where a command differs there, it is shown separately.
+
+| Topic | Rule |
+|---|---|
+| `conda` in Git Bash | Not on the PATH by default. Either run `source ~/anaconda3/etc/profile.d/conda.sh` in each new window, or run `conda init bash` once ([conda init](https://docs.conda.io/projects/conda/en/latest/commands/init.html)), which edits `~/.bash_profile`. Step-by-step: [00-02-create-course-env.md](modules/00-foundations/00-02-create-course-env.md) |
+| Paths | Git Bash writes `C:\Users\Ana\repo` as `/c/Users/Ana/repo`. Use forward slashes. `cd ~` goes to `C:\Users\<you>`. `pwd -W` prints the Windows form |
+| Spaces in paths | Quote them: `cd "/c/Users/Ana Maria/Documents"` (or escape: `Ana\ Maria`) |
+| Quoting | Single quotes for literal text (commit messages, `-c 'python code'`). Quote pip extras: `python -m pip install -e ".[dev]"` |
+| Python | Always `python -m pip`, `python -m pytest`, `python -m ipykernel` so the tool runs with the active environment's Python |
+| Copying files | `cp .env.example .env` (cmd fallback: `copy`) |
+| Comments in command blocks | `#` (cmd fallback: `::` or `REM`) |
+| Code blocks | Fenced as ` ```bash `; cmd-only blocks as ` ```bat ` |
+

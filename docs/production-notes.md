@@ -32,6 +32,14 @@ This happens often. In 2026 alone Groq retired `qwen/qwen3-32b`, `qwen/qwen3.6-2
 | 00.06, paid benchmark, Module 10 | Free tiers (Groq, Gemini, LangSmith) for everything | No SLA, low rate limits, and different data-use terms (Gemini free tier may use your data). Use paid tiers for user data. See [paid benchmark](paid-benchmark-openai-vs-gemini.md) |
 | 05.01 | Web search results go straight into the prompt | Treat results as untrusted input. Restrict domains, log sources, keep a fallback search provider. See [web search](web-search-groq-vs-tavily.md) |
 | 00.04 | `.env` files for secrets | Use a secret manager (cloud provider, Docker/Kubernetes secrets) and rotate keys |
+| 00.02 | Hand-built conda env (`lc-mastery`) and a laptop as the runtime | Reproducible, locked environments (lock file or container image) built by CI; the laptop is never the deployment target (Module 13) |
+| 00.03 | Notebooks as the place where code runs | Move reusable code into a tested package (`src/mastery`) and run services, not notebooks, in production |
+| 00.04 | `getpass()` to type a key into a session | Interactive only. Services read keys from a secret manager or injected environment variables |
+| 00.05 | Scraping docs pages and hand-curated deprecation lists | Use official APIs (Models API, PyPI JSON) and subscribe to provider deprecation/changelog feeds; automate checks in CI |
+| 00.06 | Hand-copied price table | Track real spend from provider usage dashboards/billing APIs and per-request token usage (Lesson 13.02) |
+| 00.07 | One model, no fallback; errors only reported | Pinned model ID in config, tested fallback model (Lesson 04.02), retries with backoff respecting `retry-after` (Lessons 01.06, 13.02), alerting on 4xx/5xx rates |
+| 00.07 | Checking model availability by opening a notebook | Scheduled job or CI check that compares configured IDs with the live Models API (`tests/integration/test_groq_live.py` is a first version) |
+| Project 00 | Three prompts, one run per model, as a "comparison"; offline sample JSON | Versioned evaluation datasets, repeated runs, automatic evaluators (Module 12); availability decisions only from the live API |
 | 03, 08 | `InMemorySaver` / SQLite checkpointers | Use a durable database (Postgres checkpointer) with backups |
 | 06 | `InMemoryVectorStore`, local Chroma folder | Use a managed or server-mode vector store with backups and access control |
 | 07.06 | `langgraph dev` in-memory server | Not a production server. Self-host with FastAPI + Docker (Module 13) or use LangSmith Deployment |

@@ -44,7 +44,7 @@ Most tools below do one, two, or all three of these jobs. The confusion comes fr
 - **Use it when:** you have a normal Python install and want the zero-extra-tools option.
 - **Pros:** nothing to install, official, well understood.
 - **Cons:** uses whatever Python you run it with (no version management). Slower to create than virtualenv/uv.
-- **Windows notes:** activate with `.venv\Scripts\activate.bat` (cmd) or `.venv\Scripts\Activate.ps1` (PowerShell). PowerShell may block the script until you allow it for your user with an execution policy (the venv docs show the command).
+- **Windows notes:** in **Git Bash** (course default) activate with `source .venv/Scripts/activate` (note `Scripts`, not `bin`, on Windows). In cmd: `.venv\Scripts\activate.bat`; in PowerShell: `.venv\Scripts\Activate.ps1`. PowerShell may block the script until you allow it for your user with an execution policy (the venv docs show the command).
 - **Jupyter:** `python -m pip install ipykernel`, then `python -m ipykernel install --user --name myproj --display-name "Python (myproj)"`.
 - **Docs:** [venv](https://docs.python.org/3/library/venv.html) · [Tutorial: virtual environments](https://docs.python.org/3/tutorial/venv.html) · [Packaging guide: pip + venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/)
 
@@ -68,7 +68,7 @@ Most tools below do one, two, or all three of these jobs. The confusion comes fr
 - **Pros:** manages Python versions, great for heavy scientific/GPU stacks, Anaconda Navigator for beginners, works well on Windows.
 - **Cons:** big installs (Anaconda), slower than uv, mixing conda and pip needs care. The Anaconda **default channel is covered by Anaconda's Terms of Service**, so organisations should read them (conda-forge is a community alternative).
 - **Mixing with pip (official advice):** install as much as you can with conda first, then pip. If you need to change conda packages after using pip, prefer creating a fresh environment. Don't use `pip install --user` in conda environments.
-- **Windows notes:** use **Anaconda Prompt** (it puts `conda` on PATH), or run `conda init powershell` once if you want it in PowerShell.
+- **Windows notes:** in **Git Bash** (course default), load conda with `source ~/anaconda3/etc/profile.d/conda.sh` or run `conda init bash` once ([step by step](../modules/00-foundations/00-02-create-course-env.md)). Fallbacks: the **Anaconda Prompt** (conda already on PATH), or `conda init powershell` for PowerShell users.
 - **Jupyter:** the course pattern is: create `conda create -n lc-mastery python=3.13`, activate it, `conda install ipykernel` (or `python -m pip install ipykernel`), then `python -m ipykernel install --user --name lc-mastery --display-name "Python (lc-mastery)"`. Jupyter can keep running from `base` and still use the course kernel.
 - **Docs:** [conda](https://docs.conda.io/projects/conda/en/stable/) · [Getting started](https://docs.conda.io/projects/conda/en/stable/user-guide/getting-started.html) · [Manage environments](https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html) · [Using pip in an environment](https://docs.conda.io/projects/conda/en/stable/user-guide/tasks/manage-environments.html#using-pip-in-an-environment) · [libmamba solver](https://conda.github.io/conda-libmamba-solver/) · [Anaconda vs Miniconda](https://www.anaconda.com/docs/getting-started/concepts/anaconda-or-miniconda) · [Anaconda docs](https://www.anaconda.com/docs/main) · [Anaconda Terms of Service](https://www.anaconda.com/legal/terms/terms-of-service) · [conda-forge](https://conda-forge.org/docs/) · [Miniforge download](https://conda-forge.org/download/) · [Miniforge repo](https://github.com/conda-forge/miniforge) · [mamba](https://mamba.readthedocs.io/en/latest/)
 
@@ -81,7 +81,7 @@ Most tools below do one, two, or all three of these jobs. The confusion comes fr
 - **Use it when:** you start a new project outside conda, want reproducible lock files, or want fast CI and Docker builds (Module 13 uses it in the Dockerfile).
 - **Pros:** very fast, lock files, manages Python too, great Docker/CI story, growing fast in the Python community.
 - **Cons:** PyPI only (no conda binary packages). Newer tool (0.x versions), so commands still evolve. One more mental model to learn.
-- **Windows notes:** install with PowerShell (`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`), WinGet (`winget install --id=astral-sh.uv -e`), Scoop, or `pipx install uv`. Read any script before piping it into your shell.
+- **Windows notes:** from Git Bash, the simplest options are WinGet (`winget install --id=astral-sh.uv -e`) or `pipx install uv`; the official installer script for Windows runs in PowerShell (`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`), WinGet (`winget install --id=astral-sh.uv -e`), Scoop, or `pipx install uv`. Read any script before piping it into your shell.
 - **Jupyter (official uv guide):** `uv add --dev ipykernel`, then `uv run ipython kernel install --user --env VIRTUAL_ENV <project>\.venv --name=<project>`, then start Jupyter with `uv run --with jupyter jupyter lab`. Inside a notebook, `!uv add <pkg>` updates the project, and `%pip install` still works.
 - **Docs:** [uv](https://docs.astral.sh/uv/) · [Installation](https://docs.astral.sh/uv/getting-started/installation/) · [Projects](https://docs.astral.sh/uv/guides/projects/) · [Install Python](https://docs.astral.sh/uv/guides/install-python/) · [Tools](https://docs.astral.sh/uv/guides/tools/) · [pip interface: environments](https://docs.astral.sh/uv/pip/environments/) · [uv with Jupyter](https://docs.astral.sh/uv/guides/integration/jupyter/)
 
@@ -135,13 +135,13 @@ Docs: [Installing the IPython kernel](https://ipython.readthedocs.io/en/stable/i
 
 | You are… | Use | Why |
 |---|---|---|
-| **Following the course on Windows with Anaconda (default)** | **conda** for the environment (`lc-mastery`, Python 3.13) + **pip** (`%pip` in notebooks) for LangChain packages | You already have it. Anaconda Prompt + Jupyter work out of the box. LangChain packages are on PyPI, so pip inside the conda env is the simplest path |
+| **Following the course on Windows with Anaconda (default)** | **conda** for the environment (`lc-mastery`, Python 3.13) + **pip** (`%pip` in notebooks) for LangChain packages | You already have it. Git Bash (with conda loaded, see Lesson 00.02) + Jupyter work out of the box; the Anaconda Prompt is a fallback. LangChain packages are on PyPI, so pip inside the conda env is the simplest path |
 | Starting fresh, no Anaconda, or you like modern tooling | **uv** (project mode) | Fast, one tool, lock file. Same notebooks, different setup |
 | Packaging `src/mastery` and deploying it (Module 13) | **uv** inside Docker | Reproducible, fast builds. Taught in Lesson 13.06 |
 | Global CLI tools (ruff, pre-commit, nbstripout) | **pipx** or `uv tool install` | Keeps tools out of the course env |
 | Need heavy binary deps (CUDA, GDAL) in Module 14 | **conda** (conda-forge) or **pixi** | Binary packages pip can't easily provide |
 
-**Rules of thumb:** one environment per project · never install course packages into `base` · always know which Python a command uses (`where python` on Windows, `sys.executable` in Jupyter) · don't mix tools inside one environment unless you follow the tool's official advice (conda first, then pip).
+**Rules of thumb:** one environment per project · never install course packages into `base` · always know which Python a command uses (`which -a python` in Git Bash, macOS, and Linux; `where python` in cmd; `sys.executable` in Jupyter) · don't mix tools inside one environment unless you follow the tool's official advice (conda first, then pip).
 
 > ⚠️ **Production note: environments on your laptop are not deployments.**
 > A conda env you built by hand is hard to reproduce. In production, pin exact versions in a lock file (`uv.lock`, `poetry.lock`, `pixi.lock`, or a fully pinned `requirements.txt`), build in CI from a clean image, and ship a container. The course's `requirements.txt` uses minimum versions with upper bounds for learning; Module 13 shows the locked, containerised version.
