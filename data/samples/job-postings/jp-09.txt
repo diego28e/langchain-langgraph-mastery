@@ -1,0 +1,9 @@
+Posting ID: JP-09
+AI Engineer (LLM applications) - Quantica Labs
+
+On-site in Austin, TX.
+
+Build agents and RAG systems for enterprise customers using LangChain, LangGraph, Python and FastAPI. You'll write evals and monitor production traces.
+2-4 years of software engineering experience; at least one shipped LLM project.
+
+Salary: $140,000 to $165,000 a year.

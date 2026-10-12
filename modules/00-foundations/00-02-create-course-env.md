@@ -122,6 +122,69 @@ If `which python` still shows `.../anaconda3/python` (base) or `.../WindowsApps/
 
 ---
 
+<a id="step-4b"></a>
+
+## Step 4b · Windows + Git Bash: check (and fix) the certificate path
+
+> **Who needs this:** Windows users working in **Git Bash**. On macOS/Linux, or in Anaconda Prompt/PowerShell, run the check below; it should say `OK` and you can move on.
+
+**Check** (with `(lc-mastery)` active):
+
+```bash
+python -c "import os, ssl; ssl.create_default_context(cafile=os.environ.get('SSL_CERT_FILE') or None); print('OK, SSL_CERT_FILE =', os.environ.get('SSL_CERT_FILE', '(not set)'))"
+```
+
+**You should now see** a line starting with `OK`. If you see instead
+
+```text
+FileNotFoundError: [Errno 2] No such file or directory
+```
+
+and an `echo "$SSL_CERT_FILE"` that ends in `lc-mastery/ssl/cacert.pem` (no `Library` in it), apply the fix below. Without it, every API client in the course (Groq, LangSmith, ...) crashes before sending a single request.
+
+### What is going on (plain English)
+
+- **HTTPS needs a list of trusted certificate authorities**, the *CA bundle* (a file usually called `cacert.pem`). Python uses it to check that `api.groq.com` really is Groq.
+- **`SSL_CERT_FILE`** is an environment variable that says "use *this* bundle file". Python's `ssl` module and `httpx` (the HTTP library inside the Groq and LangSmith SDKs) obey it. If it is not set, the SDKs use the bundle from the `certifi` package, which is fine.
+- **Why conda sets it:** the env contains conda's own `openssl` package, which ships a bundle and an *activation script* (in `$CONDA_PREFIX/etc/conda/activate.d/`) that points `SSL_CERT_FILE` to it whenever you `conda activate`.
+- **Why the path is wrong in Git Bash:** on Windows, conda packages put such files under `Library\`, so the real bundle is `%CONDA_PREFIX%\Library\ssl\cacert.pem`. The Windows scripts (`.bat`, PowerShell) use that path. But the Bash script, which Anaconda's openssl build also installs on Windows "for Windows Bash users", uses the Linux layout `$CONDA_PREFIX/ssl/cacert.pem`, a file that does not exist. This is a known packaging bug in Anaconda's `defaults` channel (conda-forge's build is not affected), still open at the time of writing: [anaconda-issues #13509](https://github.com/ContinuumIO/anaconda-issues/issues/13509), fix proposed in [AnacondaRecipes/openssl-feedstock PR #45](https://github.com/AnacondaRecipes/openssl-feedstock/pull/45) (background: [conda-forge/openssl-feedstock #231](https://github.com/conda-forge/openssl-feedstock/issues/231)).
+
+### The fix: store the correct path in the environment
+
+First confirm the real bundle exists:
+
+```bash
+ls "$CONDA_PREFIX/Library/ssl/cacert.pem"
+```
+
+**You should now see** the path printed back (no `No such file or directory`). Then:
+
+```bash
+conda env config vars set SSL_CERT_FILE="$(cygpath -m "$CONDA_PREFIX")/Library/ssl/cacert.pem"
+conda deactivate && conda activate lc-mastery
+```
+
+How it works:
+
+- `conda env config vars set` saves a variable **inside this environment** (in `conda-meta/state`). Conda sets it on every `conda activate lc-mastery`, in every shell (Git Bash, Anaconda Prompt, PowerShell, Jupyter kernels started from the env), and restores the old value on `conda deactivate` ([conda docs: setting environment variables](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#setting-environment-variables)).
+- Conda exports these saved variables **before** it runs the packages' activation scripts (you can see the order in conda's `activate.py`). The openssl script only sets `SSL_CERT_FILE` when it is empty, so it now leaves yours alone.
+- `cygpath -m` turns Git Bash's `/c/Users/...` into `C:/Users/...`: a Windows path with forward slashes, which Python, Git Bash and `cmd.exe` all understand.
+- You must re-activate (second line) because the new value only applies on the next activation.
+
+**Check again:** rerun the `python -c ...` check above. **You should now see** `OK, SSL_CERT_FILE = C:/Users/<you>/anaconda3/envs/lc-mastery/Library/ssl/cacert.pem`. `conda env config vars list` shows the saved value.
+
+**Undo** (for example once Anaconda ships a fixed openssl):
+
+```bash
+conda env config vars unset SSL_CERT_FILE
+conda deactivate && conda activate lc-mastery
+```
+
+> **Why not just `unset SSL_CERT_FILE`?** It works, but only for the current window: the next `conda activate` sets the wrong path again. Pointing the variable to the *right* file is permanent and keeps using conda's maintained bundle.
+> **The course package checks this too.** `mastery.get_model()` and `mastery.config.load_settings()` stop with a clear `CertificateSettingError` that names the bad path and this fix, instead of a bare `FileNotFoundError` deep inside `httpx`. `python -m pytest` prints a warning at the top when the variable is broken.
+
+---
+
 ## Step 5 · Install the course package (`mastery`) in editable mode
 
 Still in the repo root, with `(lc-mastery)` active:
@@ -145,12 +208,14 @@ python -c "import mastery, mastery.config; print('mastery', mastery.__version__)
 python -m pytest
 ```
 
-**You should now see** `mastery 0.1.0`, then a pytest summary ending in `passed` (some `skipped` is normal). If tests fail, read the first failure: it usually names the missing package or the wrong folder.
+**You should now see** `mastery 0.1.0`, then a pytest summary ending in `passed` (some `skipped` or `deselected` is normal). If tests fail, read the first failure: it usually names the missing package or the wrong folder. Two common, harmless-to-fix failures are in the table below.
 
 | Error | Fix |
 |---|---|
 | `ERROR: file:///... does not appear to be a Python project` | You are not in the repo root. `cd` to the folder that contains `pyproject.toml` |
 | `No module named pip` | Run `conda install pip -y` in the env, then retry |
+| Several tests fail with `mastery.doctor.CertificateSettingError: SSL_CERT_FILE points to a file that does not exist`, or (older checkout) `FileNotFoundError: [Errno 2] No such file or directory` raised from `ssl.create_default_context` / `load_verify_locations` | `SSL_CERT_FILE` points to a missing CA bundle (Windows + Git Bash). Do [Step 4b](#step-4b), then rerun `python -m pytest` |
+| `test_notebook_hygiene` fails, saying a notebook (for example `00-02-verify-environment.ipynb`) has saved outputs | Expected if you ran and saved a notebook before this step: the course keeps notebooks **without outputs** in git, and this test enforces it. Clear them with `(lc-mastery)` active: `jupyter nbconvert --clear-output --inplace modules/00-foundations/00-02-verify-environment.ipynb`. `nbconvert` comes with the course's `[dev]` install (`python -m pip install -e ".[dev]"`); if you see `Jupyter command jupyter-nbconvert not found`, install it in the active env with `python -m pip install nbconvert`. Or, in Jupyter, *Edit → Clear Outputs of All Cells*, then save. Lesson 00.03 installs `nbstripout`, which strips outputs automatically at every commit, so this stops happening |
 
 ---
 
@@ -223,6 +288,7 @@ conda init --reverse bash                 # only if you ran `conda init bash`
 
 - [ ] `conda env list` shows `lc-mastery`.
 - [ ] With `(lc-mastery)` active, `which python` points into `anaconda3/envs/lc-mastery`.
+- [ ] The certificate check in Step 4b prints `OK`.
 - [ ] `python -m pytest` ends with `passed`.
 - [ ] Jupyter's kernel menu lists **Python (lc-mastery)**, and `sys.executable` in a notebook points into the env.
 

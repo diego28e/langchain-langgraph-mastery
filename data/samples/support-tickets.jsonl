@@ -1,0 +1,12 @@
+{"id": "T01", "text": "I was charged twice for my March subscription. Please refund the extra payment.", "label": "billing"}
+{"id": "T02", "text": "The export button does nothing when I click it in Firefox. No error, just nothing.", "label": "bug"}
+{"id": "T03", "text": "Could you add a dark mode? My eyes hurt at night.", "label": "feature_request"}
+{"id": "T04", "text": "I can't log in. It says my password is wrong but I just reset it.", "label": "account"}
+{"id": "T05", "text": "Why did my invoice go up from $20 to $35 this month?", "label": "billing"}
+{"id": "T06", "text": "The app crashes every time I upload a PNG larger than 5 MB.", "label": "bug"}
+{"id": "T07", "text": "It would be great to schedule reports to be emailed every Monday.", "label": "feature_request"}
+{"id": "T08", "text": "Please delete my account and all my data.", "label": "account"}
+{"id": "T09", "text": "Loving the product! Just wanted to say thanks to the team.", "label": "other"}
+{"id": "T10", "text": "After the last update, the dashboard shows yesterday's numbers instead of today's, and I'm on the annual plan if that matters.", "label": "bug"}
+{"id": "T11", "text": "I want to change the email address on my profile, where do I do that?", "label": "account"}
+{"id": "T12", "text": "Can I get a receipt with my company's tax ID on it?", "label": "billing"}

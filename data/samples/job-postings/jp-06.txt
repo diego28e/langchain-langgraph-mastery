@@ -1,0 +1,7 @@
+Posting ID: JP-06
+Hey! 👋 Tiny Robots Co. is looking for a backend developer to join us fully remote.
+
+Stack: Node.js, TypeScript, PostgreSQL, Redis. We deploy on AWS.
+Mid-level: you've shipped a few production APIs and can work without hand-holding (roughly 3+ yrs).
+
+Pay: 55-65 USD/hour (contract, 6 months, extendable).

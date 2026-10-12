@@ -1,0 +1,9 @@
+Posting ID: JP-03
+Machine Learning Engineer at Helix Bio
+
+Hybrid: 3 days a week in our Boston lab.
+
+You'll train and deploy models that predict protein stability. Day to day you will use PyTorch, write Python services, deploy with Docker and Kubernetes, and track experiments.
+We expect 3-5 years of industry experience.
+
+Salary is competitive and depends on experience.

@@ -2,13 +2,14 @@
 
 This package grows module by module. Whenever code is needed in a second notebook, it moves here (with a unit test in `tests/unit/`). By the end of the course, it is a small, production-style toolkit you understand line by line.
 
-> **Status:** Module 00 code is in place (`config.py`, `groq_catalog.py`), with unit tests in [`tests/unit/`](../tests/unit/).
+> **Status:** Modules 00–01 code is in place (`config.py`, `doctor.py`, `groq_catalog.py`, `models.py`, `pricing.py`, `display.py`), with unit tests in [`tests/unit/`](../tests/unit/).
 
 ## Install once (Git Bash, course env active, repo root)
 
 ```bash
 conda activate lc-mastery
 python -m pip install -e ".[dev]"      # quotes keep bash from treating [dev] as a pattern
+                                       # [dev] includes [llm] (LangChain packages) from Module 01 on
 python -c 'import mastery; print(mastery.__version__)'   # expect: 0.1.0
 python -m pytest                       # expect: all passed, no network or keys needed
 ```
@@ -20,8 +21,11 @@ Step-by-step with troubleshooting: [Lesson 00.02 guide](../modules/00-foundation
 | Module | Path | Purpose |
 |---|---|---|
 | 00 | `mastery/config.py` | Load `.env`, validate required keys, friendly errors, course settings (model IDs) |
+| 00 | `mastery/doctor.py` | `check_ssl_env()` / `require_valid_ssl_env()`: a missing `SSL_CERT_FILE`/`SSL_CERT_DIR` raises `CertificateSettingError` with the fix (called by `load_settings` and `get_model`; Lesson 00.02, Step 4b) |
 | 00 | `mastery/groq_catalog.py` | List live Groq models via the Models API; friendly HTTP errors |
-| 01 | `mastery/models.py` | `get_model(role, provider)`: model IDs from config, never hard-coded. Includes the paid benchmark (OpenAI by default, Gemini optional) |
+| 01 | `mastery/models.py` | `get_model(role, provider)`: model IDs from config, never hard-coded; `provider="benchmark"` for the paid benchmark (OpenAI by default, Gemini optional). `PreviewModelWarning`, `explain_model_error()` (one classifier for SDK and `langchain_core` exceptions), `describe_model()` |
+| 01 | `mastery/pricing.py` | Dated price table and `estimate_cost()` / `cost_report()` from `usage_metadata` |
+| 01 | `mastery/display.py` | Safe (HTML-escaped) message cards for Jupyter: `show_message()`, testable `render_message_html()` |
 | 02 | `mastery/tools/` | Reusable, tested tools |
 | 03 | `mastery/memory.py` | Checkpointer and store factories |
 | 04 | `mastery/middleware/` | Token budget guard, audit logger, role-based tool filter |
@@ -35,3 +39,28 @@ Step-by-step with troubleshooting: [Lesson 00.02 guide](../modules/00-foundation
 | 13 | `mastery/service/` | FastAPI app factory, `pydantic-settings` config, API-key auth, SSE helpers (self-hosted with Docker) |
 
 Notebooks import it after the editable install above (packaging is defined in [`pyproject.toml`](../pyproject.toml)). If it isn't installed, each notebook's setup cell falls back to `src/` and tells you how to fix it. While editing `src/mastery`, restart the kernel to pick up changes, or use `%autoreload 2` (Module 03).
+
+## Optional dependencies (extras)
+
+| Extra | Installs | Why separate |
+|---|---|---|
+| (none) | `python-dotenv`, `httpx` | Enough for Module 00 (`config`, `groq_catalog`) |
+| `[llm]` | `langchain`, `langchain-core`, `langchain-groq` | `models`, `pricing`, `display` import LangChain **lazily**, so `import mastery` works without it |
+| `[dev]` | `pytest`, `nbformat` + `[llm]` | Every unit test runs, offline |
+
+Other providers are installed only when you use them: `python -m pip install "langchain-openai>=1.7.0,<2"` (paid benchmark) or `"langchain-google-genai>=4.4.1,<5"`. `get_model()` tells you the exact command if one is missing.
+
+## Example (Module 01)
+
+```python
+from mastery.models import get_model, explain_model_error
+from mastery.pricing import estimate_cost
+
+llm = get_model("fast", temperature=0, max_tokens=300)        # groq:<MASTERY_MODEL_FAST>
+try:
+    reply = llm.invoke("Say hi in five words.")
+    print(reply.text, estimate_cost(reply.usage_metadata, "groq:openai/gpt-oss-20b"))
+except Exception as error:
+    info = explain_model_error(error)          # kind, retryable, status_code, retry_after, hint
+    print(info.kind, info.hint)
+```

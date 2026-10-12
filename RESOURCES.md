@@ -263,7 +263,7 @@ Latest versions on **October 11, 2026** (for reference; `requirements.txt` uses 
 | fastmcp | 4.1.0 | ≥ 3.10 |
 | openevals | 0.2.0 | ≥ 3.10 |
 | agentevals | 0.0.9 | ≥ 3.9 |
-| groq (SDK) | 1.7.0 | ≥ 3.10 |
+| groq (SDK) | 1.7.0 latest; **course pins 0.37.1** (`<1`) because `langchain-groq` 1.1.3 requires `groq<1.0.0` | ≥ 3.10 |
 | chromadb | 1.5.9 | ≥ 3.9 |
 | python-dotenv | 1.2.4 | ≥ 3.10 |
 | ipykernel | 7.4.0 | **≥ 3.11** |

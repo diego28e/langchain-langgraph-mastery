@@ -40,6 +40,23 @@ This happens often. In 2026 alone Groq retired `qwen/qwen3-32b`, `qwen/qwen3.6-2
 | 00.07 | One model, no fallback; errors only reported | Pinned model ID in config, tested fallback model (Lesson 04.02), retries with backoff respecting `retry-after` (Lessons 01.06, 13.02), alerting on 4xx/5xx rates |
 | 00.07 | Checking model availability by opening a notebook | Scheduled job or CI check that compares configured IDs with the live Models API (`tests/integration/test_groq_live.py` is a first version) |
 | Project 00 | Three prompts, one run per model, as a "comparison"; offline sample JSON | Versioned evaluation datasets, repeated runs, automatic evaluators (Module 12); availability decisions only from the live API |
+| 01.01 | Trusting integration defaults (`ChatGroq`: temperature 0.7, `max_retries=2`, no timeout) | Set `timeout`, `max_retries`, `temperature` explicitly in one config module; log them as trace metadata; re-check defaults on every integration upgrade |
+| 01.01, 01.02 | `get_model("vision")` returns a **preview** model (`PreviewModelWarning`) | GA model with an SLA for user-facing features, a tested fallback (Lesson 04.02), watch the deprecations page |
+| 01.02 | Base64 images inline in requests | Resize first, prefer provider file storage/URLs for repeated images, validate MIME type and size, process only images users consented to |
+| 01.02 | Whole conversations saved to JSON files | Store only what you need, encrypt at rest, set retention, redact PII before logging, record model + prompt version per `AIMessage` |
+| 01.03 | User text pasted into prompts with only delimiters | Length limits, escape delimiter tags in user text, allow-list the output, log suspicious inputs, guardrails (Module 04) |
+| 01.03, Project 01 | Prompts and models judged on 10–12 examples, one run, one annotator | Labelled datasets that reflect real traffic, repeated runs, experiments tracked in LangSmith (Module 12), accuracy reported with uncertainty |
+| 01.03 | Prompts as Python constants in notebooks | Versioned, reviewed prompt artifacts (Git or LangSmith prompt hub); log the prompt version in trace metadata |
+| 01.04 | Schema-valid output treated as "done" | Measure field-level accuracy, monitor parse-failure rate per model/prompt version, route invalid results to a human or fallback |
+| 01.04 | Reading a private constant (`_STRICT_STRUCTURED_OUTPUT_MODELS`) to learn behavior | Never import private names in application code; re-test the behavior on upgrades |
+| 01.05 | Streaming to a notebook with `display(..., display_id=True)` | Stream to clients over SSE/WebSockets (Module 13), stop generating on disconnect, sanitize Markdown before rendering HTML |
+| 01.05 | `asyncio.gather` / `batch` with only a concurrency cap | Bound concurrency **and** rate, per-request timeouts, cancel remaining tasks when the caller gives up |
+| 01.06, Project 01 | `InMemoryRateLimiter` (per process, requests only) | Shared limiter (e.g. Redis) across workers, limit tokens as well as requests, adapt to `x-ratelimit-*` headers, queue instead of failing |
+| 01.06, Project 01 | Costs estimated from `mastery.pricing` (hand-maintained, list prices) | Reconcile with provider billing, track cost per feature/customer via trace metadata (LangSmith cost tracking), budget alerts |
+| 01.07 | Silent `with_fallbacks` | Emit a metric/tag when a fallback fires, alert on its rate, test the fallback path, validate the backup's output too |
+| 01.07 | Anonymous lambdas inside LCEL pipelines | Named, documented, unit-tested functions; `.with_config(run_name=...)` so traces are readable |
+| 01.08 | Tracing full prompts/outputs to LangSmith (free plan, 180-day retention) | Mask or hide PII (`LANGSMITH_HIDE_INPUTS`/anonymizers), one project per environment, sample high-volume traffic, flush tracers on shutdown |
+| Project 01 | OFFLINE DEMO mode: stand-in "models" built from the answer key | Demo numbers are never evidence. Decisions come from live runs on a representative dataset |
 | 03, 08 | `InMemorySaver` / SQLite checkpointers | Use a durable database (Postgres checkpointer) with backups |
 | 06 | `InMemoryVectorStore`, local Chroma folder | Use a managed or server-mode vector store with backups and access control |
 | 07.06 | `langgraph dev` in-memory server | Not a production server. Self-host with FastAPI + Docker (Module 13) or use LangSmith Deployment |
@@ -51,6 +68,7 @@ This happens often. In 2026 alone Groq retired `qwen/qwen3-32b`, `qwen/qwen3.6-2
 | 10.07 | Writable memory in a local `InMemoryStore` | Per-user scopes, read-only shared/org memory, reviewed or consolidated writes, durable store (Postgres) |
 | 10.09, Lab 10B | Local `DockerSandbox` (shares the host kernel, network on by default) | Managed sandbox or hardened microVMs with egress control, limits, TTLs; never secrets inside a sandbox |
 | 10.11 | Managed Deep Agents (public beta) and Deep Agents Code (not supported on Windows) | Optional references only; self-host with Module 13 or use GA LangSmith Deployment |
+| 00.02, Step 4b | `SSL_CERT_FILE` pinned to conda's public CA bundle with `conda env config vars` | Corporate proxies that inspect TLS need the company's root CA: build one bundle (public + corporate CA), point `SSL_CERT_FILE`/`REQUESTS_CA_BUNDLE` at it in the deployment config (or pass `http_client=httpx.Client(verify=...)`), never disable verification (`verify=False`), and fail fast at startup if the file is missing (as `mastery.doctor` does) |
 | Everywhere | Model IDs verified once on a date | Re-verify on a schedule and before each release |
 
 New shortcut in a lesson? Add a callout in the lesson **and** a row here.

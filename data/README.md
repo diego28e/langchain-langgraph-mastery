@@ -8,3 +8,13 @@
 | `vectorstores/` | ❌ Gitignored | Persisted Chroma and other indexes |
 
 Never commit personal or confidential documents. Use public or synthetic data for anything you'll publish.
+
+## Sample files
+
+| File | Used in | What it is |
+|---|---|---|
+| `samples/groq-models-sample.json` | Lesson 00.07, Project 00 | Illustrative Groq Models API response (offline demo mode; not live data) |
+| `samples/images/quarterly-signups.png` | Lesson 01.02 | Small bar chart for the image content-block demo (generated with Matplotlib, synthetic numbers) |
+| `samples/support-tickets.jsonl` | Lesson 01.03 | 12 synthetic support tickets with labels (`billing`, `bug`, `feature_request`, `account`, `other`) |
+| `samples/job-postings/jp-01.txt` … `jp-10.txt` | Project 01 | 10 synthetic job postings (fictional companies), deliberately varied in format and wording |
+| `samples/job-postings/answer-key.json` | Project 01 | Hand-labelled `JobPosting` answers plus the labelling rules (`_labelling_notes`) |

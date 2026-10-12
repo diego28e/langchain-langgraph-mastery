@@ -178,7 +178,7 @@ except MissingSettingError as error:
 
 ## 6. Clearing outputs and keeping notebooks diff-friendly
 
-- **Before every commit:** in Jupyter, *Kernel → Restart Kernel and Run All Cells…* (does it work?), then *Edit → Clear Outputs of All Cells* (Notebook 7 and JupyterLab), then save. `python -m pytest tests/unit/test_notebook_hygiene.py` fails if any notebook under `modules/` still has outputs.
+- **Before every commit:** in Jupyter, *Kernel → Restart Kernel and Run All Cells…* (does it work?), then *Edit → Clear Outputs of All Cells* (Notebook 7 and JupyterLab), then save. From the terminal instead: `jupyter nbconvert --clear-output --inplace path/to/notebook.ipynb` (`nbconvert` comes with the course's `[dev]` install (`python -m pip install -e ".[dev]"`); if you see `Jupyter command jupyter-nbconvert not found`, install it in the active env with `python -m pip install nbconvert`). `python -m pytest tests/unit/test_notebook_hygiene.py` fails if any notebook under `modules/` still has outputs.
 - **Recommended automation** (Lesson 00.03 bonus, formalized in Module 12): install `nbstripout` in the course env and run `nbstripout --install` in the repo. It strips outputs automatically when you `git add`, and `nbstripout --status` shows whether it's active.
 - Exception: notebooks meant to be read on GitHub *with* outputs (e.g., a final project report) are exported to `docs/reports/*.html` or `*.md` instead of committing outputs.
 - Optional (Module 09): pair notebooks with `.py` files via Jupytext for readable diffs.
@@ -265,6 +265,7 @@ Course commands are written for **bash**. On Windows that means **Git Bash** (in
 | Topic | Rule |
 |---|---|
 | `conda` in Git Bash | Not on the PATH by default. Either run `source ~/anaconda3/etc/profile.d/conda.sh` in each new window, or run `conda init bash` once ([conda init](https://docs.conda.io/projects/conda/en/latest/commands/init.html)), which edits `~/.bash_profile`. Step-by-step: [00-02-create-course-env.md](modules/00-foundations/00-02-create-course-env.md) |
+| `SSL_CERT_FILE` in Git Bash | Anaconda's `openssl` Bash activation script on Windows sets `SSL_CERT_FILE` to `$CONDA_PREFIX/ssl/cacert.pem`, which does not exist (the real file is under `Library/`). Every API client then fails with `FileNotFoundError`. Fix once per env: `conda env config vars set SSL_CERT_FILE="$(cygpath -m "$CONDA_PREFIX")/Library/ssl/cacert.pem"`, then re-activate. `mastery.doctor` detects it. Details: [00-02-create-course-env.md, Step 4b](modules/00-foundations/00-02-create-course-env.md#step-4b) |
 | Paths | Git Bash writes `C:\Users\Ana\repo` as `/c/Users/Ana/repo`. Use forward slashes. `cd ~` goes to `C:\Users\<you>`. `pwd -W` prints the Windows form |
 | Spaces in paths | Quote them: `cd "/c/Users/Ana Maria/Documents"` (or escape: `Ana\ Maria`) |
 | Quoting | Single quotes for literal text (commit messages, `-c 'python code'`). Quote pip extras: `python -m pip install -e ".[dev]"` |

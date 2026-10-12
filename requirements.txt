@@ -52,7 +52,11 @@ langchain-google-genai>=4.4.1,<5
 # It is not supported on Windows (use WSL): https://docs.langchain.com/oss/deepagents/code/quickstart
 
 # --- Speech (Module 11): Groq SDK for Whisper STT / Orpheus TTS ------------
-groq>=1.7.0,<2
+# Pinned to 0.x ON PURPOSE: langchain-groq 1.1.3 requires groq>=0.30.0,<1.0.0
+# (PyPI metadata, verified 2026-10-11), although groq 1.7.0 exists. Asking for
+# groq>=1 makes `pip install -r requirements.txt` fail to resolve. Raise this
+# only when a langchain-groq release allows groq 1.x.
+groq>=0.37.1,<1
 
 # --- Testing & evaluation (Module 12) ---------------------------------------
 openevals>=0.2.0,<1
@@ -64,6 +68,7 @@ langgraph-cli[inmem]>=0.4.33,<1
 # --- Jupyter tooling (already present in Anaconda; listed for completeness) -
 ipykernel>=7.4.0,<8
 nbstripout>=0.9.1,<1
+nbconvert>=7.17.2,<8
 jupytext>=1.19.6,<2
 
 # --- Self-hosted service (Module 13) ---------------------------------------

@@ -1,0 +1,41 @@
+{
+  "_about": "Hand-labelled answers for Project 01 (Multi-Model Comparison Lab). All postings are synthetic: companies and people are fictional. Skills are lowercase canonical names. salary is null when the posting gives no numbers.",
+  "_labelled": "2026-10-11",
+  "answers": {
+    "JP-01": {"title": "Senior Data Engineer", "company": "Northwind Analytics", "seniority": "senior", "work_mode": "remote",
+              "skills": ["python", "sql", "apache spark", "airflow", "aws"],
+              "salary": {"min": 150000, "max": 180000, "currency": "USD", "period": "year"}},
+    "JP-02": {"title": "Junior Frontend Developer", "company": "Lumen Studio", "seniority": "junior", "work_mode": "onsite",
+              "skills": ["html", "css", "javascript", "react"],
+              "salary": {"min": 4500000, "max": 5500000, "currency": "COP", "period": "month"}},
+    "JP-03": {"title": "Machine Learning Engineer", "company": "Helix Bio", "seniority": "mid", "work_mode": "hybrid",
+              "skills": ["pytorch", "python", "docker", "kubernetes"],
+              "salary": null},
+    "JP-04": {"title": "Summer Intern, Software Engineering", "company": "Orbit Payments", "seniority": "intern", "work_mode": "remote",
+              "skills": ["java", "kotlin", "git"],
+              "salary": {"min": 1800, "max": 1800, "currency": "EUR", "period": "month"}},
+    "JP-05": {"title": "Engineering Lead, Platform", "company": "Cobalt Cloud", "seniority": "lead", "work_mode": "onsite",
+              "skills": ["go", "kubernetes", "terraform", "gcp"],
+              "salary": {"min": 230000, "max": 270000, "currency": "USD", "period": "year"}},
+    "JP-06": {"title": "Backend Developer", "company": "Tiny Robots Co.", "seniority": "mid", "work_mode": "remote",
+              "skills": ["node.js", "typescript", "postgresql", "redis", "aws"],
+              "salary": {"min": 55, "max": 65, "currency": "USD", "period": "hour"}},
+    "JP-07": {"title": "Data Analyst", "company": "Ciudad Verde Foundation", "seniority": "junior", "work_mode": "hybrid",
+              "skills": ["power bi", "excel", "sql"],
+              "salary": null},
+    "JP-08": {"title": "Staff Security Engineer", "company": "Ironclad Health", "seniority": "lead", "work_mode": "remote",
+              "skills": ["threat modeling", "azure", "incident response", "python"],
+              "salary": {"min": 110000, "max": 130000, "currency": "EUR", "period": "year"}},
+    "JP-09": {"title": "AI Engineer (LLM applications)", "company": "Quantica Labs", "seniority": "mid", "work_mode": "onsite",
+              "skills": ["langchain", "langgraph", "python", "fastapi"],
+              "salary": {"min": 140000, "max": 165000, "currency": "USD", "period": "year"}},
+    "JP-10": {"title": "WordPress Developer", "company": "Panadería La Espiga", "seniority": "unknown", "work_mode": "remote",
+              "skills": ["wordpress", "php", "css"],
+              "salary": null}
+  },
+  "_labelling_notes": {
+    "seniority": "intern | junior (0-2 yrs) | mid (2-5 yrs) | senior (5+ yrs, individual contributor) | lead (manages people OR staff/principal level) | unknown. JP-07 says 2 years, labelled junior; JP-08 'Staff' is labelled lead by this rule. Borderline cases are deliberate: discuss them in your decision log.",
+    "work_mode": "remote | hybrid | onsite | unknown.",
+    "salary": "Numbers as written (no currency conversion). A single number gives min = max."
+  }
+}

@@ -30,10 +30,22 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# LangChain stack used by mastery.models / pricing / display (Module 01+).
+# Imported lazily, so `import mastery` works without it (Module 00).
+llm = [
+    "langchain>=1.4.4,<2",
+    "langchain-core>=1.6.9,<2",
+    "langchain-groq>=1.1.3,<2",
+]
 # Developer tools: `python -m pip install -e ".[dev]"`
+# Includes the llm extra so every unit test runs (offline, with fake models).
 dev = [
     "pytest>=9.1.1,<10",
     "nbformat>=5.11.1,<6",
+    # VERIFIED 2026-10-12: nbconvert 7.17.2 is current on PyPI. Gives
+    # `jupyter nbconvert --clear-output --inplace` inside the course env.
+    "nbconvert>=7.17.2,<8",
+    "mastery[llm]",
 ]
 
 [tool.setuptools.packages.find]

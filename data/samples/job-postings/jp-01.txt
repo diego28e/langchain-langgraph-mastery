@@ -1,0 +1,13 @@
+Posting ID: JP-01
+Northwind Analytics is hiring a Senior Data Engineer (Remote, US time zones).
+
+About the role
+You will own our batch and streaming pipelines and mentor two junior engineers.
+
+What you bring
+- 6+ years building data pipelines in production
+- Strong Python and SQL
+- Apache Spark and Airflow
+- Experience with AWS (S3, Glue, Redshift)
+
+Compensation: $150,000 - $180,000 per year, plus equity.

@@ -1,0 +1,7 @@
+Posting ID: JP-05
+Engineering Lead, Platform | Cobalt Cloud | San Francisco, CA (office-based)
+
+Lead a team of 8 engineers responsible for our internal developer platform. You'll set technical direction, hire, and still review code.
+Requirements: 10+ years of experience, 3+ years managing engineers, deep knowledge of Go, Kubernetes, Terraform and GCP.
+
+Base salary range: $230k–$270k USD annually.

@@ -65,8 +65,8 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 
 | # | Module | Status |
 |---|---|---|
-| 00 | [Foundations, Tooling & Research Skills](modules/00-foundations/) | 📝 Planned |
-| 01 | [Models, Messages & Prompts](modules/01-models-messages-prompts/) | 📝 Planned |
+| 00 | [Foundations, Tooling & Research Skills](modules/00-foundations/) | ✅ Built |
+| 01 | [Models, Messages & Prompts](modules/01-models-messages-prompts/) | ✅ Built |
 | 02 | [Tools & Your First Agents](modules/02-tools-and-agents/) | 📝 Planned |
 | 03 | [Memory & Context Engineering](modules/03-memory-and-context/) | 📝 Planned |
 | 04 | [Middleware, Guardrails & Human-in-the-Loop](modules/04-middleware-guardrails-hitl/) | 📝 Planned |

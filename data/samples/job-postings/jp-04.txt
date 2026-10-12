@@ -1,0 +1,8 @@
+Posting ID: JP-04
+Summer Intern, Software Engineering
+Company: Orbit Payments
+Location: Remote (Spain)
+
+Spend 12 weeks shipping real features with our payments team. You should know Java or Kotlin and be comfortable with Git. Currently enrolled in a CS degree.
+
+Stipend: €1,800 per month.

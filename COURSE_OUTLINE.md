@@ -253,15 +253,16 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 
 ### Lesson 01.08 — First look at LangSmith tracing
 - **Notebook:** `modules/01-models-messages-prompts/01-08-first-traces.ipynb`
-- **Objectives:** Turn on tracing with environment variables. Read a trace (inputs, outputs, latency, tokens). Add tags and metadata. Send traces to a per-module project.
+- **Objectives:** Turn on tracing with environment variables, or selectively with `tracing_context`. Read a trace (inputs, outputs, latency, tokens), first locally with `collect_runs`, then in LangSmith. Add tags, metadata, run names, and `@traceable`. Send traces to a per-notebook project (`mNN-<slug>`).
 - **Read:** [Tracing quickstart](https://docs.langchain.com/langsmith/observability-quickstart) · [Trace with LangChain](https://docs.langchain.com/langsmith/trace-with-langchain) · [Add metadata and tags](https://docs.langchain.com/langsmith/add-metadata-tags) · [Observability concepts](https://docs.langchain.com/langsmith/observability-concepts)
 
-**Jupyter skill:** magics (`%pip`, `%env`, `%%time`) and rich display.
-**`src/mastery` increment:** `mastery/models.py`: `get_model(role="fast"|"reasoning"|"vision", provider="groq")` reads model IDs from config, never hard-coded across notebooks.
+**Jupyter skill:** magics (`%pip`, `%env`, `%%time`) and rich display (HTML message cards, live-updating output with display handles, top-level `await`).
+**`src/mastery` increment:** `mastery/models.py`: `get_model(role="fast"|"reasoning"|"vision", provider="groq")` reads model IDs from config, never hard-coded across notebooks (plus `explain_model_error()` and `PreviewModelWarning`). Also `mastery/pricing.py` (dated price table, `estimate_cost`) and `mastery/display.py` (safe message rendering). Installed with the new `[llm]` extra (included in `[dev]`).
 **Research checkpoint:** Find which providers currently support standard `content_blocks` natively and whether `langchain-groq` is now one of them. Log it.
 
 ### Project 01 — Multi-Model Comparison Lab
 **Goal:** A reusable notebook that runs one task across several models and returns validated, structured verdicts.
+- **Files:** [spec](modules/01-models-messages-prompts/project/README.md) · starter `modules/01-models-messages-prompts/project/01-project-multi-model-comparison-lab.ipynb` · solution `modules/01-models-messages-prompts/project/solutions/01-project-multi-model-comparison-lab-solution.ipynb` · data `data/samples/job-postings/` (10 postings + `answer-key.json`)
 - **Requirements**
   1. Task: extract structured info (e.g., job posting → `JobPosting` Pydantic model with title, seniority, skills list, salary range or `None`) from 10 sample texts in `data/samples/`.
   2. Run at least 3 configurations: `openai/gpt-oss-20b`, `openai/gpt-oss-120b`, and one more (Groq preview, local Ollama, or the paid benchmark `gpt-6-luna` / Gemini).

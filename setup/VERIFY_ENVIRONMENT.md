@@ -96,6 +96,8 @@ python -m pip show langchain langgraph langchain-groq python-dotenv ipykernel
 | `conda: command not found` | Run the `source .../conda.sh` line from [Make conda work in Git Bash](#make-conda-work-in-git-bash) (check the path with the `ls -d` line) |
 | `python` opens the Microsoft Store or prints nothing | Windows "App execution aliases" are intercepting it. **Settings → Apps → Advanced app settings → App execution aliases**, turn off `python.exe` and `python3.exe`, then open a new Git Bash window. Or load and activate conda first (see above) |
 | `python` with no arguments seems to hang | The interactive Python prompt needs a console helper in some Git Bash versions. Use `winpty python`, or just run scripts and notebooks (the course never needs the interactive prompt) |
+| API clients (Groq, LangSmith, httpx) fail with `FileNotFoundError: [Errno 2] No such file or directory` from `ssl.create_default_context`, or `mastery` raises `CertificateSettingError` | `SSL_CERT_FILE` points to a missing file (Anaconda's openssl script uses the wrong path in Git Bash). Check with `echo "$SSL_CERT_FILE"`; fix with [Step 4b of the create-course-env guide](../modules/00-foundations/00-02-create-course-env.md#step-4b) |
+| `Jupyter command jupyter-nbconvert not found` (when clearing outputs with `jupyter nbconvert --clear-output --inplace ...`) | `nbconvert` is not installed in the active env. It comes with the course `[dev]` install (`python -m pip install -e ".[dev]"`); or install it alone with `python -m pip install nbconvert` |
 | `which -a python` shows several paths | Normal. The first one is what runs. After `conda activate`, the env's Python should be first |
 
 ## Option B: macOS / Linux terminal

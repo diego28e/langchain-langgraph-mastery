@@ -1,6 +1,8 @@
 """Configuration helpers: load ``.env``, validate keys, fail with friendly errors.
 
 Introduced in Module 00, Lesson 00.04 ("Secrets and .env hygiene").
+Extended in Module 01, Lesson 01.01: vision and paid-benchmark model settings,
+read by ``mastery.models``.
 
 Why this module exists:
     Every notebook in the course needs the same three things before it can call
@@ -27,9 +29,14 @@ from pathlib import Path
 
 from dotenv import find_dotenv, load_dotenv
 
+from mastery.doctor import require_valid_ssl_env
+
 __all__ = [
+    "DEFAULT_BENCHMARK_MODEL",
+    "DEFAULT_BENCHMARK_MODEL_STRONG",
     "DEFAULT_MODEL_FAST",
     "DEFAULT_MODEL_REASONING",
+    "DEFAULT_MODEL_VISION",
     "KEY_HELP_URLS",
     "MissingSettingError",
     "Settings",
@@ -50,6 +57,14 @@ __all__ = [
 # (https://console.groq.com/docs/models). Re-check at every research checkpoint.
 DEFAULT_MODEL_FAST = "openai/gpt-oss-20b"
 DEFAULT_MODEL_REASONING = "openai/gpt-oss-120b"
+# VERIFIED 2026-10-11: qwen/qwen3.8-27b is Groq's only vision model and it is a
+# PREVIEW model (evaluation only, may be retired at short notice).
+# https://console.groq.com/docs/vision
+DEFAULT_MODEL_VISION = "qwen/qwen3.8-27b"
+# Paid benchmark, as "provider:model" strings (docs/paid-benchmark-openai-vs-gemini.md).
+# VERIFIED 2026-10-11: https://developers.openai.com/api/docs/models
+DEFAULT_BENCHMARK_MODEL = "openai:gpt-6-luna"
+DEFAULT_BENCHMARK_MODEL_STRONG = "openai:gpt-6.1-sol"
 DEFAULT_LANGSMITH_PROJECT = "langchain-langgraph-mastery"
 
 # Where to create each key. Shown in error messages so the fix is one click away.
@@ -280,12 +295,18 @@ class Settings:
     Attributes:
         model_fast: Groq model ID for quick, cheap calls (``MASTERY_MODEL_FAST``).
         model_reasoning: Groq model ID for harder tasks (``MASTERY_MODEL_REASONING``).
+        model_vision: Groq model ID that accepts images (``MASTERY_MODEL_VISION``). Preview.
+        benchmark_model: Paid benchmark as ``"provider:model"`` (``MASTERY_BENCHMARK_MODEL``).
+        benchmark_model_strong: Paid quality ceiling (``MASTERY_BENCHMARK_MODEL_STRONG``).
         langsmith_tracing: Whether LangSmith tracing is on (``LANGSMITH_TRACING``).
         langsmith_project: LangSmith project name (``LANGSMITH_PROJECT``).
     """
 
     model_fast: str = DEFAULT_MODEL_FAST
     model_reasoning: str = DEFAULT_MODEL_REASONING
+    model_vision: str = DEFAULT_MODEL_VISION
+    benchmark_model: str = DEFAULT_BENCHMARK_MODEL
+    benchmark_model_strong: str = DEFAULT_BENCHMARK_MODEL_STRONG
     langsmith_tracing: bool = False
     langsmith_project: str = DEFAULT_LANGSMITH_PROJECT
 
@@ -300,13 +321,23 @@ def load_settings(*, load_dotenv_file: bool = True) -> Settings:
     Returns:
         A :class:`Settings` instance built from the environment and the
         verified defaults above.
+
+    Raises:
+        mastery.doctor.CertificateSettingError: ``SSL_CERT_FILE`` or
+            ``SSL_CERT_DIR`` points to a path that does not exist.
     """
     if load_dotenv_file:
         load_env()
+    # Fail early and clearly if SSL_CERT_FILE/SSL_CERT_DIR point nowhere
+    # (otherwise httpx raises a bare FileNotFoundError later). Lesson 00.02, step 4b.
+    require_valid_ssl_env()
     tracing = get_setting("LANGSMITH_TRACING", "false").lower() in {"1", "true", "yes", "on"}
     return Settings(
         model_fast=get_setting("MASTERY_MODEL_FAST", DEFAULT_MODEL_FAST),
         model_reasoning=get_setting("MASTERY_MODEL_REASONING", DEFAULT_MODEL_REASONING),
+        model_vision=get_setting("MASTERY_MODEL_VISION", DEFAULT_MODEL_VISION),
+        benchmark_model=get_setting("MASTERY_BENCHMARK_MODEL", DEFAULT_BENCHMARK_MODEL),
+        benchmark_model_strong=get_setting("MASTERY_BENCHMARK_MODEL_STRONG", DEFAULT_BENCHMARK_MODEL_STRONG),
         langsmith_tracing=tracing,
         langsmith_project=get_setting("LANGSMITH_PROJECT", DEFAULT_LANGSMITH_PROJECT),
     )

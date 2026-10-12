@@ -1,0 +1,7 @@
+Posting ID: JP-08
+Staff Security Engineer · Ironclad Health · Remote (EU)
+
+You'll be the most senior security engineer in a 120-person company: threat modeling, cloud security reviews (Azure), incident response, and security automation in Python.
+8+ years of experience. Certifications such as OSCP are a plus.
+
+Compensation: €110,000–€130,000 per year.
