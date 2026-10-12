@@ -1,0 +1,102 @@
+# =============================================================================
+# .gitignore: Modern LangChain & LangGraph Mastery
+# =============================================================================
+
+# --- Private working notes (not part of the course) -------------------------
+_maintainer/
+
+# --- Secrets & environment --------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+
+# --- Python -------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+*.egg
+build/
+dist/
+.eggs/
+pip-wheel-metadata/
+.installed.cfg
+
+# Virtual environments (conda envs normally live outside the repo, but just in case)
+.venv/
+venv/
+env/
+.conda/
+
+# Tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+
+# --- Jupyter ----------------------------------------------------------------
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+.jupyter_ystore.db
+.virtual_documents/
+
+# --- LangGraph / LangSmith local artifacts ----------------------------------
+.langgraph_api/
+langgraph_dev_state/
+
+# --- Data, outputs, vector stores, local databases --------------------------
+data/raw/
+data/outputs/
+data/vectorstores/
+chroma/
+chroma_db/
+.chroma/
+*.faiss
+*.sqlite
+*.sqlite3
+*.db
+checkpoints.db*
+outbox/
+
+# Generated media
+*.wav
+*.mp3
+*.m4a
+!data/samples/**/*.wav
+!data/samples/**/*.mp3
+
+# Fine-tuning artifacts (Module 13)
+/models/
+*.gguf
+*.safetensors
+*.bin
+wandb/
+outputs_finetune/
+
+# --- OS & editors -----------------------------------------------------------
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*~
+
+# --- Logs ---------------------------------------------------------------------
+*.log
+logs/
