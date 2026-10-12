@@ -48,6 +48,12 @@ Module 05 adds (all offline; MCP servers run in-memory or on `127.0.0.1`):
 |---|---|---|
 | `unit/test_mcp.py` | Notes server: tools and annotations, save/search/delete round trip, limits and errors, `lesson_info`, resource and prompt, `tokens_from_env`; **over HTTP** (`serve_http`): bearer tokens, tools hidden without scope, per-user notes; docs stand-in format and every benchmark page in the snapshot; URL extraction (incl. JSON-escaped newlines) and `check_sources`; `urls_from_messages` (tool results, Groq `executed_tools`, skipping the `ToolStrategy` echo); poisoned descriptions and fingerprints; `approval_policy` with the allow-list; async agents over MCP tools with Module 04 middleware (sync `invoke` raises); `web_search` backend switch, Groq sources via `ScriptedChatModel`, Tavily via a fake engine | FastMCP in-memory servers, a local HTTP child process on a free port, `ScriptedChatModel`, saved docs snapshot |
 
+Module 06 adds (all offline; no model download: `HashingEmbeddings` stands in for fastembed):
+
+| File | Tests | How it stays offline |
+|---|---|---|
+| `unit/test_rag.py` | Corpus loads ≥30 files with 1-based PDF pages; CRLF and HTML noise handling; the three splitter presets and overlap errors; `CachedEmbeddings` hits/misses; in-memory filters; **Chroma persisted to `tmp_path`, upserted, reopened, filtered and reset**; golden recall@5 ≥ 0.8; BM25 + RRF; reranker; metrics; context round trip and `verify_citations` (fabricated quotes, wrong page); the extractive reader (≥12/16, 0 fabricated, abstains on every out-of-corpus question); a scripted chain; the retriever tool's artifact; `create_agent` + `ToolStrategy(CitedAnswer)` | `HashingEmbeddings`, `tmp_path` Chroma, `ScriptedChatModel` |
+
 ## Maintainer QA (not part of `pytest`)
 
 Notebooks are executed with **nbclient** twice before release, in memory (outputs never written back):
@@ -60,8 +66,9 @@ python run_notebooks.py --mock ../../../modules/02-tools-and-agents/*.ipynb ../.
 python run_notebooks.py --mock ../../../modules/03-memory-and-context/*.ipynb ../../../modules/03-memory-and-context/project/*.ipynb ../../../modules/03-memory-and-context/project/solutions/*.ipynb
 python run_notebooks.py --mock ../../../modules/04-middleware-guardrails-hitl/*.ipynb ../../../modules/04-middleware-guardrails-hitl/project/*.ipynb ../../../modules/04-middleware-guardrails-hitl/project/solutions/*.ipynb
 python run_notebooks.py --mock ../../../modules/05-mcp-and-external-tools/*.ipynb ../../../modules/05-mcp-and-external-tools/project/*.ipynb ../../../modules/05-mcp-and-external-tools/project/solutions/*.ipynb
+python run_notebooks.py --mock ../../../modules/06-rag/*.ipynb ../../../modules/06-rag/project/*.ipynb ../../../modules/06-rag/project/solutions/*.ipynb
 ```
 
-Module 03 notebooks write SQLite files under `data/outputs/memory/`, Module 04 writes outboxes, audit logs and a SQLite file under `data/outputs/m04/`, Module 05 writes notes, an IDE config example and an audit log under `data/outputs/m05/` (all git-ignored); delete those folders after QA runs. The mock also answers the two Groq safety models (Prompt Guard: a score; safeguard: a JSON verdict) and records LangSmith upload bodies (`LANGSMITH_BODIES`) so redaction can be checked.
+Module 03 notebooks write SQLite files under `data/outputs/memory/`, Module 04 writes outboxes, audit logs and a SQLite file under `data/outputs/m04/`, Module 05 writes notes, an IDE config example and an audit log under `data/outputs/m05/`, Module 06 writes Chroma folders under `data/vectorstores/`, an embedding cache under `data/cache/` and reports under `data/outputs/m06/` (all git-ignored); delete those folders after QA runs. The mock also answers the two Groq safety models (Prompt Guard: a score; safeguard: a JSON verdict) and records LangSmith upload bodies (`LANGSMITH_BODIES`) so redaction can be checked.
 
 `--mock` starts [`mock_groq.py`](../_maintainer/tools/qa/mock_groq.py), a local HTTP server that imitates the Groq API (chat, streaming with reasoning, `json_schema`/tool calls, 401, 429 + `retry-after`, decommissioned models, images, rate-limit headers, job-posting answers with deliberate mistakes; since Module 02 an **agent mode** that picks a tool from the question, fills arguments, makes one call per turn and answers `ToolStrategy` schemas from tool results; a 400 for `json_schema` + tools, as Groq documents; built-in `browser_search` with `executed_tools` incl. `search_results` URLs; since Module 05 a **Tavily** stand-in at `/tavily/search`, enabled with `TAVILY_BASE_URL` and a mock `tvly-` key) and accepts LangSmith uploads, then points `GROQ_BASE_URL`/`LANGSMITH_ENDPOINT` at it. It proves the code paths run; it says nothing about real model quality.

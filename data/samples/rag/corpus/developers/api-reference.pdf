@@ -1,0 +1,91 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 219 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+56 780 Td
+(Orbita API Reference v2. Page 1: Basics. The base URL is https://api.orbita.example/v2.) Tj T*
+(Authenticate with a bearer token created in the dashboard under Developer > Tokens.) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 244 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+56 780 Td
+(Orbita API Reference v2. Page 2: Limits. Each token may make 600 requests per hour.) Tj T*
+(Responses include X-RateLimit-Remaining. Exceeding the limit returns HTTP 429 with a) Tj T*
+(Retry-After header.) Tj T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 217 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+56 780 Td
+(Orbita API Reference v2. Page 3: Readings. GET /stations/{id}/readings returns readings) Tj T*
+(for a time range \(maximum 31 days per request\). Timestamps are ISO 8601 in UTC.) Tj T*
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 242 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+56 780 Td
+(Orbita API Reference v2. Page 4: Webhooks. Webhooks fire on alerts. Failed deliveries) Tj T*
+(are retried 5 times with exponential backoff, then the webhook is disabled and the owner) Tj T*
+(is emailed.) Tj T*
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 10 0 R >>
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000134 00000 n 
+0000000204 00000 n 
+0000000474 00000 n 
+0000000600 00000 n 
+0000000895 00000 n 
+0000001021 00000 n 
+0000001289 00000 n 
+0000001415 00000 n 
+0000001709 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R /Info << /Title (Orbita Labs) /Producer (course data.py) >> >>
+startxref
+1837
+%%EOF

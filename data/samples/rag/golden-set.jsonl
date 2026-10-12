@@ -1,0 +1,20 @@
+{"id": "g01", "question": "What is the price of the Nimbus Pro?", "expected_sources": ["products/nimbus-pro.md"], "answer_contains": "US$349", "in_corpus": true}
+{"id": "g02", "question": "What is the radio range of the Nimbus Agro?", "expected_sources": ["products/nimbus-agro.md"], "answer_contains": "2000 m", "in_corpus": true}
+{"id": "g03", "question": "Which Wi-Fi frequency does the display bridge need?", "expected_sources": ["support/faq-wifi.md"], "answer_contains": "2.4 GHz", "in_corpus": true}
+{"id": "g04", "question": "How long is the account locked after too many failed sign-ins?", "expected_sources": ["support/faq-app-login.md"], "answer_contains": "15 minutes", "in_corpus": true}
+{"id": "g05", "question": "What does error E12 mean on the Nimbus Pro?", "expected_sources": ["manuals/nimbus-pro-manual.pdf"], "answer_contains": "rain gauge is blocked", "in_corpus": true}
+{"id": "g06", "question": "How often should a Marine station be rinsed with fresh water?", "expected_sources": ["manuals/nimbus-marine-manual.pdf"], "answer_contains": "once a month", "in_corpus": true}
+{"id": "g07", "question": "What is the restocking fee for opened products?", "expected_sources": ["policies/returns.md"], "answer_contains": "10%", "in_corpus": true}
+{"id": "g08", "question": "How many requests per hour does the API allow per token?", "expected_sources": ["developers/api-reference.pdf"], "answer_contains": "600", "in_corpus": true}
+{"id": "g09", "question": "How long are raw readings kept?", "expected_sources": ["policies/data-retention.md", "support/faq-data-export.md"], "answer_contains": "24 months", "in_corpus": true}
+{"id": "g10", "question": "Which firmware version added Matter support?", "expected_sources": ["release-notes/firmware-4.0.md"], "answer_contains": "4.0", "in_corpus": true}
+{"id": "g11", "question": "How much battery life does battery saver mode add?", "expected_sources": ["release-notes/firmware-3.2.md"], "answer_contains": "20%", "in_corpus": true}
+{"id": "g12", "question": "What is the pass mark of the installer certification exam?", "expected_sources": ["partners/installer-certification.pdf"], "answer_contains": "80 percent", "in_corpus": true}
+{"id": "g13", "question": "At what charge level should spare battery packs be stored?", "expected_sources": ["compliance/battery-handling.pdf"], "answer_contains": "40 to 60 percent", "in_corpus": true}
+{"id": "g14", "question": "How much does the Business service plan cost?", "expected_sources": ["plans/service-plans.pdf"], "answer_contains": "US$12 per month per station", "in_corpus": true}
+{"id": "g15", "question": "How high above the ground should the station be mounted?", "expected_sources": ["guides/installation.md"], "answer_contains": "1.5 m", "in_corpus": true}
+{"id": "g16", "question": "What was the most common hardware failure in 2025?", "expected_sources": ["reports/reliability-report-2025.pdf"], "answer_contains": "humidity sensor drift", "in_corpus": true}
+{"id": "g17", "question": "What is the price of the Nimbus Ultra?", "expected_sources": [], "answer_contains": null, "in_corpus": false}
+{"id": "g18", "question": "Who founded Orbita Labs?", "expected_sources": [], "answer_contains": null, "in_corpus": false}
+{"id": "g19", "question": "Does Orbita sell a smart thermostat?", "expected_sources": [], "answer_contains": null, "in_corpus": false}
+{"id": "g20", "question": "What will the weather be in Bogota tomorrow?", "expected_sources": [], "answer_contains": null, "in_corpus": false}

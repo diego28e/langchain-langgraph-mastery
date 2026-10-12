@@ -1,0 +1,93 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+4 0 obj
+<< /Length 254 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+56 780 Td
+(Nimbus Pro User Manual. Page 1: Overview. The Nimbus Pro measures temperature, humidity,) Tj T*
+(pressure, wind speed and direction, rainfall and UV index. It reports to the display) Tj T*
+(bridge every 60 seconds.) Tj T*
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 274 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+56 780 Td
+(Nimbus Pro User Manual. Page 2: Setup. Charge the 3,400 mAh pack for 4 hours before) Tj T*
+(first use. Align the arrow on the wind vane with true north; the app has a compass) Tj T*
+(helper. Level the station with the built-in bubble.) Tj T*
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 267 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+56 780 Td
+(Nimbus Pro User Manual. Page 3: Maintenance. Clean the rain gauge funnel every 3 months) Tj T*
+(and after storms; leaves and insects block it. Wipe the solar panel monthly. Replace the) Tj T*
+(anemometer bearings every 3 years.) Tj T*
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 289 >>
+stream
+BT
+/F1 11 Tf
+14 TL
+56 780 Td
+(Nimbus Pro User Manual. Page 4: Troubleshooting. Error E12 means the rain gauge is) Tj T*
+(blocked: clean the funnel. Error E31 means the wind sensor is not turning: check for ice) Tj T*
+(or debris. Error E40 means the battery is too cold to charge.) Tj T*
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 10 0 R >>
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000134 00000 n 
+0000000204 00000 n 
+0000000509 00000 n 
+0000000635 00000 n 
+0000000960 00000 n 
+0000001086 00000 n 
+0000001404 00000 n 
+0000001530 00000 n 
+0000001871 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R /Info << /Title (Orbita Labs) /Producer (course data.py) >> >>
+startxref
+1999
+%%EOF

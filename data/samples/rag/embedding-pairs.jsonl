@@ -1,0 +1,10 @@
+{"question": "How many weeks can I wait before sending a purchase back?", "expected_source": "policies/returns.md"}
+{"question": "Is it okay to install the device when there is lightning outside?", "expected_source": "compliance/safety-and-compliance.pdf"}
+{"question": "My account got blocked after typing the wrong password several times", "expected_source": "support/faq-app-login.md"}
+{"question": "The router at home only broadcasts on the fast band, will it connect?", "expected_source": "support/faq-wifi.md"}
+{"question": "Where do I tell you about a hole in your software?", "expected_source": "policies/security-disclosure.md"}
+{"question": "Which model works on a sailboat?", "expected_source": "products/nimbus-marine.md"}
+{"question": "Do you hand my information to advertisers?", "expected_source": "policies/privacy.md"}
+{"question": "How cold can it get before the cells give less power?", "expected_source": "support/faq-battery.md"}
+{"question": "What clamp size fits my mast or pole?", "expected_source": "guides/mounting.md"}
+{"question": "Can I see the readings from my phone's smart home app?", "expected_source": "release-notes/firmware-4.0.md"}

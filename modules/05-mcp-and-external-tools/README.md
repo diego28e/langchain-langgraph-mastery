@@ -110,4 +110,4 @@ Check whether `langchain.mcp` is still beta (05.02 prints the `LangChainBetaWarn
 
 ---
 
-← [Module 04](../04-middleware-guardrails-hitl/README.md) · [Course outline](../../COURSE_OUTLINE.md) · Module 06 →
+← [Module 04](../04-middleware-guardrails-hitl/README.md) · [Course outline](../../COURSE_OUTLINE.md) · [Module 06](../06-rag/README.md) →

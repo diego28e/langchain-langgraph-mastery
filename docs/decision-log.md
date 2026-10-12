@@ -133,4 +133,27 @@
 - Decision: new extra `mcp = ["langchain[mcp]>=1.4.4,<2", "langchain-tavily>=0.2.18,<1"]` (PyPI 2026-10-12: langchain 1.4.4 pulls fastmcp 4.1.0 + mcp 2.3.0; langchain-tavily 0.2.18), included in `[dev]`, so `pip install -e ".[dev]"` (the usual step) installs it and `pytest` covers MCP offline. `requirements.txt` already listed both.
 - Trade-offs: a slightly bigger dev install (fastmcp brings uvicorn/starlette/httpx, mostly already present).
 
+### D-018 · A `[rag]` extra in `[dev]`; no `langchain-community` · 2026-10-12
+- Decision: `rag = [langchain-text-splitters>=1.1.3, langchain-chroma>=1.1.0, pypdf>=6.20.1, beautifulsoup4>=4.15.0]`, included in `[dev]`. Loaders are ~100 lines in `mastery/rag/loaders.py` on pypdf and bs4 directly, instead of `langchain-community` loaders.
+- Evidence: PyPI 2026-10-12 (chromadb 1.5.9 comes with langchain-chroma); the docs' Cohere reranker page states `langchain-community` is no longer maintained.
+- Trade-offs: fewer loader formats; Docling (`langchain-docling`) and Unstructured (`langchain-unstructured`) are shown as options in 06.02, not installed.
+
+### D-019 · Local embeddings optional, with a Hashing fallback · 2026-10-12
+- Decision: `[embeddings]` (fastembed) stays **out** of `[dev]`; Module 06 asks for `pip install -e ".[dev,embeddings]"`. `default_embeddings()` uses `BAAI/bge-small-en-v1.5` (384 dims, ~67 MB once) and falls back to `HashingEmbeddings(1024)` with a ⚠️ when fastembed or the download is unavailable. Tests always use Hashing (no download in CI).
+- Evidence: measured on the golden set: R@1 0.72 (Hashing) vs 0.91 (bge); paraphrases MRR 0.61 vs 0.88.
+- Trade-offs: a learner who skips the extra sees worse retrieval, explained in the ⚠️ and in 06.04.
+
+### D-020 · Chroma: cosine, one collection per embedding model, ids = `chunk_id`, 1-based pages · 2026-10-12
+- Decision: `build_index(kind="chroma")` sets `hnsw.space = cosine`, disables telemetry, names folders/collections after the model (`nimbus-bge-small-en-v1-5`, `project06-...`) so vectors from two models never mix, and uses `chunk_id = source#p<page>-c<n>` as id (re-indexing upserts). `retrieve` reports `1 − distance` as `score`. Pages are 1-based everywhere (what a reader sees in a PDF viewer).
+- Evidence: Chroma default space is l2; collection names need ≥3 characters; `None` metadata values are rejected (measured, chromadb 1.5.9).
+
+### D-021 · Own BM25; re-ranking optional, not the default · 2026-10-12
+- Decision: a ~40-line pure-Python `BM25` (no `rank_bm25` dependency; the docs' `retrievers/bm25` page is gone) plus `rrf`. The fastembed cross-encoder (`Xenova/ms-marco-MiniLM-L-6-v2`) and Cohere `rerank-v4.0-fast` are taught and measured, but not on by default.
+- Evidence: 06.08 ablation: hybrid raised paraphrase R@1 0.8 → 0.9; re-ranking gave no gain (hybrid+rerank 0.8). Project 06 golden set: identical totals.
+- Revisit: with a harder or real query set.
+
+### D-022 · Offline readers that quote instead of a model; explicit multi-query · 2026-10-12
+- Decision: offline notebooks and tests answer with `extractive_answer` (IDF-weighted term coverage over retrieved sentences; abstains when too many question terms are unseen). It only copies text, so it never fabricates; it gets 12/16 on the golden set honestly and its limits are shown (06.09). Multi-query is written as an explicit `SearchQueries` structured call, not `MultiQueryRetriever` (community).
+- Trade-offs: offline correctness is not model quality; LIVE results are the real measure.
+
 <!-- Add your decisions below this line -->

@@ -71,7 +71,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | 03 | [Memory & Context Engineering](modules/03-memory-and-context/) | ✅ Built |
 | 04 | [Middleware, Guardrails & Human-in-the-Loop](modules/04-middleware-guardrails-hitl/) | ✅ Built |
 | 05 | [MCP & External Tools](modules/05-mcp-and-external-tools/) | ✅ Built |
-| 06 | [Documents, Embeddings & RAG](modules/06-rag/) | 📝 Planned |
+| 06 | [Documents, Embeddings & RAG](modules/06-rag/) | ✅ Built |
 | 07 | [LangGraph Fundamentals](modules/07-langgraph-fundamentals/) | 📝 Planned |
 | 08 | [LangGraph Production Features](modules/08-langgraph-production-features/) | 📝 Planned |
 

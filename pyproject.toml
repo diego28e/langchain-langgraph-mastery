@@ -49,8 +49,10 @@ studio = [
 memory = [
     "langgraph-checkpoint-sqlite>=3.1.1,<4",
 ]
-# Optional local embeddings for semantic memory search (Module 03 stretch).
-# NOT in [dev]: ~150 MB of wheels (onnxruntime) + a ~70 MB model download.
+# Local embeddings (Module 03 stretch; Module 06 lessons) and the local cross-encoder re-ranker (06.08).
+# NOT in [dev]: ~150 MB of wheels (onnxruntime) + model downloads (~67 MB embeddings, ~80 MB re-ranker).
+# Module 06 installs it with: python -m pip install -e ".[dev,embeddings]". Without it, lessons fall back
+# to the offline HashingEmbeddings and every test still passes.
 # VERIFIED 2026-10-12: fastembed 0.9.0 is current on PyPI (ONNX, no PyTorch).
 embeddings = [
     "fastembed>=0.9.0,<1",
@@ -61,6 +63,17 @@ embeddings = [
 mcp = [
     "langchain[mcp]>=1.4.4,<2",
     "langchain-tavily>=0.2.18,<1",
+]
+# RAG (Module 06): mastery.rag (loaders, splitters, Chroma persistence).
+# VERIFIED 2026-10-12 on PyPI: langchain-text-splitters 1.1.3, langchain-chroma 1.1.0
+# (pulls chromadb 1.5.x), pypdf 6.20.1, beautifulsoup4 4.15.0. Loaders use pypdf/bs4 directly,
+# as the LangChain knowledge-base tutorial now does (no langchain-community).
+# Local embeddings and re-ranking (fastembed, ONNX) stay in [embeddings].
+rag = [
+    "langchain-text-splitters>=1.1.3,<2",
+    "langchain-chroma>=1.1.0,<2",
+    "pypdf>=6.20.1,<7",
+    "beautifulsoup4>=4.15.0,<5",
 ]
 # Developer tools: `python -m pip install -e ".[dev]"`
 # Includes the llm extra so every unit test runs (offline, with fake models).
@@ -77,6 +90,8 @@ dev = [
     "mastery[memory]",
     # Module 05: FastMCP servers, MCPAdapter and Tavily, so every MCP test runs offline.
     "mastery[mcp]",
+    # Module 06: splitters, PDF/HTML loaders and Chroma, so every RAG test runs offline.
+    "mastery[rag]",
 ]
 
 [tool.setuptools.packages.find]

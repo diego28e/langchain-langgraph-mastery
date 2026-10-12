@@ -61,6 +61,8 @@ data/outputs/
 /.mcp.json
 /.cursor/mcp.json
 data/vectorstores/
+# Embedding cache (Module 06: mastery.rag.CachedEmbeddings)
+data/cache/
 chroma/
 chroma_db/
 .chroma/
