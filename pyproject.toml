@@ -1,0 +1,50 @@
+# =============================================================================
+# pyproject.toml: packaging for the course's reusable `mastery` package.
+#
+# Introduced in Module 00 (Lesson 00.02 guide + Lesson 00.04). Install it into
+# the course environment ONCE, in "editable" mode, from the repo root:
+#
+#     python -m pip install -e .
+#
+# "Editable" means Python imports the code straight from src/mastery/, so every
+# change you make there is visible after a kernel restart (or %autoreload,
+# taught in Module 03). Dependencies listed here are only the ones `mastery`
+# imports itself; lesson packages (langchain, langchain-groq, ...) are
+# installed per lesson with %pip (see requirements.txt).
+# Versions verified on PyPI on 2026-10-11.
+# =============================================================================
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mastery"
+version = "0.1.0"
+description = "Reusable helpers grown module by module in the Modern LangChain & LangGraph Mastery course."
+readme = "src/README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "python-dotenv>=1.2.4,<2",  # mastery.config: load .env files
+    "httpx>=0.28.1,<1",         # mastery.groq_catalog: call the Groq Models API
+]
+
+[project.optional-dependencies]
+# Developer tools: `python -m pip install -e ".[dev]"`
+dev = [
+    "pytest>=9.1.1,<10",
+    "nbformat>=5.11.1,<6",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+# Lets `pytest` import `mastery` from src/ even before `pip install -e .`.
+pythonpath = ["src"]
+testpaths = ["tests"]
+markers = [
+    "integration: calls real APIs and needs keys in .env (run with: pytest -m integration)",
+]
+# Unit tests only by default: no network, no API keys, fast.
+addopts = "-m 'not integration'"

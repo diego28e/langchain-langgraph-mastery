@@ -1,0 +1,92 @@
+{
+  "_comment": "ILLUSTRATIVE SAMPLE, not a live API response. Built by hand on 2026-10-11 from the Production and Preview tables on https://console.groq.com/docs/models (Enterprise-only models omitted) using the field names in https://console.groq.com/docs/api-reference#models-list. Used by unit tests and by Project 00's offline demo mode. Your live list may differ.",
+  "object": "list",
+  "data": [
+    {
+      "id": "canopylabs/orpheus-arabic-saudi",
+      "object": "model",
+      "owned_by": "Canopy Labs",
+      "active": true,
+      "context_window": 4000,
+      "max_completion_tokens": 50000,
+      "public_apps": null
+    },
+    {
+      "id": "canopylabs/orpheus-v1-english",
+      "object": "model",
+      "owned_by": "Canopy Labs",
+      "active": true,
+      "context_window": 4000,
+      "max_completion_tokens": 50000,
+      "public_apps": null
+    },
+    {
+      "id": "meta-llama/llama-prompt-guard-2-22m",
+      "object": "model",
+      "owned_by": "Meta",
+      "active": true,
+      "context_window": 512,
+      "max_completion_tokens": 512,
+      "public_apps": null
+    },
+    {
+      "id": "meta-llama/llama-prompt-guard-2-86m",
+      "object": "model",
+      "owned_by": "Meta",
+      "active": true,
+      "context_window": 512,
+      "max_completion_tokens": 512,
+      "public_apps": null
+    },
+    {
+      "id": "openai/gpt-oss-120b",
+      "object": "model",
+      "owned_by": "OpenAI",
+      "active": true,
+      "context_window": 131072,
+      "max_completion_tokens": 65536,
+      "public_apps": null
+    },
+    {
+      "id": "openai/gpt-oss-20b",
+      "object": "model",
+      "owned_by": "OpenAI",
+      "active": true,
+      "context_window": 131072,
+      "max_completion_tokens": 65536,
+      "public_apps": null
+    },
+    {
+      "id": "openai/gpt-oss-safeguard-20b",
+      "object": "model",
+      "owned_by": "OpenAI",
+      "active": true,
+      "context_window": 131072,
+      "max_completion_tokens": 65536,
+      "public_apps": null
+    },
+    {
+      "id": "qwen/qwen3.8-27b",
+      "object": "model",
+      "owned_by": "Alibaba Cloud",
+      "active": true,
+      "context_window": 131072,
+      "max_completion_tokens": 16384,
+      "public_apps": null
+    },
+    {
+      "id": "whisper-large-v3",
+      "object": "model",
+      "owned_by": "OpenAI",
+      "active": true,
+      "public_apps": null
+    },
+    {
+      "id": "whisper-large-v3-turbo",
+      "object": "model",
+      "owned_by": "OpenAI",
+      "active": true,
+      "public_apps": null
+    }
+  ]
+}

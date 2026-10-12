@@ -2,13 +2,25 @@
 
 This package grows module by module. Whenever code is needed in a second notebook, it moves here (with a unit test in `tests/unit/`). By the end of the course, it is a small, production-style toolkit you understand line by line.
 
-> No code yet. The package is created in Module 00 (Lesson 00.04, `config.py`).
+> **Status:** Module 00 code is in place (`config.py`, `groq_catalog.py`), with unit tests in [`tests/unit/`](../tests/unit/).
+
+## Install once (Git Bash, course env active, repo root)
+
+```bash
+conda activate lc-mastery
+python -m pip install -e ".[dev]"      # quotes keep bash from treating [dev] as a pattern
+python -c 'import mastery; print(mastery.__version__)'   # expect: 0.1.0
+python -m pytest                       # expect: all passed, no network or keys needed
+```
+
+Step-by-step with troubleshooting: [Lesson 00.02 guide](../modules/00-foundations/00-02-create-course-env.md).
 
 ## Planned layout
 
 | Module | Path | Purpose |
 |---|---|---|
-| 00 | `mastery/config.py` | Load `.env`, validate required keys, friendly errors |
+| 00 | `mastery/config.py` | Load `.env`, validate required keys, friendly errors, course settings (model IDs) |
+| 00 | `mastery/groq_catalog.py` | List live Groq models via the Models API; friendly HTTP errors |
 | 01 | `mastery/models.py` | `get_model(role, provider)`: model IDs from config, never hard-coded. Includes the paid benchmark (OpenAI by default, Gemini optional) |
 | 02 | `mastery/tools/` | Reusable, tested tools |
 | 03 | `mastery/memory.py` | Checkpointer and store factories |
@@ -22,4 +34,4 @@ This package grows module by module. Whenever code is needed in a second noteboo
 | 12 | `mastery/evals/` | Shared evaluators and dataset builders |
 | 13 | `mastery/service/` | FastAPI app factory, `pydantic-settings` config, API-key auth, SSE helpers (self-hosted with Docker) |
 
-Notebooks import it after an editable install (`pip install -e .`, set up when `pyproject.toml` is added in Module 00) and use `%autoreload 2` (Module 03) while developing.
+Notebooks import it after the editable install above (packaging is defined in [`pyproject.toml`](../pyproject.toml)). If it isn't installed, each notebook's setup cell falls back to `src/` and tells you how to fix it. While editing `src/mastery`, restart the kernel to pick up changes, or use `%autoreload 2` (Module 03).
