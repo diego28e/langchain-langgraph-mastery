@@ -287,7 +287,32 @@ Quick index of the failures learners hit most, also after pulling a new module. 
 | `ImportError` / missing name right after `git pull` | A new module added code or packages: rerun `python -m pip install -e ".[dev]"`, then restart the kernel |
 | **Python (lc-mastery)** missing from the kernel list | Redo [Step 6](#step-6--register-the-environment-as-a-jupyter-kernel), then reload the Jupyter browser tab |
 | `pytest` fails in `test_notebook_hygiene` | A notebook was saved with outputs: see the table under [Step 5](#step-5--install-the-course-package-mastery-in-editable-mode) |
+| `ERROR: pip's dependency resolver does not currently take into account all the packages that are installed...` followed by `X requires Y~=1.42.1, but you have Y 1.45.1` | See [Dependency warnings after an install](#dependency-warnings-after-an-install) below |
 | `PermissionError: [WinError 32]` deleting a file in `data/outputs/` | A kernel still has it open: **Kernel → Shut Down**, then delete |
+
+### Dependency warnings after an install
+
+`pip install` can finish with `Successfully installed ...` **and** print this first:
+
+```text
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed.
+This behaviour is the source of the following dependency conflicts.
+opentelemetry-exporter-prometheus 0.63b1 requires opentelemetry-sdk~=1.42.1, but you have opentelemetry-sdk 1.45.1 which is incompatible.
+```
+
+**How to read it:** pip only re-checks the packages it touched in *this* install. The line names a package already in your environment (`opentelemetry-exporter-prometheus`), the version range it needs (`~=1.42.1` = 1.42.x), and what is installed now (1.45.1). Imports usually still work; it is a warning about a package pip did not reconsider, often a **leftover** from an older version of something else.
+
+**What to do (Git Bash, repo root, `(lc-mastery)` active):**
+
+```bash
+python -m pip install -e ".[dev,embeddings]"     # 1. re-install with the current pins (drop ,embeddings if you don't use Module 06+)
+python -m pip check                              # 2. list every conflict; expect: No broken requirements found.
+python -m pip show opentelemetry-exporter-prometheus | grep Required-by   # 3. for each package pip check names
+```
+
+- `Required-by:` **empty** → nothing needs it (a leftover). Remove it: `python -m pip uninstall -y <name>`, then run `python -m pip check` again.
+- `Required-by:` lists something → don't uninstall; rerun step 1 after `git pull` (the course may have fixed a pin), or note the two lines and ask.
+- `python -m pytest -q` also runs `test_course_stack_dependencies_are_consistent`, the same check limited to the course's packages ([decision D-023](../../docs/decision-log.md)).
 
 Still stuck? Copy the full error (no keys!) plus the output of `which python` and `python --version` into your notes before asking for help.
 

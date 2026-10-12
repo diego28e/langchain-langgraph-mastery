@@ -40,8 +40,12 @@ llm = [
 # LangSmith Studio / local Agent Server (Module 02, Lesson 02.07): `langgraph dev`.
 # VERIFIED 2026-10-12: langgraph-cli 0.4.33 is current on PyPI; the [inmem]
 # extra pulls langgraph-api (needs Python >= 3.11).
+# langgraph-api lower bound (D-023): chromadb ([rag]) pulls opentelemetry-exporter-otlp-proto-grpc with no
+# upper bound; without this floor pip picks otlp 1.45 and silently backtracks langgraph-api to 0.10.x (whose
+# opentelemetry pins it accepts) instead of keeping the current Agent Server. Measured 2026-10-12.
 studio = [
     "langgraph-cli[inmem]>=0.4.33,<1",
+    "langgraph-api>=0.16.0,<1",
 ]
 # Memory (Module 03): SqliteSaver / SqliteStore for mastery.memory.
 # VERIFIED 2026-10-12: langgraph-checkpoint-sqlite 3.1.1 is current on PyPI;

@@ -72,7 +72,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | 04 | [Middleware, Guardrails & Human-in-the-Loop](modules/04-middleware-guardrails-hitl/) | ✅ Built |
 | 05 | [MCP & External Tools](modules/05-mcp-and-external-tools/) | ✅ Built |
 | 06 | [Documents, Embeddings & RAG](modules/06-rag/) | ✅ Built |
-| 07 | [LangGraph Fundamentals](modules/07-langgraph-fundamentals/) | 📝 Planned |
+| 07 | [LangGraph Fundamentals](modules/07-langgraph-fundamentals/) | ✅ Built |
 | 08 | [LangGraph Production Features](modules/08-langgraph-production-features/) | 📝 Planned |
 
 ### Part 2 — Pro

@@ -4,7 +4,7 @@
 |---|---|---|
 | `samples/` | ✅ Yes (small files only, < 1 MB each) | Sample CSVs, short texts, tiny audio clips used by lessons |
 | `raw/` | ❌ Gitignored | Downloaded corpora (created by notebook cells) |
-| `outputs/` | ❌ Gitignored | Generated results, audio, charts, checkpoints. Module 03: `outputs/memory/*.sqlite` (conversations and learner memories: personal data, never commit) and `outputs/scratch/` (the 03.01 autoreload demo module). Module 04: `outputs/m04/` (fake outboxes, audit logs, the 04.06 SQLite pause). Module 05: `outputs/m05/` (notes as UTF-8 JSON per user, `mcp.json` IDE config example, project audit log). Module 06: `outputs/m06/` (eval reports, the Project 06 comparison table) |
+| `outputs/` | ❌ Gitignored | Generated results, audio, charts, checkpoints. Module 03: `outputs/memory/*.sqlite` (conversations and learner memories: personal data, never commit) and `outputs/scratch/` (the 03.01 autoreload demo module). Module 04: `outputs/m04/` (fake outboxes, audit logs, the 04.06 SQLite pause). Module 05: `outputs/m05/` (notes as UTF-8 JSON per user, `mcp.json` IDE config example, project audit log). Module 06: `outputs/m06/` (eval reports, the Project 06 comparison table). Module 07: `outputs/m07/` (`expenses.sqlite` for 07.07, the pipeline diagram, `langgraph dev` logs, `project07-runs.json`) |
 | `vectorstores/` | ❌ Gitignored | Persisted Chroma and other indexes. Module 06: `nimbus-<model>/` (Lesson 06.05), `scratch-demo/`, `project06-<model>/` (Project 06, reused in Project 08) |
 | `cache/` | ❌ Gitignored | Module 06: `cache/embeddings/<namespace>.sqlite` (`CachedEmbeddings`: vectors keyed by text hash; safe to delete) |
 

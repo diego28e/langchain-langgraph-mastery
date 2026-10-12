@@ -156,4 +156,32 @@
 - Decision: offline notebooks and tests answer with `extractive_answer` (IDF-weighted term coverage over retrieved sentences; abstains when too many question terms are unseen). It only copies text, so it never fabricates; it gets 12/16 on the golden set honestly and its limits are shown (06.09). Multi-query is written as an explicit `SearchQueries` structured call, not `MultiQueryRetriever` (community).
 - Trade-offs: offline correctness is not model quality; LIVE results are the real measure.
 
+### D-023 · A floor on `langgraph-api` so Chroma can't downgrade the Agent Server · 2026-10-12
+- Context: after Module 06, `pip install -e ".[dev,embeddings]"` downgraded langgraph-api 0.16.0 → 0.10.3 and langgraph-runtime-inmem 0.36.0 → 0.30.3, upgraded OpenTelemetry to 1.45.1, and warned `opentelemetry-exporter-prometheus 0.63b1 requires opentelemetry-sdk~=1.42.1`.
+- Root cause (reproduced on Python 3.13, fresh and upgrade installs): chromadb 1.5.9 (via langchain-chroma) requires `opentelemetry-exporter-otlp-proto-grpc>=1.2.0` with no upper bound; pip takes the newest (1.45.1, needs `opentelemetry-sdk~=1.45.1`). langgraph-api 0.16.0 requires `opentelemetry-exporter-prometheus>=0.63b1,<0.64`, which needs `opentelemetry-sdk~=1.42.1`. pip resolves the conflict by backtracking the package with no floor, langgraph-api, to 0.10.3 (no prometheus exporter, grpcio 1.80). On upgrades the old prometheus exporter stays behind as an orphan.
+- Decision: `[studio]` (in `[dev]`) adds `langgraph-api>=0.16.0,<1`; requirements.txt too. pip then keeps langgraph-api 0.16.0 and picks otlp-proto-grpc 1.42.1. `mastery.doctor.check_dependencies()` (a focused `pip check` + the floor) runs in pytest. Rejected: pinning chromadb/opentelemetry (brittle, every langgraph-api release moves its OpenTelemetry pin) and moving Chroma out of `[dev]` (RAG tests need it offline).
+- Evidence: fresh install → langgraph-api 0.16.0, runtime-inmem 0.36.0, grpcio 1.81.1, otel-sdk 1.42.1, chromadb 1.5.9, `pip check` clean; upgrade from the broken state → same, plus two orphans (`opentelemetry-exporter-otlp-common`, `opentelemetry-exporter-http-transport` 0.66b1, nothing requires them) removed by hand; `langgraph dev` serves the Module 02 graph.
+- Revisit: when langgraph-api moves to a newer OpenTelemetry (raise the floor with it) or chromadb bounds its exporter.
+
+### D-024 · `mastery.graphs`: one reference pipeline shared by app, tests and solution · 2026-10-12
+- Decision: Project 07's graph lives in `mastery/graphs/content.py` (`build_content_graph`). `apps/m07_content_pipeline/pipeline.py` serves it, `tests/unit/test_graphs.py` tests it, and the project notebook rebuilds it node by node (the learner writes `fan_out`, `revise`, the router) and checks node names and scores against the served app. Reusable pieces (`timed`, `loop_router`, reducers, `show_graph`, `DevServer`) sit next to it.
+- Trade-offs: the solution and the app could drift; the acceptance check "same node names, same offline scores" catches it.
+
+### D-025 · Offline content models and keyless `langgraph dev` · 2026-10-12
+- Decision: `offline_models()` scripts planner, writer and critic (critic: 4 + 2 per fixed issue; writer fixes one issue per revision), so the loop visibly improves (4 → 6 → 8) without a key. The app uses them when `GROQ_API_KEY` is missing or `MASTERY_OFFLINE=1`; notebooks start the server with `MASTERY_OFFLINE=1` by default (no tokens spent by Restart & Run All). Research is BM25 sentence picking over the Module 06 corpus (copies text, never invents).
+- Apps live in repo-root `apps/` (CONVENTIONS), Module 02's `studio/` folders stay where they are.
+
+### D-026 · Default recursion limit: teach "measure it", not a number · 2026-10-12
+- Context: the docs say the default `recursion_limit` is 1000; langgraph 1.2.14 uses 10007 (`DEFAULT_RECURSION_LIMIT`, overridable with `LANGGRAPH_DEFAULT_RECURSION_LIMIT`), measured on the box.
+- Decision: 07.03 prints the installed value and always sets `recursion_limit` explicitly on loops; termination is a counter in state (`loop_router`), the limit is only the safety net.
+
+### D-027 · Read-only SQL helpers instead of `SQLDatabase`/community toolkits · 2026-10-12
+- Decision: 07.07 uses `mastery/graphs/sql.py` (~100 lines on `sqlite3`): one `SELECT`/`WITH` statement, `LIMIT` added, file opened with `mode=ro` **and** an authorizer that allows only reads. No `langchain-community` (unmaintained, D-018).
+- Trade-offs: SQLite only; production uses a read-only DB role and timeouts (production notes).
+
+### D-028 · Register Pydantic state types for checkpoints · 2026-10-12
+- Context: langgraph 1.2.14 warns "Deserializing unregistered type mastery.graphs.state.Outline from checkpoint. This will be blocked in a future version" when Pydantic objects in state are read back from `InMemorySaver`.
+- Decision: `memory_checkpointer()` builds `InMemorySaver(serde=JsonPlusSerializer(allowed_msgpack_modules=CHECKPOINT_TYPES))`; notebooks and tests that read history use it. The `langgraph dev` server showed no such warning in its log (verified).
+- Revisit: Module 08 (SQLite/Postgres checkpointers need the same serde).
+
 <!-- Add your decisions below this line -->

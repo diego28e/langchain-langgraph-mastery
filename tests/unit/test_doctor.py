@@ -62,3 +62,32 @@ def test_load_settings_raises_clear_error(no_ssl_vars: pytest.MonkeyPatch) -> No
     no_ssl_vars.setenv("SSL_CERT_FILE", BAD_PATH)
     with pytest.raises(CertificateSettingError):
         load_settings(load_dotenv_file=False)
+
+
+def test_course_stack_dependencies_are_consistent() -> None:
+    """A focused `pip check`: fails on version conflicts in the langgraph/langchain/opentelemetry/grpc/chroma stack."""
+    from mastery.doctor import check_dependencies
+
+    problems = check_dependencies()
+    assert not problems, "Fix with the commands in modules/06-rag/README.md (Before you start):\n" + "\n".join(problems)
+
+
+def test_check_dependencies_reports_unmet_requirements(monkeypatch) -> None:
+    from importlib import metadata
+
+    from mastery import doctor
+
+    class Dist:
+        def __init__(self, name, version, requires=()):
+            self.metadata = {"Name": name}
+            self.version = version
+            self.requires = list(requires)
+
+    fake = [Dist("opentelemetry-exporter-prometheus", "0.63b1", ["opentelemetry-sdk~=1.42.1"]),
+            Dist("opentelemetry-sdk", "1.45.1"), Dist("langgraph-api", "0.10.3"),
+            Dist("langchain-x", "1.0", ['missing-pkg>=1; extra == "never"'])]
+    monkeypatch.setattr(metadata, "distributions", lambda: fake)
+    problems = doctor.check_dependencies()
+    assert any("opentelemetry-sdk~=1.42.1, but 1.45.1" in p for p in problems)
+    assert any("langgraph-api 0.10.3 is older than 0.16.0" in p for p in problems)
+    assert not any("missing-pkg" in p for p in problems)          # extras-only requirements are ignored

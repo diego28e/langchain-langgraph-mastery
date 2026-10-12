@@ -1,7 +1,8 @@
 """mastery.doctor: catch broken environment settings early, with a clear fix.
 
-Today it checks one thing: the TLS certificate variables ``SSL_CERT_FILE`` and
-``SSL_CERT_DIR``.
+It checks the TLS certificate variables ``SSL_CERT_FILE`` and ``SSL_CERT_DIR``,
+and (since Module 06) whether the installed packages of the course stack agree with
+each other (:func:`check_dependencies`, a focused ``pip check``).
 
 Why this exists
 ---------------
@@ -31,7 +32,7 @@ import os
 from collections.abc import Mapping
 from pathlib import Path
 
-__all__ = ["CertificateSettingError", "check_ssl_env", "require_valid_ssl_env"]
+__all__ = ["CertificateSettingError", "check_dependencies", "check_ssl_env", "require_valid_ssl_env"]
 
 FIX_HINT = (
     "Fix (Git Bash on Windows, with the course env active):\n"
@@ -73,3 +74,54 @@ def require_valid_ssl_env(environ: Mapping[str, str] | None = None) -> None:
     problems = check_ssl_env(environ)
     if problems:
         raise CertificateSettingError("\n".join([*problems, "", FIX_HINT]))
+
+
+# Packages whose versions fight in this course (langgraph-api pins grpcio and opentelemetry; chromadb pulls them too).
+STACK_PREFIXES = ("langgraph", "langchain", "opentelemetry", "grpcio", "chromadb", "protobuf", "fastembed", "mcp", "fastmcp")
+MIN_VERSIONS = {"langgraph-api": "0.16.0"}   # older = the resolver backtracked (D-023)
+
+
+def check_dependencies(prefixes: tuple[str, ...] = STACK_PREFIXES) -> list[str]:
+    """Problems among installed packages whose names start with ``prefixes`` (``()`` = all packages).
+
+    Like ``python -m pip check`` restricted to the course stack, plus a floor for ``langgraph-api``.
+    An empty list means consistent. Each problem says what to run.
+    """
+    from importlib import metadata
+
+    from packaging.requirements import InvalidRequirement, Requirement
+    from packaging.utils import canonicalize_name
+    from packaging.version import InvalidVersion, Version
+
+    installed: dict[str, str] = {}
+    dists = []
+    for dist in metadata.distributions():
+        name = dist.metadata["Name"]
+        if name:
+            installed[canonicalize_name(name)] = dist.version
+            dists.append((canonicalize_name(name), dist))
+    problems: list[str] = []
+    for name, dist in sorted(dists, key=lambda x: x[0]):
+        if prefixes and not name.startswith(prefixes):
+            continue
+        for raw in dist.requires or []:
+            try:
+                req = Requirement(raw)
+            except InvalidRequirement:
+                continue
+            if req.marker and not req.marker.evaluate({"extra": ""}):
+                continue
+            have = installed.get(canonicalize_name(req.name))
+            if have is None:
+                problems.append(f"{name} {dist.version} requires {req}, which is not installed")
+            elif req.specifier and not req.specifier.contains(have, prereleases=True):
+                problems.append(f"{name} {dist.version} requires {req}, but {have} is installed")
+    for name, floor in MIN_VERSIONS.items():
+        have = installed.get(name)
+        try:
+            if have and Version(have) < Version(floor):
+                problems.append(f"{name} {have} is older than {floor}: run python -m pip install -e \".[dev]\" again "
+                                "(the course pins a floor since Module 06)")
+        except InvalidVersion:
+            pass
+    return problems

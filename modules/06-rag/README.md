@@ -15,6 +15,8 @@ cd ~/path/to/langchain-langgraph-mastery   # your clone; quote the path if it ha
 conda activate lc-mastery
 git pull                                   # get this module's files
 python -m pip install -e ".[dev,embeddings]"   # re-run after every pull: Module 06 adds the [rag] extra (splitters, Chroma, pypdf, bs4); [embeddings] = fastembed for real local embeddings
+python -m pip check                        # expect: No broken requirements found. (if not: see the note below the table)
+python -c "import importlib.metadata as m; print('langgraph-api', m.version('langgraph-api'))"   # expect: 0.16.x or newer
 python -m pytest -q                        # expect: "... passed" and no failures (offline, no keys, no downloads)
 python -c "import mastery.rag, chromadb, pypdf; print('rag ok', chromadb.__version__)"   # expect: rag ok 1.5.x
 python -c "from mastery.memory import local_embeddings; print('embeddings ok', local_embeddings().dims)"   # 🌐 first run downloads ~67 MB; expect: embeddings ok 384
@@ -26,7 +28,19 @@ python -c "from mastery.memory import local_embeddings; print('embeddings ok', l
 | 💰 Cost | $0. Embeddings and re-ranking run **locally on your CPU** (fastembed, ONNX, no PyTorch). Chroma runs in-process. Groq free tier: a RAG answer is ~1.5–4k input tokens (the retrieved chunks), so keep `k` small |
 | 💾 Disk | ~67 MB embedding model + ~80 MB re-ranker (cached in `~/.cache/fastembed`), a few MB of Chroma files in `data/vectorstores/` (git-ignored) |
 | 🌐 Network | Only the first model download (Hugging Face). Offline, corporate proxy, or `[embeddings]` not installed? 🌐 cells print ⚠️ and fall back to the offline `HashingEmbeddings`; everything still runs |
-| ✅ Ready when | `pytest` shows no failures, `rag ok` and `embeddings ok 384` print |
+| ✅ Ready when | `pip check` is clean, `pytest` shows no failures, `rag ok` and `embeddings ok 384` print |
+
+**Saw `ERROR: pip's dependency resolver does not currently take into account...`?** If you installed Module 06 before 2026-10-12 evening, pip may have **downgraded** `langgraph-api` (0.16 → 0.10) to fit Chroma's OpenTelemetry packages and left orphans behind. The course now pins `langgraph-api>=0.16.0`. Fix once:
+
+```bash
+git pull && python -m pip install -e ".[dev,embeddings]"   # restores langgraph-api 0.16.x, opentelemetry 1.42.x
+python -m pip check                                         # lists leftovers, e.g. opentelemetry-exporter-otlp-common / -http-transport / -prometheus
+python -m pip show opentelemetry-exporter-otlp-common | grep Required-by   # empty = nothing needs it
+python -m pip uninstall -y opentelemetry-exporter-otlp-common opentelemetry-exporter-http-transport   # only the ones pip check named AND nothing requires
+python -m pip check                                         # expect: No broken requirements found.
+```
+
+Never uninstall a package whose `Required-by:` is not empty (`opentelemetry-exporter-prometheus` is **required** by langgraph-api 0.16; it only looks orphaned while 0.10 is installed). How to read the warning: [setup guide · Dependency warnings](../00-foundations/00-02-create-course-env.md#dependency-warnings-after-an-install).
 
 If `pip install`, `pytest` or the model download fails, see the [setup guide's troubleshooting](../00-foundations/00-02-create-course-env.md#troubleshooting). SSL certificate errors on Anaconda (also for `huggingface.co`): Step 4b. `DLL load failed` from `onnxruntime` on Windows: install the [Microsoft Visual C++ Redistributable (x64)](https://learn.microsoft.com/cpp/windows/latest-supported-vc-redist) and restart Git Bash.
 
