@@ -50,6 +50,7 @@ studio = [
 # Memory (Module 03): SqliteSaver / SqliteStore for mastery.memory.
 # VERIFIED 2026-10-12: langgraph-checkpoint-sqlite 3.1.1 is current on PyPI;
 # it pulls aiosqlite and sqlite-vec (vector search inside SQLite).
+# Module 08 uses its AsyncSqliteSaver (aiosqlite) for async graphs; no new package.
 memory = [
     "langgraph-checkpoint-sqlite>=3.1.1,<4",
 ]

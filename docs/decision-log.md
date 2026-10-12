@@ -183,5 +183,31 @@
 - Context: langgraph 1.2.14 warns "Deserializing unregistered type mastery.graphs.state.Outline from checkpoint. This will be blocked in a future version" when Pydantic objects in state are read back from `InMemorySaver`.
 - Decision: `memory_checkpointer()` builds `InMemorySaver(serde=JsonPlusSerializer(allowed_msgpack_modules=CHECKPOINT_TYPES))`; notebooks and tests that read history use it. The `langgraph dev` server showed no such warning in its log (verified).
 - Revisit: Module 08 (SQLite/Postgres checkpointers need the same serde).
+- Update (Module 08): the server claim held for runs without resumes. With an interrupt + resume, `langgraph dev` logged "Deserializing unregistered type" for Pydantic objects in state and has no allow-list setting, so Module 08 stores plain dicts in state (D-030).
+
+### D-029 · `mastery.graphs.hitl`: one approval node, a validation loop, and scripted humans · 2026-10-12
+- Context: Lesson 08.03, Project 08 and the app all need approve / edit / reject; keyless notebooks need a "human" that always answers.
+- Decision: `approval_node(...)` re-asks inside the node when an answer is invalid (no `try/except` around `interrupt()`, per the docs' rules), returns `Command(goto=...)` (register with `destinations=`), and gives up after `max_rejections`. `drive`/`adrive` + `scripted_reviewer` answer pauses in tests and 🧪 cells; parameter cells (`DECISIONS`) let learners try other branches.
+- Revisit: if LangGraph ships a built-in review node for graphs.
+
+### D-030 · Plain dicts in checkpointed state · 2026-10-12
+- Context: Pydantic objects in state need an allow-list on every checkpointer (`allowed_msgpack_modules`); unlisted types come back as dicts (blocked) and `langgraph dev`/LangSmith Deployment has no allow-list setting (warning in its log). A `python -m` run also stores `__main__.Plan` instead of the module path.
+- Decision: validate with Pydantic in the node, store `model_dump()` in state (`ResearchState.plan: dict`). The course allow-list stays for Module 07's graphs. The CLI re-imports its own module in `__main__` so stored types never point at `__main__`.
+- Revisit: when the server exposes a serializer allow-list.
+
+### D-031 · Research subgraph: own schema, called from a node, searches in sequence · 2026-10-12
+- Context: measured on langgraph 1.2.14: (1) a subgraph added as a node that shares an `operator.add` key returns the parent's items again (duplicates); (2) a node's `error_handler` does not run when the node fails in the same super-step as a parallel sibling (the exception ends the run); (3) a handler that returns a plain dict ends the run instead of following the node's edges.
+- Decision: `research` is an async wrapper node that calls the subgraph with its own schema and returns only new items; `search_docs → search_web` run one after the other; handlers that must continue return `Command(goto=...)` (`search_web` is the subgraph's last node, so a dict is enough there). Lessons 08.02 and 08.05 show the measurements.
+- Revisit: re-test (2) on new langgraph releases (Lesson 08.02, exercise 3).
+
+### D-032 · Async nodes + `AsyncSqliteSaver` for anything with a timeout · 2026-10-12
+- Context: node timeouts are async-only (a sync node with `timeout=` fails at compile); `SqliteSaver` raises `NotImplementedError` from async calls; `SqliteSaver.prune` raises `NotImplementedError` (3.1.1).
+- Decision: `timed` wraps async nodes; `async_sqlite_checkpointer()` for async graphs; `trim_thread()` (keep the newest checkpoint) instead of `prune` for SQLite. Default `durability` stays `"async"` in lessons; the crash CLI uses `"sync"` (08.01 measured that `"async"` lost every step after the input and `"exit"` everything).
+- Revisit: when `langgraph-checkpoint-sqlite` implements `prune`.
+
+### D-033 · Offline web stand-in that fails on purpose · 2026-10-12
+- Context: retries, timeouts and fallbacks must be visible without a key or network.
+- Decision: `offline_web_search(failures=N, delay=S)` returns no results but raises `ConnectionError` for the first N calls or sleeps S seconds; LIVE mode uses Groq browser search through `web_tool_search`. The v3 `stream_events` API is taught as experimental; v2 `stream` is what the helpers use.
+- Revisit: Module 12 (failure injection in evals).
 
 <!-- Add your decisions below this line -->

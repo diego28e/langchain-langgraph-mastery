@@ -118,4 +118,4 @@ Read [Choosing between Graph and Functional APIs](https://docs.langchain.com/oss
 
 ---
 
-← [Module 06](../06-rag/README.md) · [Course outline](../../COURSE_OUTLINE.md) · [Module 08](../08-langgraph-production-features/) →
+← [Module 06](../06-rag/README.md) · [Course outline](../../COURSE_OUTLINE.md) · [Module 08](../08-langgraph-production-features/README.md) →

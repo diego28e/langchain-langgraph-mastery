@@ -73,7 +73,9 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | 05 | [MCP & External Tools](modules/05-mcp-and-external-tools/) | ✅ Built |
 | 06 | [Documents, Embeddings & RAG](modules/06-rag/) | ✅ Built |
 | 07 | [LangGraph Fundamentals](modules/07-langgraph-fundamentals/) | ✅ Built |
-| 08 | [LangGraph Production Features](modules/08-langgraph-production-features/) | 📝 Planned |
+| 08 | [LangGraph Production Features](modules/08-langgraph-production-features/) | ✅ Built |
+
+**Part 1 is complete.** Its wrap-up (what you can now build, and what to check before moving on) is in the [Module 08 README](modules/08-langgraph-production-features/README.md#part-1-complete). Part 2 starts with [Module 09 — Multi-Agent Systems](modules/09-multi-agent-systems/README.md) (planned; see the [outline](COURSE_OUTLINE.md#part-2--pro-modules-0914)).
 
 ### Part 2 — Pro
 

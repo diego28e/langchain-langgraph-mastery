@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import functools
+import inspect
 import time
 from collections.abc import Callable, Iterable
 from typing import Any
@@ -19,14 +20,25 @@ def timed(name: str | None = None) -> Callable:
     def wrap(fn: Callable) -> Callable:
         label = name or fn.__name__
 
-        @functools.wraps(fn)
-        def node(*args: Any, **kwargs: Any) -> dict:
-            start = time.perf_counter()
-            update = fn(*args, **kwargs) or {}
+        def finish(update: Any, start: float) -> dict:
+            update = update or {}
             if not isinstance(update, dict):
                 raise TypeError(f"@timed node {label!r} must return a dict, got {type(update).__name__}")
             row = {"node": label, "seconds": round(time.perf_counter() - start, 4)}
             return {**update, "run_log": list(update.get("run_log", [])) + [row]}
+
+        if inspect.iscoroutinefunction(fn):      # async nodes stay async (node timeouts need that, Module 08)
+            @functools.wraps(fn)
+            async def anode(*args: Any, **kwargs: Any) -> dict:
+                start = time.perf_counter()
+                return finish(await fn(*args, **kwargs), start)
+
+            return anode
+
+        @functools.wraps(fn)
+        def node(*args: Any, **kwargs: Any) -> dict:
+            start = time.perf_counter()
+            return finish(fn(*args, **kwargs), start)
 
         return node
 

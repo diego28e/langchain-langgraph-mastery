@@ -96,7 +96,8 @@ class ContentState(TypedDict, total=False):
 
 #: Pydantic models above that may sit in checkpointed state (LangGraph 1.2 warns on unregistered types).
 CHECKPOINT_TYPES = [("mastery.graphs.state", "SectionPlan"), ("mastery.graphs.state", "Outline"),
-                    ("mastery.graphs.state", "Critique")]
+                    ("mastery.graphs.state", "Critique"), ("mastery.graphs.research", "Plan"),
+                    ("mastery.graphs.research", "Clarity")]
 
 
 def memory_checkpointer():
