@@ -6,17 +6,31 @@
 
 **Estimated time:** 1.5 weeks (about 11–14 hours of lessons plus 4–6 hours for the project).
 
+## Before you start this module
+
+Run this **once**, in **Git Bash**, from the **repo root**, with the **`lc-mastery`** environment active (the prompt starts with `(lc-mastery)`).
+
+```bash
+cd ~/path/to/langchain-langgraph-mastery   # your clone; quote the path if it has spaces
+conda activate lc-mastery
+git pull                                   # get this module's files
+python -m pip install -e ".[dev]"          # re-run after every pull: new modules add packages
+python -m pytest -q                        # expect: "... passed" and no failures (offline, no keys)
+python -c 'import langgraph.checkpoint.sqlite, sqlite_vec; print("sqlite ok")'   # expect: sqlite ok
+```
+
+| | |
+|---|---|
+| 🔑 Keys | `GROQ_API_KEY` (optional, 💸 cells skip without it). No new keys. |
+| 💰 Cost | $0 on the Groq free tier. Memory and embeddings run locally. |
+| 📦 Optional extras | `python -m pip install -e ".[embeddings]"` for real semantic search in 03.04 (fastembed, ≈150 MB + ≈70 MB model on first use). Skip it and those cells print `⏭️ Skipped`. |
+| ✅ Ready when | `pytest` shows no failures and `sqlite ok` prints. |
+
+If `pip install` or `pytest` fails, see the [setup guide's troubleshooting](../00-foundations/00-02-create-course-env.md#troubleshooting) (SSL certificate errors on Anaconda: Step 4b).
+
 ## How to work through this module
 
-1. **Update the course package once** (Git Bash, repo root, `lc-mastery` active). Module 03 adds `mastery.memory`. The `[dev]` extra now also installs `langgraph-checkpoint-sqlite` (SQLite checkpointer and store, with the `sqlite-vec` extension for vector search).
-   ```bash
-   cd ~/path/to/langchain-langgraph-mastery
-   conda activate lc-mastery
-   git pull
-   python -m pip install -e ".[dev]"
-   python -m pytest -q          # expect: all passed (offline, no keys needed)
-   python -c 'import langgraph.checkpoint.sqlite, sqlite_vec; print("sqlite ok")'   # expect: sqlite ok
-   ```
+1. **Do [Before you start this module](#before-you-start-this-module) first** (once per pull). Module 03 adds `mastery.memory`. The `[dev]` extra now also installs `langgraph-checkpoint-sqlite` (SQLite checkpointer and store, with the `sqlite-vec` extension for vector search).
 2. **Optional, for real semantic search** (Lesson 03.04 Part 4, Project 03 stretch): a local embedding model, no key, no PyTorch (≈150 MB of wheels; the model, ≈70 MB, downloads on first use into `~/.cache/fastembed`):
    ```bash
    python -m pip install -e ".[embeddings]"

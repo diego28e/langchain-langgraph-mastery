@@ -7,16 +7,31 @@
 
 **Estimated time:** 1.5–2 weeks (about 13–16 hours of lessons plus 4–6 hours for the project).
 
+## Before you start this module
+
+Run this **once**, in **Git Bash**, from the **repo root**, with the **`lc-mastery`** environment active (the prompt starts with `(lc-mastery)`).
+
+```bash
+cd ~/path/to/langchain-langgraph-mastery   # your clone; quote the path if it has spaces
+conda activate lc-mastery
+git pull                                   # get this module's files
+python -m pip install -e ".[dev]"          # re-run after every pull: new modules add packages
+python -m pytest -q                        # expect: "... passed" and no failures (offline, no keys)
+python -c "import langchain, langchain_groq; print('llm ok')"   # expect: llm ok
+```
+
+| | |
+|---|---|
+| 🔑 Keys | `GROQ_API_KEY` in `.env` (optional: without it 💸 cells print `⏭️ Skipped`). `LANGSMITH_API_KEY` (optional, free) for Lesson 01.08 traces. |
+| 💰 Cost | $0. Groq free tier and LangSmith free tier; a full module run uses a few hundred thousand tokens at most. |
+| 📦 Optional extras | None. |
+| ✅ Ready when | `pytest` shows no failures and `llm ok` prints. |
+
+If `pip install` or `pytest` fails, see the [setup guide's troubleshooting](../00-foundations/00-02-create-course-env.md#troubleshooting) (SSL certificate errors on Anaconda: Step 4b).
+
 ## How to work through this module
 
-1. **Update the course package once** (Git Bash, repo root, `lc-mastery` active). Module 01 adds `mastery.models`, `mastery.pricing` and `mastery.display`, and the `llm` extra pulls in the LangChain packages the tests need:
-   ```bash
-   cd ~/path/to/langchain-langgraph-mastery
-   conda activate lc-mastery
-   git pull
-   python -m pip install -e ".[dev]"
-   python -m pytest -q          # expect: all passed (offline, no keys needed)
-   ```
+1. **Do [Before you start this module](#before-you-start-this-module) first** (once per pull). Module 01 adds `mastery.models`, `mastery.pricing` and `mastery.display`, and the `llm` extra pulls in the LangChain packages the tests need
 2. **Start Jupyter from the repo root** (`jupyter lab` or `jupyter notebook`) and pick the **Python (lc-mastery)** kernel in every notebook.
 3. **Go in order.** 01.01 introduces `get_model(role)`, used everywhere after; 01.04 (structured output), 01.05 (batching), 01.06 (rate limits) and 01.08 (tracing) all come together in the project.
 4. **Read the cell markers.** 🧪 = offline (fake model, free) · 🌐 = network, no tokens · 💸 = calls a model (free-tier quota). Most concepts are taught first with a 🧪 fake model, then shown live.

@@ -7,17 +7,31 @@
 
 **Estimated time:** 1.5 weeks (about 12–15 hours of lessons plus 4–6 hours for the project).
 
+## Before you start this module
+
+Run this **once**, in **Git Bash**, from the **repo root**, with the **`lc-mastery`** environment active (the prompt starts with `(lc-mastery)`).
+
+```bash
+cd ~/path/to/langchain-langgraph-mastery   # your clone; quote the path if it has spaces
+conda activate lc-mastery
+git pull                                   # get this module's files
+python -m pip install -e ".[dev]"          # re-run after every pull: new modules add packages
+python -m pytest -q                        # expect: "... passed" and no failures (offline, no keys)
+langgraph --version                         # expect: LangGraph CLI, version 0.4.33 (or newer)
+```
+
+| | |
+|---|---|
+| 🔑 Keys | `GROQ_API_KEY` (optional, 💸 cells skip without it). `LANGSMITH_API_KEY` (optional, free) for Studio in Lesson 02.07. |
+| 💰 Cost | $0 on the Groq and LangSmith free tiers. |
+| 📦 Optional extras | None: `langgraph-cli[inmem]` (Studio) is already in `[dev]`. |
+| ✅ Ready when | `pytest` shows no failures and `langgraph --version` prints a version. |
+
+If `pip install` or `pytest` fails, see the [setup guide's troubleshooting](../00-foundations/00-02-create-course-env.md#troubleshooting) (SSL certificate errors on Anaconda: Step 4b).
+
 ## How to work through this module
 
-1. **Update the course package once** (Git Bash, repo root, `lc-mastery` active). Module 02 adds `mastery.tools`, `mastery.agents` and `mastery.testing`. The `[dev]` extra now also installs `langgraph-cli[inmem]` (new `studio` extra) for Lesson 02.07:
-   ```bash
-   cd ~/path/to/langchain-langgraph-mastery
-   conda activate lc-mastery
-   git pull
-   python -m pip install -e ".[dev]"
-   python -m pytest -q          # expect: all passed (offline, no keys needed)
-   langgraph --version          # expect: LangGraph CLI, version 0.4.33 (or newer)
-   ```
+1. **Do [Before you start this module](#before-you-start-this-module) first** (once per pull). Module 02 adds `mastery.tools`, `mastery.agents` and `mastery.testing`. The `[dev]` extra now also installs `langgraph-cli[inmem]` (new `studio` extra) for Lesson 02.07
 2. **Start Jupyter from the repo root** and pick the **Python (lc-mastery)** kernel in every notebook. Lesson 02.01 explains why that matters and how to fix "module not found".
 3. **Go in order.** 02.02 writes the loop by hand; 02.03 replaces it with `create_agent`; 02.04–02.06 add context, structured output and streaming; 02.07 opens the same kind of agent in Studio. The project uses all of it.
 4. **Read the cell markers.** 🧪 = offline (scripted model, free) · 🌐 = network, no tokens · 💸 = calls a model (free-tier quota). Every concept is shown first with `mastery.testing.ScriptedChatModel`, so you see the mechanics of the loop exactly, then live.

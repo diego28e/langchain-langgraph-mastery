@@ -7,6 +7,19 @@
 
 **Estimated time:** 1–1.5 weeks (about 8–11 hours of lessons plus 2–3 hours for the project).
 
+## Before you start this module
+
+Nothing to install yet: this module **is** the setup. You need:
+
+| | |
+|---|---|
+| 💻 Machine | Windows 10/11 with **Git Bash** ([git-scm.com](https://git-scm.com/)), or macOS/Linux; **Anaconda** or Miniconda; ~5 GB free disk |
+| 🔑 Keys | None until Lesson 00.04, where you create a free `GROQ_API_KEY` |
+| 💰 Cost | $0 (Groq free tier, no card needed) |
+| ✅ Ready when | Lesson 00.02 notebook prints all ✅ and the [setup guide](00-02-create-course-env.md) ends with `python -m pytest` passing |
+
+Already finished Module 00 and pulled updates? Run `git pull` then `python -m pip install -e ".[dev]"` in Git Bash at the repo root with `lc-mastery` active.
+
 ## How to work through this module
 
 1. **Use Git Bash on Windows** (macOS/Linux: your normal terminal). Every command in this module is written for bash. The Anaconda Prompt is only a fallback. See [CONVENTIONS.md §10](../../CONVENTIONS.md#10-shells-git-bash-first) for path and quoting rules.
@@ -18,7 +31,7 @@
    jupyter notebook                           # or: jupyter lab
    ```
 4. **In each notebook:** check the kernel name in the top-right corner (00.01–00.02 use the default **Python 3 (ipykernel)**; from 00.03 on, **Python (lc-mastery)**), then run cells top to bottom with **Shift + Enter**. Read each "What just happened?" cell before moving on.
-5. **Tick the ✅ Checkpoint** at the end of each lesson. If something fails, every lesson has a **Pitfalls** table, and the [setup guide](00-02-create-course-env.md) has a troubleshooting section.
+5. **Tick the ✅ Checkpoint** at the end of each lesson. If something fails, every lesson has a **Pitfalls** table, and the [setup guide](00-02-create-course-env.md#troubleshooting) has a troubleshooting index.
 6. **Before you commit:** *Kernel → Restart Kernel and Run All Cells…*, then *Edit → Clear Outputs of All Cells*, save, and run `python -m pytest` from the repo root.
 7. **No API key yet?** Lessons 00.01–00.06 need none. In 00.07 and the project, API cells print `⏭️ Skipped` instead of crashing, so you can read along and come back after creating your key (Lesson 00.04).
 

@@ -274,6 +274,23 @@ The kernel name stays `lc-mastery`, so every notebook works unchanged. Official 
 
 ---
 
+## Troubleshooting
+
+Quick index of the failures learners hit most, also after pulling a new module. Run every fix in **Git Bash**, at the **repo root**, with `(lc-mastery)` active unless it says otherwise.
+
+| Symptom | Fix |
+|---|---|
+| `conda: command not found` | [Step 2](#step-2--make-conda-available-in-this-git-bash-window): source `conda.sh` in this window |
+| Prompt does not start with `(lc-mastery)` | `conda activate lc-mastery`. Every new Git Bash window needs it |
+| `pip install` fails with `SSL: CERTIFICATE_VERIFY_FAILED` or `FileNotFoundError` from `ssl` | [Step 4b](#step-4b): fix `SSL_CERT_FILE`, open a new window, retry |
+| `ModuleNotFoundError: No module named 'mastery'` (or `langchain`, `langgraph`) in a notebook | Wrong kernel: pick **Python (lc-mastery)** (top-right). In Git Bash, rerun `python -m pip install -e ".[dev]"`, then **Kernel → Restart** |
+| `ImportError` / missing name right after `git pull` | A new module added code or packages: rerun `python -m pip install -e ".[dev]"`, then restart the kernel |
+| **Python (lc-mastery)** missing from the kernel list | Redo [Step 6](#step-6--register-the-environment-as-a-jupyter-kernel), then reload the Jupyter browser tab |
+| `pytest` fails in `test_notebook_hygiene` | A notebook was saved with outputs: see the table under [Step 5](#step-5--install-the-course-package-mastery-in-editable-mode) |
+| `PermissionError: [WinError 32]` deleting a file in `data/outputs/` | A kernel still has it open: **Kernel → Shut Down**, then delete |
+
+Still stuck? Copy the full error (no keys!) plus the output of `which python` and `python --version` into your notes before asking for help.
+
 ## Undo everything (if you ever need to start over)
 
 ```bash

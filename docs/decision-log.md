@@ -84,4 +84,27 @@
 - Trade-offs: every format you may select must be declared up front (a `Union[...]` for several).
 - Revisit: when Groq supports JSON schema with tools, or when `create_agent` accepts new formats at call time.
 
+### D-009 · No new dependencies for Module 04 · 2026-10-12
+- Context: Module 04 needs PII handling, guardrails, human-in-the-loop and trace redaction.
+- Options: (A) only what ships with `langchain` 1.4.4 / `langsmith` 0.14.7 plus small helpers in `mastery.middleware`; (B) add Presidio (PII) or guardrail frameworks.
+- Decision: A. `PIIMiddleware`, `HumanInTheLoopMiddleware`, limits, retry and fallback are prebuilt; redaction, injection signals, audit, budget and role filter are ~400 lines in `src/mastery/middleware/` with 27 offline tests.
+- Evidence: all 15 prebuilt middleware imported and exercised on 2026-10-12 (langchain 1.4.4); `create_anonymizer` checked end to end against the mock's recorded LangSmith upload bodies (card and addresses absent after anonymizing, present without).
+- Trade-offs: regex PII detection is simple and locale-blind (a 10-digit number is redacted as a phone; accepted).
+- Revisit: if a later module needs production-grade PII detection.
+
+### D-010 · Layered defences and guard-classifier parsing · 2026-10-12
+- Context: Groq's safety models are Preview, and Groq's docs don't state Prompt Guard's exact reply format.
+- Decision: never rely on one layer (least-privilege tools, allow-lists, fencing, scanner, classifier, HITL, audit). `parse_guard_score` accepts a probability or a BENIGN/MALICIOUS-style label; anything else → `None`, treated as an attack (fail closed). `parse_verdict` for the safeguard model fails closed too.
+- Evidence: model pages on console.groq.com (2026-10-12): both models Preview; Prompt Guard 512-token context. Live formats **not verified** (no key on the build machine): the 04.05 cell prints the raw first reply so learners see it.
+- Revisit: after the first live run (log the raw format in `docs/research-log.md`), or when either model leaves Preview.
+
+### D-011 · Where Module 04 writes, and fake sending · 2026-10-12
+- Decision: every "send" writes a file under git-ignored `data/outputs/m04/` (`04-05-outbox/`, `04-06-outbox/`, `outbox/`, `project04-audit.jsonl`, `04-06-hitl.sqlite`). No SMTP or email API anywhere in the module.
+- Trade-offs: no deliverability or provider-side concerns are taught here.
+
+### D-012 · Validate HITL decisions before resuming · 2026-10-12
+- Context: measured with langgraph 1.2.14: after a resume fails (wrong number of decisions), resending correct decisions on the same thread, by interrupt id, or from the paused checkpoint config still raised the same `ValueError`.
+- Decision: lessons and the project validate decisions (`check_decisions`) before `Command(resume=...)`, and tell learners to restart on a new `thread_id` if a thread is stuck.
+- Revisit: re-test on each langgraph upgrade; remove the warning when fixed.
+
 <!-- Add your decisions below this line -->

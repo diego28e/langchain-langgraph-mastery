@@ -75,6 +75,14 @@ This happens often. In 2026 alone Groq retired `qwen/qwen3-32b`, `qwen/qwen3.6-2
 | 03.04, Project 03 | Model-written memories (`remember_fact`) re-injected into prompts | Length caps, typed `kind`, never store instructions, mark memories as data, user-visible "what you remember" + delete, TTLs, write audit log |
 | 03.04 | `HashingEmbeddings` (word overlap) in demos; one local fastembed model | A real embedding model chosen by evaluation; record model + dims with the store and re-embed on change; pgvector in production |
 | 03.05 | Tools hidden from the model with `wrap_model_call` | Hiding is not authorization: enforce permissions in the tool or `wrap_tool_call` too |
+| 04.02 | Prebuilt retry/fallback/limit middleware with demo thresholds | Tune limits from real traffic; alert when fallbacks or limits fire; fallback to a different provider, not only a smaller model |
+| 04.03 | `AuditLogMiddleware` writing local JSONL; `TokenBudgetMiddleware` estimating tokens | Ship audit events to an append-only store with retention and access control; reconcile budgets with provider `usage_metadata` and billing |
+| 04.03 | Role taken from `runtime.context` set in the notebook | Roles come from your auth system, never from the model or the user's text |
+| 04.04 | Regex PII detectors (`PIIMiddleware`, `redact_text`) | Dedicated PII detection (e.g. Presidio or a provider service) tuned per locale; test on real-shaped data; redact before logging **and** before tracing |
+| 04.04–04.05 | Groq **Preview** safety models (`gpt-oss-safeguard-20b`, `llama-prompt-guard-2-86m`) | Never the only defence; fail closed; pin, monitor and keep a fallback classifier (see the lesson notes) |
+| 04.05 | Regex injection scanner measured on 20 rows | Layered defences, a much larger labelled set, red-teaming, and monitoring of `injection_blocked` rates |
+| 04.06, Project 04 | `InMemorySaver`/SQLite for pending approvals; a code `review()` policy as the "human" | Durable checkpointer shared by workers; a real review UI showing exact arguments; reviewer identity, timeouts that reject, and an audit trail |
+| Project 04 | Outbox = files in `data/outputs/m04/outbox/` | Real sending through a provider API behind the same approval gate, with rate limits and an allow-list |
 | 06 | `InMemoryVectorStore`, local Chroma folder | Use a managed or server-mode vector store with backups and access control |
 | 07.06 | `langgraph dev` in-memory server | Not a production server. Self-host with FastAPI + Docker (Module 13) or use LangSmith Deployment |
 | 13 | Single-container Docker Compose on your laptop | Add a reverse proxy with TLS, health checks, resource limits, log shipping, and a deployment pipeline |

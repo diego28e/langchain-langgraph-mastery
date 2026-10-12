@@ -2,7 +2,7 @@
 
 This package grows module by module. Whenever code is needed in a second notebook, it moves here (with a unit test in `tests/unit/`). By the end of the course, it is a small, production-style toolkit you understand line by line.
 
-> **Status:** Modules 00–03 code is in place (`config.py`, `doctor.py`, `groq_catalog.py`, `models.py`, `pricing.py`, `display.py`, `tools/`, `agents.py`, `testing.py`, `memory.py`), with unit tests in [`tests/unit/`](../tests/unit/).
+> **Status:** Modules 00–04 code is in place (`config.py`, `doctor.py`, `groq_catalog.py`, `models.py`, `pricing.py`, `display.py`, `tools/`, `agents.py`, `testing.py`, `memory.py`, `middleware/`), with unit tests in [`tests/unit/`](../tests/unit/).
 
 ## Install once (Git Bash, course env active, repo root)
 
@@ -30,7 +30,7 @@ Step-by-step with troubleshooting: [Lesson 00.02 guide](../modules/00-foundation
 | 02 | `mastery/agents.py` | `execute_tool_calls` / `run_tool_loop` (the hand-written loop, tested), `format_transcript`, `agent_stats`, `format_stream_part` (v2 stream parts) |
 | 02 | `mastery/testing.py` | `ScriptedChatModel`: offline chat model with `bind_tools` and tool-call streaming, for 🧪 cells and unit tests |
 | 03 | `mastery/memory.py` | `make_checkpointer` / `make_store` (in-memory for tests, SQLite in git-ignored `data/outputs/memory/` for notebooks; optional embedding index and TTL), `close`, `thread_config`, `learner_namespace` / `safe_label` (namespace validation), `count_tokens`, offline `HashingEmbeddings`, optional `local_embeddings()` (fastembed, `[embeddings]` extra) |
-| 04 | `mastery/middleware/` | Token budget guard, audit logger, role-based tool filter |
+| 04 | `mastery/middleware/` | `TokenBudgetMiddleware` (run/thread token budget, ends or raises), `AuditLogMiddleware` + `read_audit_log` (redacted JSONL events), `RoleToolFilterMiddleware` + `role_from_context` (hides **and** blocks tools per role, fails closed), `redact_text` / `redact_obj` / `PII_PATTERNS`, `injection_signals` / `INJECTION_PATTERNS`, `fence_untrusted`, `parse_guard_score` (Prompt Guard output, fail closed) |
 | 05 | `mastery/mcp.py`, `mastery/mcp_servers/`, `mastery/tools/web_search.py` | MCP helpers, the course's FastMCP server, and a web search switch (Groq browser search by default, Tavily optional) |
 | 06 | `mastery/rag/` | Loaders, splitter presets, indexing, retrieval, citations |
 | 07–08 | `mastery/graphs/` | State schemas, node utilities, HITL helpers |

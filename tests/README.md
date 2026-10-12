@@ -36,6 +36,12 @@ Module 03 adds (all offline):
 |---|---|---|
 | `unit/test_memory.py` | `thread_config`, `memory_dir`; in-memory checkpointer keeps threads apart; **SQLite checkpointer read back from a new Python process**; `make_store` (memory and SQLite) put/get/prefix search and semantic search with an index; SQLite store reopened; TTL arg rules; `safe_label` / `learner_namespace` reject unsafe ids; `HashingEmbeddings` stable and normalised; `count_tokens`; a `create_agent` tool writing to `runtime.store` with users kept apart | `tmp_path` SQLite files, `ScriptedChatModel`, `HashingEmbeddings` (no model download) |
 
+Module 04 adds (all offline):
+
+| File | Tests | How it stays offline |
+|---|---|---|
+| `unit/test_middleware.py` | Redaction (email, card, IP, phone, API keys; nested objects); injection signals and `fence_untrusted` (fake end markers neutralised); `parse_guard_score` (numbers, labels, garbage → `None`); `TokenBudgetMiddleware` ends a run / raises / counts per thread; `RoleToolFilterMiddleware` hides tools, blocks forbidden calls, fails closed for unknown roles; `AuditLogMiddleware` writes redacted JSONL for model and tool calls and errors | `ScriptedChatModel` agents, `tmp_path` files |
+
 ## Maintainer QA (not part of `pytest`)
 
 Notebooks are executed with **nbclient** twice before release, in memory (outputs never written back):
@@ -46,8 +52,9 @@ python run_notebooks.py ../../../modules/01-models-messages-prompts/*.ipynb     
 python run_notebooks.py --mock ../../../modules/01-models-messages-prompts/*.ipynb          # live code paths vs a local stand-in
 python run_notebooks.py --mock ../../../modules/02-tools-and-agents/*.ipynb ../../../modules/02-tools-and-agents/project/*.ipynb ../../../modules/02-tools-and-agents/project/solutions/*.ipynb
 python run_notebooks.py --mock ../../../modules/03-memory-and-context/*.ipynb ../../../modules/03-memory-and-context/project/*.ipynb ../../../modules/03-memory-and-context/project/solutions/*.ipynb
+python run_notebooks.py --mock ../../../modules/04-middleware-guardrails-hitl/*.ipynb ../../../modules/04-middleware-guardrails-hitl/project/*.ipynb ../../../modules/04-middleware-guardrails-hitl/project/solutions/*.ipynb
 ```
 
-Module 03 notebooks write SQLite files under `data/outputs/memory/` (git-ignored); delete that folder after QA runs.
+Module 03 notebooks write SQLite files under `data/outputs/memory/`, Module 04 writes outboxes, audit logs and a SQLite file under `data/outputs/m04/` (all git-ignored); delete those folders after QA runs. The mock also answers the two Groq safety models (Prompt Guard: a score; safeguard: a JSON verdict) and records LangSmith upload bodies (`LANGSMITH_BODIES`) so redaction can be checked.
 
 `--mock` starts [`mock_groq.py`](../_maintainer/tools/qa/mock_groq.py), a local HTTP server that imitates the Groq API (chat, streaming with reasoning, `json_schema`/tool calls, 401, 429 + `retry-after`, decommissioned models, images, rate-limit headers, job-posting answers with deliberate mistakes; since Module 02 an **agent mode** that picks a tool from the question, fills arguments, makes one call per turn and answers `ToolStrategy` schemas from tool results; a 400 for `json_schema` + tools, as Groq documents; built-in `browser_search` with `executed_tools`) and accepts LangSmith uploads, then points `GROQ_BASE_URL`/`LANGSMITH_ENDPOINT` at it. It proves the code paths run; it says nothing about real model quality.
