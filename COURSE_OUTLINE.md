@@ -1,8 +1,8 @@
 # Course Outline — Modern LangChain & LangGraph Mastery
 
 > Full syllabus: modules, lessons, notebooks, reading lists, Jupyter skills, research checkpoints, and project specs.
-> **Docs verified:** October 11, 2026, against LangChain v1 (`langchain` 1.4.x), LangGraph v1 (`langgraph` 1.2.x), Deep Agents 0.7.x, LangSmith, and GroqCloud docs.
-> **Two parts:** [Part 1 — Core](#part-1--core-modules-0008) (Modules 00–08) and [Part 2 — Pro](#part-2--pro-modules-0913) (Modules 09–13).
+> **Docs verified:** October 11, 2026, against LangChain v1 (`langchain` 1.4.x), LangGraph v1 (`langgraph` 1.2.x), Deep Agents 0.7.x (`deepagents` 0.7.23), LangSmith, and GroqCloud docs.
+> **Two parts:** [Part 1 — Core](#part-1--core-modules-0008) (Modules 00–08) and [Part 2 — Pro](#part-2--pro-modules-0914) (Modules 09–14).
 
 ---
 
@@ -24,7 +24,7 @@ Notebook paths follow [CONVENTIONS.md](CONVENTIONS.md): `modules/<NN-slug>/<NN>-
 
 ### Course philosophy (in one paragraph)
 
-The current official docs organize the stack in three layers: **LangChain** (`create_agent`, a minimal agent harness you customize with middleware), **LangGraph** (the low-level runtime for durable, stateful workflows that LangChain agents run on), and **Deep Agents** (a "batteries-included" harness built on top of both). LangSmith covers tracing, evaluation, and deployment across all three ([Runtimes, frameworks, and harnesses](https://docs.langchain.com/oss/python/concepts/products), [LangChain overview](https://docs.langchain.com/oss/python/langchain/overview)). The course follows that order: models → agents → memory and middleware → tools and MCP → RAG → LangGraph → multi-agent and Deep Agents → multimodal → evaluation → production. LCEL and Runnables are taught as one "under the hood" lesson rather than as the main way to build (they no longer appear in the v1 learning path).
+The current official docs organize the stack in three layers: **LangChain** (`create_agent`, a minimal agent harness you customize with middleware), **LangGraph** (the low-level runtime for durable, stateful workflows that LangChain agents run on), and **Deep Agents** (a "batteries-included" harness built on top of both). LangSmith covers tracing, evaluation, and deployment across all three ([Runtimes, frameworks, and harnesses](https://docs.langchain.com/oss/python/concepts/products), [LangChain overview](https://docs.langchain.com/oss/python/langchain/overview)). The course follows that order: models → agents → memory and middleware → tools and MCP → RAG → LangGraph → multi-agent systems → Deep Agents (a full module) → multimodal → evaluation → production. LCEL and Runnables are taught as one "under the hood" lesson rather than as the main way to build (they no longer appear in the v1 learning path).
 
 ---
 
@@ -50,32 +50,34 @@ The course ships in **two parts**. Part 1 gives you a complete, job-relevant fou
 
 ### Part 2 — Pro
 
-*Modules 09–13: multi-agent and Deep Agents → multimodal and voice → testing and evaluation → self-hosted production deployment → local models and fine-tuning (elective). About 9–10 weeks part-time, plus capstones.*
+*Modules 09–14: multi-agent systems → Deep Agents → multimodal and voice → testing and evaluation → self-hosted production deployment → local models and fine-tuning (elective). About 11–12.5 weeks part-time, plus capstones.*
 
 | # | Module | Focus | Est. time | Main project |
 |---|---|---|---|---|
-| 09 | [Multi-Agent Systems & Deep Agents](#module-09--multi-agent-systems--deep-agents) | Subagents, handoffs, skills, router, custom workflows, Deep Agents | 2 wk | Multi-agent support desk |
-| 10 | [Multimodal & Voice](#module-10--multimodal--voice) | Image/PDF input, Groq Whisper STT, Orpheus TTS, the voice "sandwich" | 1.5 wk | Voice Q&A agent |
-| 11 | [Testing, Evaluation & Observability](#module-11--testing-evaluation--observability) | pytest for agents, LangSmith tracing, datasets, evaluators, trajectory evals, online evals | 2 wk | Eval suite + CI for a previous agent |
-| 12 | [Production & Deployment](#module-12--production--deployment) | Resilience, cost, async, **self-hosted FastAPI + Docker + Postgres**, auth, UI, CI (LangSmith Cloud as optional reference) | 2–2.5 wk | Self-hosted agent service |
-| 13 | [Local Models & Fine-Tuning (elective)](#module-13--local-models--fine-tuning-elective) | Ollama, HF, when to fine-tune, QLoRA with Unsloth, serving | 1–1.5 wk | Local-first assistant + fine-tune experiment |
+| 09 | [Multi-Agent Systems](#module-09--multi-agent-systems) | Subagents, handoffs, skills, router, custom workflows, architecture decisions | 1.5 wk | Multi-agent support desk |
+| 10 | [Deep Agents](#module-10--deep-agents) | `create_deep_agent`, virtual filesystem and backends, permissions, subagents (sync, forked, async, dynamic), context engineering, skills and memory, HITL, sandboxes and interpreters, streaming, rubric and trajectory evals, shipping | 3–3.5 wk | Deep research analyst + 3 use-case labs |
+| 11 | [Multimodal & Voice](#module-11--multimodal--voice) | Image/PDF input, Groq Whisper STT, Orpheus TTS, the voice "sandwich" | 1.5 wk | Voice Q&A agent |
+| 12 | [Testing, Evaluation & Observability](#module-12--testing-evaluation--observability) | pytest for agents, LangSmith tracing, datasets, evaluators, trajectory evals, online evals | 2 wk | Eval suite + CI for a previous agent |
+| 13 | [Production & Deployment](#module-13--production--deployment) | Resilience, cost, async, **self-hosted FastAPI + Docker + Postgres**, auth, UI, CI (LangSmith Cloud as optional reference) | 2–2.5 wk | Self-hosted agent service |
+| 14 | [Local Models & Fine-Tuning (elective)](#module-14--local-models--fine-tuning-elective) | Ollama, HF, when to fine-tune, QLoRA with Unsloth, serving | 1–1.5 wk | Local-first assistant + fine-tune experiment |
 
 ### After both parts
 
 | # | Module | Focus | Est. time | Main project |
 |---|---|---|---|---|
-| — | [Capstones](#capstones-choose-2-of-5) | Choose 2 of 5 | 3–6 wk | Portfolio projects |
+| — | [Capstones](#capstones-choose-2-of-6) | Choose 2 of 6 | 3–6 wk | Portfolio projects |
 | — | [Appendices](#appendices) | Full setup (later), glossary, cheat sheets | — | — |
 
-**Total:** roughly 26–32 weeks part-time with two capstones (Part 1 ≈ 14–16.5 weeks, Part 2 ≈ 9–10 weeks, capstones 3–6 weeks). Module 13 is optional. Capstones C1 and C3 can already be started after Part 1 (in a simpler form).
+**Total:** roughly 28–35 weeks part-time with two capstones (Part 1 ≈ 14–16.5 weeks, Part 2 ≈ 11–12.5 weeks, capstones 3–6 weeks). Module 14 is optional. Capstones C1 and C3 can already be started after Part 1 (in a simpler form).
 
 ### Prerequisite graph
 
 ```text
 00 → 01 → 02 → 03 → 04 → 05 ─┐
-                └──────→ 06 ─┼→ 07 → 08 → 09 → 11 → 12 → Capstones
-                             └→ 10 (needs 02; uses 06/08 optionally)
-13 can be taken any time after 06.
+                └──────→ 06 ─┼→ 07 → 08 → 09 → 10 → 12 → 13 → Capstones
+                             └→ 11 (needs 02; uses 06/08 optionally)
+14 can be taken any time after 06.
+10 (Deep Agents) needs 03, 04, 05, 08, and 09; Lab 10B also needs Docker (installed in Module 13, or earlier if you like).
 ```
 
 ---
@@ -100,6 +102,8 @@ Groq's model list changes fast. Several models used in older tutorials have been
 
 **Paid quality benchmark** (optional, used for comparisons, stretch goals, and LLM-as-judge evaluators): **OpenAI** by default, through `langchain-openai`. Cheap benchmark: `gpt-6-luna` ($0.10 input / $0.50 output per 1M tokens). Quality ceiling: `gpt-6.1-sol` ($2.00 / $10.00). **Optional low-cost alternative: Google Gemini** through `langchain-google-genai` (`gemini-3.8-flash`, `gemini-3.5-flash-lite`), which has a free tier with no billing account. Full comparison and sources: [docs/paid-benchmark-openai-vs-gemini.md](docs/paid-benchmark-openai-vs-gemini.md). Anthropic works the same way through `langchain-anthropic` if you prefer it. Never copy model IDs from old tutorials.
 
+**Deep Agents (Module 10):** orchestrator `groq:openai/gpt-oss-120b`, subagents `groq:openai/gpt-oss-20b`, officially suggested free-tier option `google_genai:gemini-3.6-flash`. See the [Module 10 model stack](#default-model-stack-for-this-module) for why and for the free-tier limits.
+
 **Local models:** Ollama through `langchain-ollama` ([Ollama integration](https://docs.langchain.com/oss/python/integrations/providers/ollama), [Ollama docs](https://docs.ollama.com/quickstart)).
 
 ---
@@ -120,10 +124,11 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 | 07 | Visualizing graphs inline (`draw_mermaid_png`), Markdown + Mermaid documentation cells | [Use the Graph API](https://docs.langchain.com/oss/python/langgraph/use-graph-api) |
 | 08 | Rendering live streams: `display(..., display_id=True)` / `update_display`, `clear_output`, interrupt/resume cells | [IPython.display](https://ipython.readthedocs.io/en/stable/api/generated/IPython.display.html) |
 | 09 | Organizing long notebooks: section headers, "config" cells at the top, pairing notebooks with `.py` files using Jupytext for clean diffs | [Jupytext](https://jupytext.readthedocs.io/en/latest/) |
-| 10 | Audio and widgets: `IPython.display.Audio`, `ipywidgets` file upload | [IPython.display](https://ipython.readthedocs.io/en/stable/api/generated/IPython.display.html), [ipywidgets](https://ipywidgets.readthedocs.io/en/stable/) |
-| 11 | Notebooks and git, automated: `nbstripout` + pre-commit hooks, running notebooks headless with `nbconvert --execute` as a smoke test in CI | [nbstripout](https://github.com/kynan/nbstripout), [nbconvert](https://nbconvert.readthedocs.io/en/latest/) |
-| 12 | From notebook to module/service: refactoring cells into `src/`, `nbconvert --to script`, when not to use notebooks | [nbconvert](https://nbconvert.readthedocs.io/en/latest/) |
-| 13 | Remote/GPU notebooks (Google Colab) and VS Code notebooks | [Google Colab](https://colab.research.google.com/), [VS Code Jupyter](https://code.visualstudio.com/docs/datascience/jupyter-notebooks) |
+| 10 | Long-running agents in notebooks: live progress panels (`display_id` updates), rendering agent-written files and Markdown reports, `asyncio` background tasks, saving run artifacts | [IPython.display](https://ipython.readthedocs.io/en/stable/api/generated/IPython.display.html), [Autoawait](https://ipython.readthedocs.io/en/stable/interactive/autoawait.html) |
+| 11 | Audio and widgets: `IPython.display.Audio`, `ipywidgets` file upload | [IPython.display](https://ipython.readthedocs.io/en/stable/api/generated/IPython.display.html), [ipywidgets](https://ipywidgets.readthedocs.io/en/stable/) |
+| 12 | Notebooks and git, automated: `nbstripout` + pre-commit hooks, running notebooks headless with `nbconvert --execute` as a smoke test in CI | [nbstripout](https://github.com/kynan/nbstripout), [nbconvert](https://nbconvert.readthedocs.io/en/latest/) |
+| 13 | From notebook to module/service: refactoring cells into `src/`, `nbconvert --to script`, when not to use notebooks | [nbconvert](https://nbconvert.readthedocs.io/en/latest/) |
+| 14 | Remote/GPU notebooks (Google Colab) and VS Code notebooks | [Google Colab](https://colab.research.google.com/), [VS Code Jupyter](https://code.visualstudio.com/docs/datascience/jupyter-notebooks) |
 
 ---
 
@@ -369,7 +374,7 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
   4. Runtime context carries `user_id`. Two different users must not see each other's memories (write a test cell).
 - **Acceptance criteria:** A scripted 3-session demo shows that session 3 uses facts from session 1. No cross-user leakage. Token budget respected.
 - **Stretch:** Memory with semantic search (local embeddings). A `forget_fact` tool with confirmation.
-- **Stack:** Free: Groq + SQLite + local embeddings. Paid: optional Postgres store later (Module 12).
+- **Stack:** Free: Groq + SQLite + local embeddings. Paid: optional Postgres store later (Module 13).
 
 ---
 
@@ -474,7 +479,7 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
   3. Every answer includes a `sources: list[url]` field (structured output). URLs must come from tool results, never invented.
   4. HITL approval before `save_note`.
 - **Acceptance criteria:** 10 benchmark questions about this course's own topics. At least 8 answers cite a docs.langchain.com page that really contains the answer (spot-check manually). No invented URLs.
-- **Stretch:** Expose the agent itself as an MCP tool (for example from your FastAPI service in Module 12, or the [MCP endpoint in Agent Server](https://docs.langchain.com/langsmith/server-mcp) in optional Lesson 12.08).
+- **Stretch:** Expose the agent itself as an MCP tool (for example from your FastAPI service in Module 13, or the [MCP endpoint in Agent Server](https://docs.langchain.com/langsmith/server-mcp) in optional Lesson 13.08).
 - **Stack:** Free: Groq (models + built-in browser search) + docs MCP + FastMCP. Freemium alternative: Tavily (1,000 free credits/month).
 
 ---
@@ -525,7 +530,7 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 - **Read:** [Retriever integrations](https://docs.langchain.com/oss/python/integrations/retrievers/index) · [Retrieval: hybrid RAG](https://docs.langchain.com/oss/python/deepagents/retrieval) · [Cohere rerank overview](https://docs.cohere.com/docs/rerank-overview) · [Sentence Transformers (cross-encoders)](https://www.sbert.net/)
 - **Note:** legacy retrievers such as `MultiQueryRetriever` now live in `langchain-classic` ([v1 release notes](https://docs.langchain.com/oss/python/releases/langchain-v1)). The course builds query rewriting explicitly instead.
 
-### Lesson 06.09 — Measuring RAG quality (preview of Module 11)
+### Lesson 06.09 — Measuring RAG quality (preview of Module 12)
 - **Notebook:** `modules/06-rag/06-09-rag-evaluation-preview.ipynb`
 - **Objectives:** Build a 20-question golden set. Measure retrieval hit rate / recall@k and answer groundedness with an LLM judge.
 - **Read:** [Evaluate a RAG application](https://docs.langchain.com/langsmith/evaluate-rag-tutorial) · [Evaluation concepts](https://docs.langchain.com/langsmith/evaluation-concepts)
@@ -662,52 +667,48 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 
 ---
 
-## Part 2 — Pro (Modules 09–13)
+## Part 2 — Pro (Modules 09–14)
 
-> You can build agents, RAG systems, and LangGraph workflows. Part 2 makes them **coordinated, multimodal, measured, and deployed**: multi-agent systems and Deep Agents, voice, testing and evaluation, a self-hosted production service, and (optionally) local models and fine-tuning.
+> You can build agents, RAG systems, and LangGraph workflows. Part 2 makes them **coordinated, long-running, multimodal, measured, and deployed**: multi-agent systems, a full module on Deep Agents, voice, testing and evaluation, a self-hosted production service, and (optionally) local models and fine-tuning.
 
 ---
 
-## Module 09 — Multi-Agent Systems & Deep Agents
+## Module 09 — Multi-Agent Systems
 
-**Goals:** Know the current multi-agent patterns (subagents, handoffs, skills, router, custom workflow) and their trade-offs, then use Deep Agents, LangChain's batteries-included harness for long-running, planning-heavy tasks.
-**Time:** 2 weeks.
+**Goals:** Know the current multi-agent patterns (subagents, handoffs, skills, router, custom workflow), what each one costs in model calls, tokens, and control, and how to pick one from requirements. Build the same system two ways and measure the difference. This module uses plain `create_agent` and LangGraph; Module 10 then shows what a full agent harness (Deep Agents) adds on top.
+**Time:** 1.5 weeks.
 
 > **Note:** the `langgraph-supervisor` package (`create_supervisor`) is **no longer actively maintained**. The docs recommend the **subagents** pattern (a main `create_agent` calling worker agents as tools) ([Migrate from langgraph-supervisor](https://docs.langchain.com/oss/python/migrate/langgraph-supervisor)). "Swarm"-style peer handoffs are covered by the **handoffs** pattern.
 
 ### Lesson 09.01 — Why (and when not) to go multi-agent
-- **Notebook:** `modules/09-multi-agent-and-deep-agents/09-01-multi-agent-overview.ipynb`
-- **Objectives:** Compare patterns by model calls, tokens, and control. Pick a pattern from requirements. Know when a single agent with good tools is better.
-- **Read:** [Multi-agent](https://docs.langchain.com/oss/python/langchain/multi-agent/index)
+- **Notebook:** `modules/09-multi-agent-systems/09-01-multi-agent-overview.ipynb`
+- **Objectives:** Compare patterns by model calls, tokens, latency, and control. Pick a pattern from requirements. Know when a single agent with good tools is better.
+- **Read:** [Multi-agent](https://docs.langchain.com/oss/python/langchain/multi-agent/index) · [Runtimes, frameworks, and harnesses](https://docs.langchain.com/oss/python/concepts/products)
 
 ### Lesson 09.02 — Subagents (supervisor-style orchestration)
-- **Notebook:** `modules/09-multi-agent-and-deep-agents/09-02-subagents.ipynb`
+- **Notebook:** `modules/09-multi-agent-systems/09-02-subagents.ipynb`
 - **Objectives:** Wrap specialist agents as tools. Control what history they see. Propagate interrupts.
 - **Read:** [Subagents](https://docs.langchain.com/oss/python/langchain/multi-agent/subagents) · [Build a personal assistant with subagents](https://docs.langchain.com/oss/python/langchain/multi-agent/subagents-personal-assistant) · [Migrate from langgraph-supervisor](https://docs.langchain.com/oss/python/migrate/langgraph-supervisor)
 
 ### Lesson 09.03 — Handoffs
-- **Notebook:** `modules/09-multi-agent-and-deep-agents/09-03-handoffs.ipynb`
+- **Notebook:** `modules/09-multi-agent-systems/09-03-handoffs.ipynb`
 - **Objectives:** Use state-driven handoffs between agents (triage → billing → tech support).
 - **Read:** [Handoffs](https://docs.langchain.com/oss/python/langchain/multi-agent/handoffs) · [Build customer support with handoffs](https://docs.langchain.com/oss/python/langchain/multi-agent/handoffs-customer-support)
 
 ### Lesson 09.04 — Skills and routers
-- **Notebook:** `modules/09-multi-agent-and-deep-agents/09-04-skills-and-router.ipynb`
+- **Notebook:** `modules/09-multi-agent-systems/09-04-skills-and-router.ipynb`
 - **Objectives:** Load specialized prompts/knowledge on demand (skills). Classify and fan out to specialists, then synthesize (router).
-- **Read:** [Skills](https://docs.langchain.com/oss/python/langchain/multi-agent/skills) · [Router](https://docs.langchain.com/oss/python/langchain/multi-agent/router) · [Custom workflow](https://docs.langchain.com/oss/python/langchain/multi-agent/custom-workflow)
+- **Read:** [Skills](https://docs.langchain.com/oss/python/langchain/multi-agent/skills) · [Router](https://docs.langchain.com/oss/python/langchain/multi-agent/router)
 
-### Lesson 09.05 — Deep Agents: planning, filesystem, subagents
-- **Notebook:** `modules/09-multi-agent-and-deep-agents/09-05-deep-agents-intro.ipynb`
-- **Objectives:** Build a deep agent with `create_deep_agent`. Use the to-do list, virtual filesystem backends, subagents, skills, memory, and HITL. Compare it with a plain `create_agent`.
-- **Read:** [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) · [Quickstart](https://docs.langchain.com/oss/python/deepagents/quickstart) · [Customize Deep Agents](https://docs.langchain.com/oss/python/deepagents/customization) · [Subagents](https://docs.langchain.com/oss/python/deepagents/subagents) · [Backends](https://docs.langchain.com/oss/python/deepagents/backends) · [Skills](https://docs.langchain.com/oss/python/deepagents/skills) · [Memory](https://docs.langchain.com/oss/python/deepagents/memory) · [Human-in-the-loop](https://docs.langchain.com/oss/python/deepagents/human-in-the-loop)
-
-### Lesson 09.06 — Deep research agent (guided build)
-- **Notebook:** `modules/09-multi-agent-and-deep-agents/09-06-deep-research-agent.ipynb`
-- **Objectives:** Follow and adapt the official deep research tutorial to Groq models. Compare it with your Module 08 graph.
-- **Read:** [Build a deep research agent](https://docs.langchain.com/oss/python/deepagents/deep-research) · [Build a data analysis agent from scratch](https://docs.langchain.com/oss/python/langchain/deep-agent-from-scratch) · [Going to production](https://docs.langchain.com/oss/python/deepagents/going-to-production)
+### Lesson 09.05 — Custom workflows and choosing an architecture
+- **Notebook:** `modules/09-multi-agent-systems/09-05-custom-workflow-and-architecture.ipynb`
+- **Objectives:** Build a custom multi-agent workflow as a LangGraph graph (deterministic steps + agent nodes). Write an architecture decision record (ADR) that compares: single agent, each multi-agent pattern, custom graph, and an agent harness (preview of Module 10).
+- **Key concepts:** deterministic vs agentic control flow; where state lives; the cost of every extra model call; "start simple, add agents only when evals say so".
+- **Read:** [Custom workflow](https://docs.langchain.com/oss/python/langchain/multi-agent/custom-workflow) · [Workflows and agents](https://docs.langchain.com/oss/python/langgraph/workflows-agents) · [Runtimes, frameworks, and harnesses](https://docs.langchain.com/oss/python/concepts/products)
 
 **Jupyter skill:** organizing long notebooks + Jupytext pairing.
 **`src/mastery` increment:** `mastery/agents/` factories for specialist agents.
-**Research checkpoint:** Read the [Deep Agents changelog](https://docs.langchain.com/oss/python/deepagents/changelog-py) (Deep Agents is pre-1.0 and changes fast) and log one breaking or notable change.
+**Research checkpoint:** Re-read the [Multi-agent](https://docs.langchain.com/oss/python/langchain/multi-agent/index) overview. Log whether the list of recommended patterns or the `langgraph-supervisor` status changed.
 
 ### Project 09 — Multi-Agent Support Desk
 **Goal:** A customer-support system for a fictional SaaS product.
@@ -716,13 +717,169 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
   2. Pattern B (subagents): one coordinator calling the same specialists as tools.
   3. Shared RAG over a product FAQ (reuse `mastery/rag`). HITL before any refund over a threshold.
   4. A 15-conversation test set. Compare A vs B on resolution correctness, model calls, tokens, and latency.
-- **Acceptance criteria:** Both patterns pass ≥ 12/15 conversations. Refunds over the threshold always interrupt. Written comparison with a recommendation.
-- **Stretch:** Rebuild the technical agent as a Deep Agent with a filesystem of troubleshooting runbooks (skills).
+- **Acceptance criteria:** Both patterns pass ≥ 12/15 conversations. Refunds over the threshold always interrupt. Written comparison (ADR) with a recommendation.
+- **Stretch:** Pattern C: a custom LangGraph workflow (Lesson 09.05) for the refund path. Note which specialist would benefit from a full harness; you rebuild it as a deep agent in Module 10.
 - **Stack:** Free: Groq + Chroma. Paid: optional stronger coordinator model.
 
 ---
 
-## Module 10 — Multimodal & Voice
+## Module 10 — Deep Agents
+
+**Goals:** Master **Deep Agents**, LangChain's open-source "batteries-included" agent harness for long-running, multi-step work. By the end you can design, build, secure, evaluate, and ship deep agents that plan, use a virtual filesystem with pluggable backends, delegate to subagents (sync, forked, async, and dynamic), manage their own context over long runs, load skills and long-term memory, pause for human approval, execute code safely in sandboxes, and stream progress to a UI. You also learn when **not** to use a harness.
+**Time:** 3–3.5 weeks (11 lessons, 3 use-case labs, 1 module project).
+
+> **Version note (verified October 11, 2026):** this module targets **`deepagents` 0.7.23** (released October 7, 2026, Python ≥ 3.11) ([PyPI](https://pypi.org/project/deepagents/), [Changelog](https://docs.langchain.com/oss/python/deepagents/changelog-py)). `deepagents` is a standalone library built on LangChain's agent building blocks and runs on the LangGraph runtime ([Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview)). Several features used here are officially **beta** (forked subagents, interpreters and dynamic subagents, `RubricMiddleware`), and the official CLI landscape changed in 2026: the terminal coding agent is now **Deep Agents Code** (`dcode`, package `deepagents-code`), and the old `deepagents-cli` package is **deprecated** in favor of Managed Deep Agents (`mda`) ([Deep Agents Code](https://docs.langchain.com/oss/deepagents/code/overview), [deepagents-cli on PyPI](https://pypi.org/project/deepagents-cli/)). Never copy Deep Agents code from tutorials older than v0.7 without checking it against the docs.
+
+> ⚠️ **Production note: Deep Agents is pre-1.0, so pin it and expect API churn.**
+> Patch releases ship every few days (0.7.21 on Sep 30, 0.7.22 on Oct 5, 0.7.23 on Oct 7, 2026), and real APIs changed within months: backend factory functions were deprecated in 0.5.0, namespace factories switched from `BackendContext` to a LangGraph `Runtime` in 0.5.2, relying on the default model (`model=None`) is deprecated since 0.5.3 and will be removed in 1.0, and v0.7 removed the planning tool from the default stack ([Backends: migrate from backend factories](https://docs.langchain.com/oss/python/deepagents/backends), [`create_deep_agent` reference](https://reference.langchain.com/python/deepagents/graph/create_deep_agent), [Deep Agents v0.7](https://www.langchain.com/blog/deep-agents-v0-7)). The course uses a floor + minor-version ceiling (`deepagents>=0.7.23,<0.8`) so lessons keep working while you learn. **In production:** pin the exact version (`deepagents==0.7.23`) in a lock file (for example `uv.lock`), upgrade deliberately on a branch, read the changelog for every bump, run your trajectory evals (Lesson 10.11) as an upgrade gate, treat `DeprecationWarning`s from `deepagents` as test failures in CI, and keep beta features behind your own small interface (`mastery/deep/`) so a breaking change touches one file.
+
+### Default model stack for this module
+
+| Role | Course default | Why / caveats |
+|---|---|---|
+| Orchestrator (main deep agent) | `groq:openai/gpt-oss-120b` | Free/cheap, 131K context, supports tool use. **Not** in the official Deep Agents eval matrix, so you validate it with your own evals |
+| Subagents / workers | `groq:openai/gpt-oss-20b` | Faster and cheaper; per-subagent `model` override |
+| Officially suggested, free-tier option | `google_genai:gemini-3.6-flash` | Listed as a suggested model and scores well on the official [Deep Agents eval suite](https://docs.langchain.com/oss/python/deepagents/models). `langchain-google-genai` is already a `deepagents` dependency. Free tier: public/synthetic data only |
+| Paid benchmark | `openai:gpt-6-luna` (course benchmark), `openai:gpt-5.5` (officially suggested) | OpenAI models default to the Responses API in Deep Agents ([Models](https://docs.langchain.com/oss/python/deepagents/models)) |
+
+> ⚠️ **Production note: Groq's free tier is too small for serious deep-agent runs.**
+> On the free plan, `openai/gpt-oss-120b` and `openai/gpt-oss-20b` are limited to **30 RPM, 1K requests/day, 8K tokens/minute, and 200K tokens/day** ([Groq rate limits](https://console.groq.com/docs/rate-limits)). A deep agent sends its system prompt, tool schemas, and growing history on every step, and spawns subagents, so one research run can use tens of thousands of tokens. The course keeps tasks small, throttles with a rate limiter, and suggests the Groq Developer plan (pay per token) or the Gemini free tier for the module project. **In production:** use a paid tier with headroom, a model that passes both the official eval suite and *your* evals, per-run token and call budgets (`ModelCallLimitMiddleware`, `ToolCallLimitMiddleware`), retries with backoff, and a tested fallback model ([Fault tolerance](https://docs.langchain.com/oss/python/deepagents/fault-tolerance)).
+
+### Lesson 10.01 — Harness thinking: deep agents vs `create_agent` vs LangGraph
+- **Notebook:** `modules/10-deep-agents/10-01-harness-and-first-deep-agent.ipynb`
+- **Objectives:** Explain "agent = model + harness" and the four harness areas the docs use (execution environment, context management, delegation, steering). Build a first deep agent with `create_deep_agent(model=..., tools=..., system_prompt=...)`, always passing the model explicitly. List the built-in tools (`ls`, `read_file`, `write_file`, `edit_file`, `delete`, `glob`, `grep`, `task`, and `execute` with sandbox backends). Inspect the default middleware stack and the prompt assembly order (your prompt → profile base prompt → profile suffix). Rebuild the same agent with plain `create_agent` and compare tokens, steps, and results. Know when a deep agent is the wrong tool.
+- **Key concepts:** agent harness; `create_deep_agent` returns a compiled LangGraph graph (invoke, stream, checkpointers all work as in Module 08); base stack (`FilesystemMiddleware`, `SubAgentMiddleware`, `SummarizationMiddleware`, `PatchToolCallsMiddleware`); v0.7's leaner harness (about 65% fewer base input tokens); Deep Agents vs Claude Agent SDK.
+- **Read:** [Deep Agents overview](https://docs.langchain.com/oss/python/deepagents/overview) · [Quickstart](https://docs.langchain.com/oss/python/deepagents/quickstart) · [Customize Deep Agents](https://docs.langchain.com/oss/python/deepagents/customization) · [`create_deep_agent` reference](https://reference.langchain.com/python/deepagents/graph/create_deep_agent) · [Runtimes, frameworks, and harnesses](https://docs.langchain.com/oss/python/concepts/products) · [Deep Agents vs Claude Agent SDK](https://docs.langchain.com/oss/python/deepagents/comparison) · [Deep Agents v0.7 (blog)](https://www.langchain.com/blog/deep-agents-v0-7) · [`deepagents` on GitHub](https://github.com/langchain-ai/deepagents)
+
+### Lesson 10.02 — Models, harness profiles, and token budgets
+- **Notebook:** `modules/10-deep-agents/10-02-models-profiles-and-budgets.ipynb`
+- **Objectives:** Configure models with `provider:model` strings and with `init_chat_model` instances (temperature, timeouts, retries). Use **provider profiles** (`ProviderProfile`) and **harness profiles** (`HarnessProfile`, `register_harness_profile`) to change defaults per model, hide tools (`excluded_tools`), or rename/disable the default general-purpose subagent. Swap the model at runtime with a `wrap_model_call` middleware. Measure tokens, steps, and cost per run in LangSmith, and add a rate limiter so Groq's free tier does not fail mid-run. Read the official eval matrix and decide which models to test.
+- **Key concepts:** suggested models vs "works with any tool-calling model"; model profiles (`max_input_tokens`); per-subagent models; OpenAI Responses API default and data retention; harness tuning per model (why open-weight models need profiles).
+- **Read:** [Models](https://docs.langchain.com/oss/python/deepagents/models) · [Profiles](https://docs.langchain.com/oss/python/deepagents/profiles) · [Fault tolerance](https://docs.langchain.com/oss/python/deepagents/fault-tolerance) · [Deep Agents eval suite](https://github.com/langchain-ai/deepagents/tree/main/libs/evals) · [New in Deep Agents v0.6 (harness profiles)](https://www.langchain.com/blog/deep-agents-0-6) · [Groq rate limits](https://console.groq.com/docs/rate-limits) · [ChatGroq](https://docs.langchain.com/oss/python/integrations/chat/groq)
+
+### Lesson 10.03 — The virtual filesystem and planning
+- **Notebook:** `modules/10-deep-agents/10-03-virtual-filesystem-and-planning.ipynb`
+- **Objectives:** Use the file tools as the agent's working memory: seed files into state (`create_file_data`), let the agent write notes and drafts, read them back from the final state, and render them in the notebook. Understand the default `StateBackend` (thread-scoped, persisted by your checkpointer, shared by the main agent and its subagents). Opt in to planning with `TodoListMiddleware` (`write_todos`) and test, on the same task, whether it helps your model (v0.7 made it opt-in because the official evals showed little gain). Read images and PDFs with `read_file` on a multimodal model.
+- **Key concepts:** files as context offloading; `pending` / `in_progress` / `completed` todos in state; restricting tools with `FilesystemMiddleware(tools=[...])` for a read-only agent; multimodal file reads.
+- **Read:** [Overview: virtual filesystem and task planning](https://docs.langchain.com/oss/python/deepagents/overview) · [Backends: StateBackend](https://docs.langchain.com/oss/python/deepagents/backends) · [Built-in middleware: to-do list](https://docs.langchain.com/oss/python/langchain/middleware/built-in) · [Multimodal inputs and outputs](https://docs.langchain.com/oss/python/deepagents/multimodal) · [Frontend: todo list](https://docs.langchain.com/oss/python/deepagents/frontend/todo-list)
+
+### Lesson 10.04 — Backends, routing, and permissions
+- **Notebook:** `modules/10-deep-agents/10-04-backends-routing-permissions.ipynb`
+- **Objectives:** Choose the right backend: `StateBackend` (scratch), `FilesystemBackend` (real disk, always with `virtual_mode=True`), `StoreBackend` (LangGraph store, persists across threads, with a `namespace` function), `ContextHubBackend` (files in LangSmith), and `CompositeBackend` routes (for example `/workspace/` → disk, `/memories/` → store, everything else → state). Write **declarative filesystem permissions** (`FilesystemPermission`: operations, glob paths, allow/deny, first match wins) to protect `.env`, make policies read-only, and give subagents narrower access. Write a small custom backend or a policy hook that logs every write.
+- **Key concepts:** thread vs user vs assistant scope; internal paths (`/large_tool_results/`, `/conversation_history/`) and why to route them away from your project; passing backend *instances* (factories are deprecated); permissions do not apply to sandbox `execute`.
+- **Read:** [Backends](https://docs.langchain.com/oss/python/deepagents/backends) · [Permissions](https://docs.langchain.com/oss/python/deepagents/permissions) · [Backend integrations](https://docs.langchain.com/oss/python/integrations/backends/index) · [LangGraph persistence: memory store](https://docs.langchain.com/oss/python/langgraph/persistence)
+
+> ⚠️ **Production note: `FilesystemBackend` and `LocalShellBackend` are for local development only.**
+> The docs warn that `FilesystemBackend` gives the agent direct read/write access to real files (including secrets like `.env`), that `virtual_mode=False` gives no protection even with `root_dir`, and that `LocalShellBackend` adds unrestricted shell execution on your host with no isolation ([Backends](https://docs.langchain.com/oss/python/deepagents/backends)). The course uses them on a throwaway copy of a repo, with `virtual_mode=True`, deny rules for secrets, and HITL on writes. **In production:** never use them in web servers or multi-tenant APIs. Use `StateBackend`/`StoreBackend` for agent files, a sandbox backend for code execution, least-privilege permissions, and audit logs of file operations.
+
+### Lesson 10.05 — Subagents and delegation
+- **Notebook:** `modules/10-deep-agents/10-05-subagents-and-delegation.ipynb`
+- **Objectives:** Use the built-in `task` tool and the default `general-purpose` subagent. Define custom subagents as `SubAgent` dicts (`name`, `description`, `system_prompt`, `tools`, `model`, `middleware`, `interrupt_on`, `skills`, `response_format`, `permissions`). Wrap a `create_agent` or a Module 08 LangGraph graph as a `CompiledSubAgent`. Use **forked subagents** (`mode="fork"`, beta, needs `deepagents>=0.7.13`) to continue work with the parent's history. Return structured results from subagents. Run several subagents in parallel and filter their traces in LangSmith. Run a deep agent with no subagents at all.
+- **Key concepts:** context isolation (the main agent gets one final report, not dozens of tool calls); writing descriptions the orchestrator can route on; minimal tool sets per subagent; choosing models by task; subagents are stateless and single-handoff.
+- **Read:** [Subagents](https://docs.langchain.com/oss/python/deepagents/subagents) · [Context engineering: isolation with subagents](https://docs.langchain.com/oss/python/deepagents/context-engineering) · [Customize Deep Agents: subagents](https://docs.langchain.com/oss/python/deepagents/customization) · [Build a deep research agent](https://docs.langchain.com/oss/python/deepagents/deep-research)
+
+### Lesson 10.06 — Context engineering for long-running agents
+- **Notebook:** `modules/10-deep-agents/10-06-context-engineering-long-runs.ipynb`
+- **Objectives:** Watch the built-in context compression work on a long task: **offloading** (tool inputs/results over about 20,000 tokens go to the filesystem and are replaced with a path plus a preview), **summarization** (triggered near 85% of the model's `max_input_tokens`, keeping recent messages, with the full history saved to the filesystem), and the fallback on `ContextOverflowError`. Add an on-demand `compact_conversation` tool (`create_summarization_tool_middleware`). Pass per-run data through `context_schema` / runtime context and extend state with `DeepAgentState`. Know where prompt caching applies automatically (Anthropic, Bedrock) and where it doesn't.
+- **Key concepts:** input context (system prompt + memory + skills + tool prompts); compression vs isolation vs long-term memory; filtering summarization tokens out of streams; shrinking tool schemas with `excluded_tools`.
+- **Read:** [Context engineering in Deep Agents](https://docs.langchain.com/oss/python/deepagents/context-engineering) · [Built-in middleware: summarization](https://docs.langchain.com/oss/python/langchain/middleware/built-in) · [Models: model profiles](https://docs.langchain.com/oss/python/langchain/models) · [Context engineering (LangChain)](https://docs.langchain.com/oss/python/langchain/context-engineering)
+
+### Lesson 10.07 — Skills and long-term memory
+- **Notebook:** `modules/10-deep-agents/10-07-skills-and-memory.ipynb`
+- **Objectives:** Write skills that follow the Agent Skills standard (`SKILL.md` with frontmatter, plus `scripts/`, `references/`, `assets/`) and load them with `skills=[...]` using progressive disclosure. Give subagents their own skill sets and make skills read-only. Add **memory** with `memory=[...]` `AGENTS.md` files (always loaded) stored in a backend. Build agent-scoped and user-scoped memory with `StoreBackend` namespaces, read-only organization memory, and episodic memory (searching past threads). Decide what belongs in the system prompt vs a skill vs memory.
+- **Key concepts:** procedural (skills) vs semantic (memory files) vs episodic (threads) memory; update during the conversation vs background consolidation; memory poisoning and why shared memory should be read-only.
+- **Read:** [Skills](https://docs.langchain.com/oss/python/deepagents/skills) · [Memory](https://docs.langchain.com/oss/python/deepagents/memory) · [Agent Skills standard](https://agentskills.io/) · [AGENTS.md](https://agents.md/) · [Build a content builder agent](https://docs.langchain.com/oss/python/deepagents/content-builder)
+
+> ⚠️ **Production note: writable memory is an attack surface.**
+> If an agent can write to memory that other users or future runs read, a prompt injection today becomes a standing instruction tomorrow. The docs recommend organization-level memory be **read-only** ([Memory](https://docs.langchain.com/oss/python/deepagents/memory)). The course demos writable memory on synthetic data in a local `InMemoryStore`. **In production:** scope memory per user, make shared policy memory read-only, review or consolidate writes in the background, version memory files, and use a durable store (Postgres) instead of `InMemoryStore`.
+
+### Lesson 10.08 — Human-in-the-loop, guardrails, and fault tolerance
+- **Notebook:** `modules/10-deep-agents/10-08-hitl-guardrails-fault-tolerance.ipynb`
+- **Objectives:** Gate sensitive tools with `interrupt_on` (`True`, or `InterruptOnConfig` with `allowed_decisions`: approve, edit, reject, respond) and conditional `when` predicates. Handle interrupts in a notebook loop (resume with `Command`), including several pending tool calls and interrupts raised inside subagents. Add permission interrupts for file writes. Add resilience middleware: rate limiting, model and tool call limits, retries, fallbacks, and tool-error handling. Reuse your Module 04 guardrails (PII, prompt-injection checks) as middleware on a deep agent.
+- **Key concepts:** always use a checkpointer and the same `thread_id`; match decision order to actions; `reject` (deny) vs `respond` (human acts as the tool); tailoring approvals by risk.
+- **Read:** [Human-in-the-loop](https://docs.langchain.com/oss/python/deepagents/human-in-the-loop) · [Human-in-the-loop (LangChain)](https://docs.langchain.com/oss/python/langchain/human-in-the-loop) · [Fault tolerance](https://docs.langchain.com/oss/python/deepagents/fault-tolerance) · [Permissions: pause for human approval](https://docs.langchain.com/oss/python/deepagents/permissions) · [Guardrails](https://docs.langchain.com/oss/python/langchain/guardrails)
+
+### Lesson 10.09 — Code execution: sandboxes, interpreters, and dynamic subagents
+- **Notebook:** `modules/10-deep-agents/10-09-sandboxes-interpreters-dynamic-subagents.ipynb`
+- **Objectives:** Give an agent an `execute` tool through a sandbox backend. Compare the "sandbox as tool" and "agent in sandbox" patterns, thread-scoped vs assistant-scoped lifecycles, seeding files and downloading artifacts. Try one managed provider (LangSmith Sandboxes, Daytona, Modal, E2B, Runloop, and others are listed on the integrations page). Build a **free local `DockerSandbox`** by subclassing `BaseSandbox` (implement `execute()`, `upload_files()`, `download_files()`, and `id`). Add the QuickJS interpreter (`CodeInterpreterMiddleware` from `langchain-quickjs`, beta) for programmatic tool calling, and use **dynamic subagents** for fan-out, adversarial verification, and "loop until done" workflows.
+- **Key concepts:** isolation boundaries; why sandboxes don't stop context injection; keeping secrets in host-side tools; interpreters (no shell, network, or package installs) vs sandboxes; TTLs and cleanup.
+- **Read:** [Sandboxes](https://docs.langchain.com/oss/python/deepagents/sandboxes) · [Sandbox integrations](https://docs.langchain.com/oss/python/integrations/sandboxes/index) · [LangSmith Sandboxes](https://docs.langchain.com/langsmith/sandboxes) · [`BaseSandbox` reference](https://reference.langchain.com/python/deepagents/backends/sandbox/BaseSandbox) · [Interpreters](https://docs.langchain.com/oss/python/deepagents/interpreters) · [Dynamic subagents](https://docs.langchain.com/oss/python/deepagents/dynamic-subagents) · [`langchain-quickjs` on PyPI](https://pypi.org/project/langchain-quickjs/) · [Build a data analysis agent](https://docs.langchain.com/oss/python/deepagents/data-analysis)
+
+> ⚠️ **Production note: a local Docker container is not a hardened sandbox, and secrets never go inside one.**
+> The docs are explicit: **never put secrets inside a sandbox**, because a context-injected agent can read and exfiltrate them; keep credentials in tools that run on the host, block network access when it isn't needed, and treat everything produced inside the sandbox as untrusted ([Sandboxes: security considerations](https://docs.langchain.com/oss/python/deepagents/sandboxes)). The course's `DockerSandbox` is a free learning tool: containers share the host kernel and, by default, have network access. **In production:** use a managed sandbox provider (or hardened microVMs) with egress controls, resource limits, TTLs, and snapshots; never mount your home folder or Docker socket; and log every `execute` call. Interpreters and dynamic subagents are **beta**: keep them off critical paths until they stabilize.
+
+### Lesson 10.10 — Async subagents, streaming, and agent protocols
+- **Notebook:** `modules/10-deep-agents/10-10-async-subagents-streaming-protocols.ipynb`
+- **Objectives:** Stream a deep agent with `stream_events(..., version="v3")` and use the `stream.subagents` projection (one handle per delegated task, with `messages`, `tool_calls`, `status`, `output`). Build a live notebook dashboard: todo list, subagent cards, token stream. Launch **async subagents** (`AsyncSubAgent`) against an Agent Protocol server you run locally with `langgraph dev`, and use the start/check/update/cancel/list task tools. Survey how deep agents plug into other clients: AG-UI (frontends), ACP (code editors such as Zed), A2A (agent-to-agent).
+- **Key concepts:** sync vs async subagents (blocking vs job IDs and mid-flight steering); ASGI vs HTTP transport; namespaces in subgraph streaming; frontend patterns (todo list, subagent streaming, sandbox IDE).
+- **Read:** [Event streaming](https://docs.langchain.com/oss/python/deepagents/event-streaming) · [Streaming](https://docs.langchain.com/oss/python/deepagents/streaming) · [Async subagents](https://docs.langchain.com/oss/python/deepagents/async-subagents) · [Frontend overview](https://docs.langchain.com/oss/python/deepagents/frontend/overview) · [Subagent streaming UI](https://docs.langchain.com/oss/python/deepagents/frontend/subagent-streaming) · [AG-UI](https://docs.langchain.com/oss/python/deepagents/ag-ui) · [ACP](https://docs.langchain.com/oss/python/deepagents/acp) · [A2A server](https://docs.langchain.com/oss/python/deepagents/a2a)
+
+### Lesson 10.11 — Evaluating and shipping deep agents
+- **Notebook:** `modules/10-deep-agents/10-11-evaluating-and-shipping-deep-agents.ipynb`
+- **Objectives:** Evaluate deep agents on three levels: (1) **runtime self-checks** with `RubricMiddleware` (beta: a grader subagent scores the output against a rubric and the agent revises until satisfied or `max_iterations`); (2) **trajectory evals** with `agentevals` (`create_trajectory_match_evaluator` in `superset`/`subset`/`unordered` modes, `create_trajectory_llm_as_judge`) run as LangSmith experiments; (3) **outcome checks** on the final files (required report sections, valid citations, no writes outside allowed paths). Compare the Groq default, Gemini, and the OpenAI benchmark on the same dataset. Then plan production: thread/user/assistant scoping, `thread_id` + `context` on every call, a Postgres checkpointer and store, and the deployment options (self-hosted FastAPI in Module 13, LangSmith Deployment via `langgraph.json`, and **Managed Deep Agents**, a CLI-first hosted runtime in public beta, as an optional reference). Tour **Deep Agents Code** (`dcode`) as a real-world deep agent.
+- **Key concepts:** necessary vs sufficient evals (passing the official suite is "necessary but not sufficient"); file-state assertions; cost per successful task; upgrade gates for pre-1.0 libraries; Harbor and Terminal-Bench as reference benchmarks.
+- **Read:** [Grading rubrics](https://docs.langchain.com/oss/python/deepagents/rubric) · [Trajectory evaluations](https://docs.langchain.com/langsmith/trajectory-evals) · [Agent evals (LangChain)](https://docs.langchain.com/oss/python/langchain/test/evals) · [Going to production](https://docs.langchain.com/oss/python/deepagents/going-to-production) · [Managed Deep Agents](https://docs.langchain.com/langsmith/python/managed-deep-agents-overview) · [Harbor integrations](https://docs.langchain.com/langsmith/harbor-integrations) · [Improving Deep Agents with harness engineering (blog)](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering) · [Deep Agents Code quickstart](https://docs.langchain.com/oss/deepagents/code/quickstart)
+
+> ⚠️ **Production note: Deep Agents Code is not officially supported on Windows.**
+> The docs say Windows users can try it under WSL ([Deep Agents Code quickstart](https://docs.langchain.com/oss/deepagents/code/quickstart)). The course only *tours* `dcode` (optional, in WSL) as an example of a production deep agent; nothing in the course depends on it. Managed Deep Agents is a public-beta hosted service and is optional.
+
+**Jupyter skill:** long-running agents in notebooks: live progress panels with `display(..., display_id=True)` (todos, subagent status), rendering agent-written files and Markdown reports inline with `IPython.display.Markdown`, running a long job as an `asyncio` task so the kernel stays responsive, and saving run artifacts (final state, files, trace URL) to disk for later comparison.
+**`src/mastery` increment:** `mastery/deep/` with `factory.py` (`build_deep_agent()` with the course defaults: explicit model from settings, `CompositeBackend` layout `/workspace/` · `/memories/` · `/reports/`, default deny rules for secrets, rate limiter, call limits), `sandboxes/docker.py` (`DockerSandbox(BaseSandbox)`), `skills/` (course skills), and `evals.py` (trajectory and file-state evaluators).
+**Research checkpoint:** Open the [Deep Agents changelog](https://docs.langchain.com/oss/python/deepagents/changelog-py) and [releases](https://github.com/langchain-ai/deepagents/releases). Log every release since 0.7.23, any breaking change or new deprecation, whether 1.0 has shipped, and whether any feature this module calls "beta" is now stable. Re-check the suggested-models table on [Models](https://docs.langchain.com/oss/python/deepagents/models) (is a Groq-hosted model listed yet?). Update the `deepagents` line in `requirements.txt` if needed.
+
+### Lab 10A — Repo Cartographer (codebase analysis & refactor planning)
+*After Lesson 10.05.* **Real problem:** understanding an unfamiliar codebase and planning a safe refactor takes a senior engineer days.
+- **Requirements**
+  1. Input: a local clone of a small open-source Python repo (or your own `src/mastery`), mounted read-only at `/workspace/` through `FilesystemBackend(root_dir=..., virtual_mode=True)` in a `CompositeBackend`.
+  2. Permissions: deny all writes under `/workspace/`, deny reads of `.env*` and `**/secrets/**`, allow writes only under `/reports/`.
+  3. Subagents: `dependency-mapper` (imports, modules, entry points), `test-gap-finder` (untested modules), `code-reviewer` (smells, duplication). Each has a minimal tool set and returns structured findings (`response_format`).
+  4. Output: `/reports/ARCHITECTURE.md` (Mermaid module diagram), `/reports/REFACTOR_PLAN.md` (prioritized steps, each with `file:line` evidence, risk, and test plan).
+- **Acceptance criteria:** Every claim in the plan cites a real file and line (verified by a script). Zero writes outside `/reports/` (verified from the run's file operations). The run finishes within a token budget you set and log. A trajectory eval (superset mode) confirms all three subagents ran.
+- **Stretch:** Run the repo's test suite inside your `DockerSandbox` (Lesson 10.09) to confirm the test-gap findings. Package the review checklist as a `refactor-plan` skill.
+- **Stack:** Free: Groq (`gpt-oss-120b` orchestrator, `gpt-oss-20b` subagents) or Gemini free tier. Paid: OpenAI benchmark for the orchestrator.
+
+### Lab 10B — Sandboxed Data Analyst
+*After Lesson 10.09.* **Real problem:** turning a raw CSV into a trustworthy analysis report with charts, without running model-written code on your machine.
+- **Requirements**
+  1. Upload a CSV (public dataset) into a sandbox (your `DockerSandbox`, or a managed provider). The agent explores, cleans, analyzes, and plots with pandas/matplotlib through `execute`.
+  2. Opt-in planning (`TodoListMiddleware`) with the plan streamed to a notebook progress panel.
+  3. Artifacts: `report.md` (method, findings, caveats, every number traceable to a script), `analysis.py`, and PNG charts, downloaded from the sandbox to `artifacts/`.
+  4. No secrets inside the sandbox; any API access goes through host-side tools. Network disabled in the container unless a step needs it.
+- **Acceptance criteria:** Re-running `analysis.py` reproduces every number in the report. Charts render inline in the notebook. The sandbox is cleaned up at the end (verified). HITL approval is required before any `execute` that installs packages.
+- **Stretch:** Use the interpreter + dynamic subagents to analyze several CSVs in parallel and write a comparison. Compare one managed sandbox provider with Docker (setup effort, latency, cost).
+- **Stack:** Free: Groq + Docker Desktop. Paid (optional): a managed sandbox provider, OpenAI benchmark.
+
+### Lab 10C — Policy & Contract Review Desk (HITL compliance review)
+*After Lesson 10.08.* **Real problem:** reviewing many documents against a compliance checklist is slow, and a wrong "approved" is expensive, so a human must sign off.
+- **Requirements**
+  1. Input: 10–20 synthetic contracts/policies (PDF or Markdown) plus a checklist (for example data-retention, liability cap, termination, PII handling).
+  2. A `contract-review` skill holds the checklist, the scoring guide, and a findings template. Organization policies live in read-only memory (`/policies/`, deny writes).
+  3. Fan out one reviewer subagent per document (sync `task` calls in parallel, or dynamic subagents as a stretch). Each returns structured findings with quotes and page/section references.
+  4. HITL: the agent must interrupt before `approve_document` or `send_report` (mock tools) and allow approve / edit / reject. Rejections must be explained back to the agent.
+  5. `RubricMiddleware` checks that every checklist item is addressed for every document before the final summary.
+- **Acceptance criteria:** On a labeled set of 10 documents, ≥ 90% of seeded issues are found, with zero fabricated quotes (exact-match check). No document is approved without a human decision (verified from traces). The final `review_summary.md` lists every document, its status, and the reviewer decision.
+- **Stretch:** Swap the mock `send_report` for a real email draft (never auto-send). Add PII redaction middleware from Module 04.
+- **Stack:** Free: Groq or Gemini free tier (synthetic documents only). Paid: OpenAI benchmark as the rubric grader.
+
+### Project 10 — Deep Research Analyst
+**Goal:** A production-shaped deep research agent that answers a hard question by researching the web **and** your own documents, and delivers a cited report you would actually send to someone.
+- **Requirements**
+  1. **Harness:** `build_deep_agent()` from `mastery/deep/` with an explicit model, `CompositeBackend` (`/research/` notes in state, `/memories/` in a store, `/reports/` for outputs), deny rules for secrets, a rate limiter, and model/tool call limits.
+  2. **Planning:** opt-in `TodoListMiddleware`; the research plan is shown to the user and approved through HITL **before** any research starts (edit or reject allowed).
+  3. **Research subagents:** `web-researcher` (web search tool from `mastery/tools/web_search.py`: Groq browser search by default, Tavily as a drop-in) and `docs-researcher` (your Module 06 RAG index wrapped as a tool). Run in parallel, write raw notes to `/research/`, and return structured findings (claim, evidence quote, source URL or doc ID).
+  4. **Critic:** a `fact-checker` subagent re-checks every claim against its evidence and flags unsupported ones. Use `mode="fork"` (beta) or an isolated subagent, and justify the choice in the README.
+  5. **Context:** large search results are offloaded automatically; show in the trace at least one offload and explain the summarization settings you rely on.
+  6. **Memory:** user-scoped `AGENTS.md` memory of report preferences (length, tone, citation style) that persists across threads.
+  7. **Output:** `/reports/<slug>.md` (executive summary, findings, contradictions, open questions, numbered citations) + `/reports/<slug>.sources.json`.
+  8. **Streaming:** a notebook dashboard (or a small Streamlit/Gradio page) showing the todo list, subagent cards, and the report as it is written.
+  9. **Evaluation:** a 15-question LangSmith dataset; evaluators: trajectory superset (plan approved → both researchers → fact-checker → report written), file-state checks (required sections, every citation resolves to a source), LLM-as-judge groundedness, plus a `RubricMiddleware` runtime check. Compare Groq default vs Gemini vs OpenAI benchmark on quality, tokens, latency, and cost per report.
+- **Acceptance criteria:** ≥ 12/15 reports pass all file-state checks and score ≥ 4/5 on groundedness. Zero citations to sources the agent did not retrieve. The run survives a kernel restart mid-research (resume from the checkpointer with the same `thread_id`). Cost per report and token usage are reported. The README has an architecture diagram (Mermaid), the ⚠️ Production notes that apply, and the exact `deepagents` version used.
+- **Stretch:** Turn `web-researcher` into an **async subagent** on a local `langgraph dev` server so the user can keep chatting while research runs. Add a `report-style` skill. Serve it with the Module 13 FastAPI service. Try the optional Managed Deep Agents path and compare.
+- **Stack:** Free: Groq (Developer plan recommended for full runs) or Gemini free tier with public data + Chroma + SQLite checkpointer + LangSmith free tier. Paid: OpenAI benchmark (`gpt-6-luna`; `gpt-6.1-sol` as the judge), Tavily beyond the free credits.
+
+---
+
+## Module 11 — Multimodal & Voice
 
 **Goals:** Send images and PDFs to models, transcribe speech with Groq Whisper, synthesize speech with Groq Orpheus, and build the STT → agent → TTS "sandwich".
 **Time:** 1.5 weeks.
@@ -732,23 +889,23 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 > ⚠️ **Production note: this module uses two Groq preview models.**
 > Vision (`qwen/qwen3.8-27b`) and TTS (`canopylabs/orpheus-v1-english`) are previews: evaluation only, no migration guarantee, and they can be retired at short notice. The course accepts that because they are cheap and fast to learn with, and each lesson has a fallback (vision → the paid benchmark model, which accepts image input; TTS → text-only answer). In production: choose GA vision and TTS models with an SLA, pin model IDs, cache generated audio, monitor errors and per-character cost, and test the fallback path in CI.
 
-### Lesson 10.01 — Multimodal input: images and PDFs
-- **Notebook:** `modules/10-multimodal-and-voice/10-01-multimodal-input.ipynb`
+### Lesson 11.01 — Multimodal input: images and PDFs
+- **Notebook:** `modules/11-multimodal-and-voice/11-01-multimodal-input.ipynb`
 - **Objectives:** Send images (URL/base64) and documents as content blocks. Use Groq's vision model (`qwen/qwen3.8-27b`, **preview**) for OCR/description. Wire a fallback to a paid multimodal model (`gpt-6-luna` accepts image input) and compare quality.
 - **Read:** [Messages: multimodal](https://docs.langchain.com/oss/python/langchain/messages) · [Models: multimodal](https://docs.langchain.com/oss/python/langchain/models) · [Groq vision](https://console.groq.com/docs/vision) · [Qwen 3.8 27B on Groq](https://console.groq.com/docs/model/qwen/qwen3.8-27b)
 
-### Lesson 10.02 — Speech-to-text with Groq Whisper
-- **Notebook:** `modules/10-multimodal-and-voice/10-02-speech-to-text.ipynb`
+### Lesson 11.02 — Speech-to-text with Groq Whisper
+- **Notebook:** `modules/11-multimodal-and-voice/11-02-speech-to-text.ipynb`
 - **Objectives:** Transcribe and translate audio. Get word/segment timestamps (`verbose_json`). Use prompts for spelling hints. Handle file-size limits (chunking long audio, 16 kHz mono preprocessing).
 - **Read:** [Groq speech to text](https://console.groq.com/docs/speech-to-text) · [Whisper Large V3 Turbo](https://console.groq.com/docs/model/whisper-large-v3-turbo) · [Whisper Large V3](https://console.groq.com/docs/model/whisper-large-v3)
 
-### Lesson 10.03 — Text-to-speech with Orpheus
-- **Notebook:** `modules/10-multimodal-and-voice/10-03-text-to-speech.ipynb`
+### Lesson 11.03 — Text-to-speech with Orpheus
+- **Notebook:** `modules/11-multimodal-and-voice/11-03-text-to-speech.ipynb`
 - **Objectives:** Generate speech with the six English voices of Orpheus (**preview**). Use vocal directions deliberately. Split long text into ≤ 200-character sentence-aware chunks and stitch the WAVs. Play audio inline. Fall back to a text-only answer if TTS fails.
 - **Read:** [Groq text to speech](https://console.groq.com/docs/text-to-speech) · [Orpheus](https://console.groq.com/docs/text-to-speech/orpheus) · [Orpheus V1 English model](https://console.groq.com/docs/model/canopylabs/orpheus-v1-english)
 
-### Lesson 10.04 — The voice agent "sandwich"
-- **Notebook:** `modules/10-multimodal-and-voice/10-04-voice-agent-sandwich.ipynb`
+### Lesson 11.04 — The voice agent "sandwich"
+- **Notebook:** `modules/11-multimodal-and-voice/11-04-voice-agent-sandwich.ipynb`
 - **Objectives:** Compose STT → `create_agent` → TTS. Compare the sandwich with speech-to-speech models. Stream for lower perceived latency. Trace voice runs.
 - **Read:** [Build a voice agent with LangChain](https://docs.langchain.com/oss/python/langchain/voice-agent) (uses AssemblyAI + Cartesia; we adapt it to Groq) · [Voice tracing fundamentals](https://docs.langchain.com/langsmith/trace-voice-fundamentals) · [Understanding and optimizing latency on Groq](https://console.groq.com/docs/production-readiness/optimizing-latency)
 
@@ -756,7 +913,7 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 **`src/mastery` increment:** `mastery/voice/` (`transcribe()`, `speak()` with chunking, `VoicePipeline`).
 **Research checkpoint:** Re-check Groq's TTS model list and voices. Log whether Orpheus is still preview and whether any new voice/language exists.
 
-### Project 10 — Voice Q&A Agent
+### Project 11 — Voice Q&A Agent
 **Goal:** Ask questions about your knowledge base by voice and hear the answer.
 - **Requirements**
   1. Input: upload a WAV/MP3 (and optionally record from the browser in a Gradio/Streamlit app).
@@ -769,43 +926,43 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 
 ---
 
-## Module 11 — Testing, Evaluation & Observability
+## Module 12 — Testing, Evaluation & Observability
 
 **Goals:** Make quality measurable. Unit-test agents without API calls, integration-test with real models, build LangSmith datasets and evaluators (code, LLM-as-judge, pairwise, trajectory), monitor production with online evaluators, and close the loop with feedback.
 **Time:** 2 weeks.
 
-### Lesson 11.01 — Testing strategy for LLM apps
-- **Notebook:** `modules/11-testing-evaluation-observability/11-01-testing-strategy.ipynb` + `tests/`
+### Lesson 12.01 — Testing strategy for LLM apps
+- **Notebook:** `modules/12-testing-evaluation-observability/12-01-testing-strategy.ipynb` + `tests/`
 - **Objectives:** Separate unit tests (fake chat models, `InMemorySaver`), integration tests (real APIs, assert on structure), and evals (quality). Organize with pytest markers.
 - **Read:** [Test (overview)](https://docs.langchain.com/oss/python/langchain/test/index) · [Unit testing](https://docs.langchain.com/oss/python/langchain/test/unit-testing) · [Integration testing](https://docs.langchain.com/oss/python/langchain/test/integration-testing) · [Test (LangGraph)](https://docs.langchain.com/oss/python/langgraph/test) · [pytest](https://docs.pytest.org/en/stable/)
 
-### Lesson 11.02 — Observability in depth
-- **Notebook:** `modules/11-testing-evaluation-observability/11-02-observability.ipynb`
+### Lesson 12.02 — Observability in depth
+- **Notebook:** `modules/12-testing-evaluation-observability/12-02-observability.ipynb`
 - **Objectives:** Trace custom functions with `@traceable`. Group conversations in threads. Track cost. Mask sensitive data. Query traces with the SDK.
 - **Read:** [LangSmith Observability](https://docs.langchain.com/langsmith/observability) · [Custom instrumentation](https://docs.langchain.com/langsmith/annotate-code) · [Configure threads](https://docs.langchain.com/langsmith/threads) · [Cost tracking](https://docs.langchain.com/langsmith/cost-tracking) · [Redact secrets](https://docs.langchain.com/langsmith/redact-secrets) · [Query traces with the SDK](https://docs.langchain.com/langsmith/export-traces)
 
-### Lesson 11.03 — Datasets and offline experiments
-- **Notebook:** `modules/11-testing-evaluation-observability/11-03-datasets-and-experiments.ipynb`
+### Lesson 12.03 — Datasets and offline experiments
+- **Notebook:** `modules/12-testing-evaluation-observability/12-03-datasets-and-experiments.ipynb`
 - **Objectives:** Create datasets programmatically (from traces too). Define target functions. Run `evaluate()`. Compare experiments. Handle rate limits during evals.
 - **Read:** [LangSmith Evaluation](https://docs.langchain.com/langsmith/evaluation) · [Evaluation quickstart](https://docs.langchain.com/langsmith/evaluation-quickstart) · [Evaluation concepts](https://docs.langchain.com/langsmith/evaluation-concepts) · [Manage datasets programmatically](https://docs.langchain.com/langsmith/manage-datasets-programmatically) · [How to evaluate agents](https://docs.langchain.com/langsmith/evaluate-llm-application) · [Handle model rate limits](https://docs.langchain.com/langsmith/handle-model-rate-limiting)
 
-### Lesson 11.04 — Evaluators: code, LLM-as-judge, pairwise
-- **Notebook:** `modules/11-testing-evaluation-observability/11-04-evaluators.ipynb`
+### Lesson 12.04 — Evaluators: code, LLM-as-judge, pairwise
+- **Notebook:** `modules/12-testing-evaluation-observability/12-04-evaluators.ipynb`
 - **Objectives:** Write deterministic code evaluators, LLM-as-judge evaluators (with openevals), and pairwise comparisons. Calibrate judges against human labels.
 - **Read:** [Code evaluator (SDK)](https://docs.langchain.com/langsmith/code-evaluator-sdk) · [LLM-as-a-judge (SDK)](https://docs.langchain.com/langsmith/llm-as-judge-sdk) · [Pairwise evaluation](https://docs.langchain.com/langsmith/evaluate-pairwise) · [openevals with LangSmith](https://docs.langchain.com/langsmith/openevals) · [openevals repo](https://github.com/langchain-ai/openevals)
 
-### Lesson 11.05 — Agent evals: trajectories and multi-turn
-- **Notebook:** `modules/11-testing-evaluation-observability/11-05-agent-trajectory-evals.ipynb`
+### Lesson 12.05 — Agent evals: trajectories and multi-turn
+- **Notebook:** `modules/12-testing-evaluation-observability/12-05-agent-trajectory-evals.ipynb`
 - **Objectives:** Evaluate tool-call trajectories (match modes and LLM-as-judge) with agentevals. Evaluate a complex agent. Run pytest-integrated evals.
 - **Read:** [Agent evals](https://docs.langchain.com/oss/python/langchain/test/evals) · [Trajectory evaluations](https://docs.langchain.com/langsmith/trajectory-evals) · [Evaluate a complex agent](https://docs.langchain.com/langsmith/evaluate-complex-agent) · [Test a ReAct agent with pytest and LangSmith](https://docs.langchain.com/langsmith/test-react-agent-pytest) · [Evaluations with pytest](https://docs.langchain.com/langsmith/pytest) · [agentevals repo](https://github.com/langchain-ai/agentevals)
 
-### Lesson 11.06 — Production monitoring: online evals, feedback, annotation queues
-- **Notebook:** `modules/11-testing-evaluation-observability/11-06-online-evaluation-and-feedback.ipynb`
+### Lesson 12.06 — Production monitoring: online evals, feedback, annotation queues
+- **Notebook:** `modules/12-testing-evaluation-observability/12-06-online-evaluation-and-feedback.ipynb`
 - **Objectives:** Attach user feedback to runs. Set up an online LLM-as-judge evaluator, dashboards, and alerts. Route bad runs to an annotation queue. Turn them into dataset examples.
 - **Read:** [Log user feedback](https://docs.langchain.com/langsmith/attach-user-feedback) · [Online LLM-as-a-judge evaluators](https://docs.langchain.com/langsmith/online-evaluations-llm-as-judge) · [Annotation queues](https://docs.langchain.com/langsmith/annotation-queues) · [Dashboards](https://docs.langchain.com/langsmith/dashboards) · [Alerts](https://docs.langchain.com/langsmith/alerts) · [Insights](https://docs.langchain.com/langsmith/insights)
 
-### Lesson 11.07 — Prompt management with the Prompt & Context Hub
-- **Notebook:** `modules/11-testing-evaluation-observability/11-07-prompt-hub.ipynb`
+### Lesson 12.07 — Prompt management with the Prompt & Context Hub
+- **Notebook:** `modules/12-testing-evaluation-observability/12-07-prompt-hub.ipynb`
 - **Objectives:** Version prompts in LangSmith, pull them in code, and test prompt changes against a dataset before promoting them.
 - **Read:** [Prompt & Context Hub](https://docs.langchain.com/langsmith/prompt-context-hub) · [Prompt engineering quickstart](https://docs.langchain.com/langsmith/prompt-engineering-quickstart) · [Manage prompts programmatically](https://docs.langchain.com/langsmith/manage-prompts-programmatically)
 
@@ -813,8 +970,8 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 **`src/mastery` increment:** `mastery/evals/` (shared evaluators, dataset builders) + `tests/unit/`, `tests/integration/`.
 **Research checkpoint:** Check [Usage and billing](https://docs.langchain.com/langsmith/usage-and-billing) for current free-tier trace limits and retention. Log how many eval runs per week you can afford.
 
-### Project 11 — Eval Suite + CI for a Previous Agent
-**Goal:** Turn one earlier project (06, 08, or 09) into an evaluated, regression-tested system.
+### Project 12 — Eval Suite + CI for a Previous Agent
+**Goal:** Turn one earlier project (06, 08, 09, or 10) into an evaluated, regression-tested system.
 - **Requirements**
   1. ≥ 30-example LangSmith dataset (including edge cases and adversarial inputs from Module 04).
   2. ≥ 3 evaluators: 1 deterministic (schema/citation validity), 1 LLM-as-judge (correctness or groundedness), 1 trajectory evaluator (right tools, right order).
@@ -822,47 +979,47 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
   4. Unit tests with fake models run in < 30 s with no API keys. Integration tests marked and skipped by default.
   5. GitHub Actions workflow running unit tests + lint on every push (evals optional/manual trigger).
 - **Acceptance criteria:** CI is green. The eval report states a winner with evidence. Judge agreement with your own labels on 10 examples is reported.
-- **Stretch:** An online evaluator + annotation queue on a deployed version (after Module 12). Backtesting a new agent version.
+- **Stretch:** An online evaluator + annotation queue on a deployed version (after Module 13). Backtesting a new agent version.
 - **Stack:** Free: Groq + LangSmith free tier + GitHub Actions. Paid: stronger judge model.
 
 ---
 
-## Module 12 — Production & Deployment
+## Module 13 — Production & Deployment
 
 **Goals:** Ship an agent as a reliable, **self-hosted** service you fully control: configuration, resilience, cost control, caching, async, a FastAPI API with streaming, Postgres persistence, API-key auth, Docker + Docker Compose, a small UI, and CI. Everything in the main path is free and runs on your own machine. LangSmith's managed deployment (Agent Server / LangSmith Cloud) is covered as an **optional reference** lesson at the end, so you can compare.
 **Time:** 2–2.5 weeks.
 
 > **Why self-hosted first:** FastAPI + Docker is free, portable to any cloud, and the deployment skill most job descriptions ask for. Once you have built the service by hand, you will understand exactly what a managed platform does for you (and what it costs).
 
-### Lesson 12.01 — Production readiness checklist
-- **Notebook:** `modules/12-production-and-deployment/12-01-production-checklist.ipynb`
-- **Objectives:** Walk through config, secrets, timeouts, retries, fallbacks, limits, logging, tracing, evals, and a security review for one agent. Review every ⚠️ Production note you collected in Modules 00–11 and decide which ones your service must fix.
+### Lesson 13.01 — Production readiness checklist
+- **Notebook:** `modules/13-production-and-deployment/13-01-production-checklist.ipynb`
+- **Objectives:** Walk through config, secrets, timeouts, retries, fallbacks, limits, logging, tracing, evals, and a security review for one agent. Review every ⚠️ Production note you collected in Modules 00–12 and decide which ones your service must fix.
 - **Read:** [Groq production-ready checklist](https://console.groq.com/docs/production-readiness/production-ready-checklist) · [LangChain deployment](https://docs.langchain.com/oss/python/langchain/deploy) · [Common errors](https://docs.langchain.com/oss/python/common-errors) · [FastAPI deployment concepts](https://fastapi.tiangolo.com/deployment/concepts/) · [Course production notes](docs/production-notes.md)
 
-### Lesson 12.02 — Resilience, rate limits, cost and caching
-- **Notebook:** `modules/12-production-and-deployment/12-02-resilience-cost-caching.ipynb`
+### Lesson 13.02 — Resilience, rate limits, cost and caching
+- **Notebook:** `modules/13-production-and-deployment/13-02-resilience-cost-caching.ipynb`
 - **Objectives:** Combine model retry/fallback middleware, rate limiters, call limits, prompt caching (where supported), and Groq Batch/Flex for offline workloads. Build a cost report from traces.
 - **Read:** [Prebuilt middleware](https://docs.langchain.com/oss/python/langchain/middleware/built-in) · [Models: rate limiting, prompt caching](https://docs.langchain.com/oss/python/langchain/models) · [Groq batch](https://console.groq.com/docs/batch) · [Cost tracking](https://docs.langchain.com/langsmith/cost-tracking)
 
-### Lesson 12.03 — Async agents and concurrency
-- **Notebook:** `modules/12-production-and-deployment/12-03-async-and-concurrency.ipynb`
+### Lesson 13.03 — Async agents and concurrency
+- **Notebook:** `modules/13-production-and-deployment/13-03-async-and-concurrency.ipynb`
 - **Objectives:** Use `ainvoke`/`astream` end to end. Bound concurrency. Handle cancellation and timeouts. These are the building blocks of the FastAPI endpoints in the next lesson.
 - **Read:** [asyncio](https://docs.python.org/3/library/asyncio.html) · [Streaming](https://docs.langchain.com/oss/python/langchain/streaming) · [FastAPI: concurrency and async/await](https://fastapi.tiangolo.com/async/)
 
-### Lesson 12.04 — A FastAPI service for your agent
-- **Notebook:** `modules/12-production-and-deployment/12-04-fastapi-service.ipynb` + `apps/m12_service/`
+### Lesson 13.04 — A FastAPI service for your agent
+- **Notebook:** `modules/13-production-and-deployment/13-04-fastapi-service.ipynb` + `apps/m13_service/`
 - **Objectives:** Structure a FastAPI app (`app/main.py`, routers, settings). Build the agent and checkpointer **once** in the lifespan handler. Expose `POST /v1/chat` (invoke) and `POST /v1/chat/stream` (Server-Sent Events) with a `thread_id`. Validate requests and responses with Pydantic. Load config with `pydantic-settings`. Test endpoints with `TestClient` and a fake model (no API keys).
 - **Key concepts:** app factory; lifespan; dependency injection; SSE vs WebSockets; streaming agent events with `astream`; health (`/healthz`) and readiness endpoints.
 - **Read:** [FastAPI](https://fastapi.tiangolo.com/) · [Server-Sent Events](https://fastapi.tiangolo.com/tutorial/server-sent-events/) · [Custom responses / StreamingResponse](https://fastapi.tiangolo.com/advanced/custom-response/) · [Bigger applications](https://fastapi.tiangolo.com/tutorial/bigger-applications/) · [Settings and env vars](https://fastapi.tiangolo.com/advanced/settings/) · [Lifespan events](https://fastapi.tiangolo.com/advanced/events/) · [Testing](https://fastapi.tiangolo.com/tutorial/testing/) · [pydantic-settings](https://docs.pydantic.dev/latest/concepts/pydantic_settings/) · [LangChain streaming](https://docs.langchain.com/oss/python/langchain/streaming) · [uv + FastAPI](https://docs.astral.sh/uv/guides/integration/fastapi/)
 
-### Lesson 12.05 — Persistence, auth, and multi-user data
-- **Notebook:** `modules/12-production-and-deployment/12-05-persistence-and-auth.ipynb`
+### Lesson 13.05 — Persistence, auth, and multi-user data
+- **Notebook:** `modules/13-production-and-deployment/13-05-persistence-and-auth.ipynb`
 - **Objectives:** Swap SQLite for the **Postgres checkpointer** (`langgraph-checkpoint-postgres`). Add API-key auth with a FastAPI security dependency. Make threads private per user (thread ownership check) and namespace the long-term store per user. Add per-key rate limiting and request IDs in logs.
 - **Key concepts:** connection pools; checkpointer `setup()`; authn vs authz; tenant isolation; never trusting client-sent `user_id`.
 - **Read:** [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence) · [`langgraph-checkpoint-postgres`](https://pypi.org/project/langgraph-checkpoint-postgres/) · [FastAPI security](https://fastapi.tiangolo.com/tutorial/security/) · [Long-term memory](https://docs.langchain.com/oss/python/langchain/long-term-memory)
 
-### Lesson 12.06 — Docker and Docker Compose
-- **Notebook:** `modules/12-production-and-deployment/12-06-docker-and-compose.ipynb` + `apps/m12_service/Dockerfile`, `compose.yaml`
+### Lesson 13.06 — Docker and Docker Compose
+- **Notebook:** `modules/13-production-and-deployment/13-06-docker-and-compose.ipynb` + `apps/m13_service/Dockerfile`, `compose.yaml`
 - **Objectives:** Install and check Docker Desktop on Windows (WSL 2 backend). Write a multi-stage Dockerfile that installs dependencies with `uv` from a lock file, runs as a non-root user, and has a health check. Add `.dockerignore`. Run the API + Postgres with Docker Compose, passing secrets through environment variables (never baked into the image). Rebuild fast with layer caching.
 - **Key concepts:** images vs containers; layers and cache; multi-stage builds; `uv sync --locked`; Compose services, volumes, and health checks; 12-factor config.
 - **Read:** [FastAPI in containers](https://fastapi.tiangolo.com/deployment/docker/) · [Docker get started](https://docs.docker.com/get-started/) · [Docker Desktop on Windows](https://docs.docker.com/desktop/setup/install/windows-install/) · [Docker Python guide](https://docs.docker.com/guides/python/) · [Multi-stage builds](https://docs.docker.com/build/building/multi-stage/) · [Build best practices](https://docs.docker.com/build/building/best-practices/) · [Docker Compose](https://docs.docker.com/compose/) · [uv in Docker](https://docs.astral.sh/uv/guides/integration/docker/) · [Postgres image](https://hub.docker.com/_/postgres)
@@ -870,24 +1027,24 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 > ⚠️ **Production note: "it runs in Compose on my laptop" is not production.**
 > Compose on one machine has no redundancy, TLS, or zero-downtime deploys. In production: put a reverse proxy with TLS in front, use a managed Postgres with backups, keep secrets in a secret manager, set CPU/memory limits, ship logs and traces centrally, and deploy images built by CI (not from your laptop). Docker Desktop is free for personal use and small businesses, but commercial use in larger enterprises (more than 250 employees **or** more than $10M annual revenue) needs a paid subscription ([Docker Desktop on Windows](https://docs.docker.com/desktop/setup/install/windows-install/)).
 
-### Lesson 12.07 — UI and CI/CD for the service
-- **Notebook:** `modules/12-production-and-deployment/12-07-ui-and-cicd.ipynb` + `apps/m12_ui/`, `.github/workflows/`
+### Lesson 13.07 — UI and CI/CD for the service
+- **Notebook:** `modules/13-production-and-deployment/13-07-ui-and-cicd.ipynb` + `apps/m13_ui/`, `.github/workflows/`
 - **Objectives:** Build a Streamlit or Gradio front-end that calls your API and renders the SSE stream. Build a GitHub Actions pipeline: lint → unit tests → build the Docker image → (manual) evals. Use pre-commit hooks (nbstripout, ruff).
 - **Read:** [Streamlit docs](https://docs.streamlit.io/) · [Gradio docs](https://www.gradio.app/docs) · [Frontend overview](https://docs.langchain.com/oss/python/langchain/frontend/overview) · [Building and testing Python (GitHub Actions)](https://docs.github.com/en/actions/tutorials/build-and-test-code/python) · [pre-commit](https://pre-commit.com/)
 
-### Lesson 12.08 — (Optional reference) LangSmith Deployment and Agent Server
-- **Notebook:** `modules/12-production-and-deployment/12-08-optional-langsmith-deployment.ipynb`
-- **Objectives:** Understand what the managed option gives you: Agent Server concepts (assistants, threads, runs, cron, webhooks), `langgraph.json`, `langgraph dev`, cloud deployment, standalone servers, RemoteGraph, Agent Chat UI, custom auth, and the MCP endpoint. Compare it, feature by feature and cost by cost, with the service you built in 12.04–12.07. Deploying to LangSmith Cloud is **optional** (it may need a paid plan).
+### Lesson 13.08 — (Optional reference) LangSmith Deployment and Agent Server
+- **Notebook:** `modules/13-production-and-deployment/13-08-optional-langsmith-deployment.ipynb`
+- **Objectives:** Understand what the managed option gives you: Agent Server concepts (assistants, threads, runs, cron, webhooks), `langgraph.json`, `langgraph dev`, cloud deployment, standalone servers, RemoteGraph, Agent Chat UI, custom auth, and the MCP endpoint. Compare it, feature by feature and cost by cost, with the service you built in 13.04–13.07. Deploying to LangSmith Cloud is **optional** (it may need a paid plan).
 - **Read:** [LangSmith Deployment components](https://docs.langchain.com/langsmith/components) · [Agent Server](https://docs.langchain.com/langsmith/agent-server) · [Local development & testing](https://docs.langchain.com/langsmith/local-dev-testing) · [Deploy your app to cloud](https://docs.langchain.com/langsmith/deployment-quickstart) · [Self-host standalone servers](https://docs.langchain.com/langsmith/deploy-standalone-server) · [RemoteGraph](https://docs.langchain.com/langsmith/use-remote-graph) · [Agent Chat UI](https://docs.langchain.com/oss/python/langchain/ui) · [Custom authentication](https://docs.langchain.com/langsmith/custom-auth) · [Authentication & access control](https://docs.langchain.com/langsmith/auth) · [MCP endpoint in Agent Server](https://docs.langchain.com/langsmith/server-mcp) · [CI/CD with LangSmith Deployment](https://docs.langchain.com/langsmith/cicd-pipeline-example) · [LangGraph deployment](https://docs.langchain.com/oss/python/langgraph/deploy) · [Usage and billing](https://docs.langchain.com/langsmith/usage-and-billing)
 
 **Jupyter skill:** from notebook to module/service (`nbconvert --to script`, refactoring).
 **`src/mastery` increment:** `mastery/service/` (FastAPI app factory, settings via `pydantic-settings`, auth dependency, SSE helpers).
 **Research checkpoint:** Re-check the [FastAPI release notes](https://fastapi.tiangolo.com/release-notes/) and [uv Docker guide](https://docs.astral.sh/uv/guides/integration/docker/) for changes since this course was written. Then compare running your service yourself vs LangSmith Cloud using [Usage and billing](https://docs.langchain.com/langsmith/usage-and-billing), and log the decision.
 
-### Project 12 — Self-Hosted Agent Service (FastAPI + Docker)
+### Project 13 — Self-Hosted Agent Service (FastAPI + Docker)
 **Goal:** Deploy one capstone-candidate agent as a real, self-hosted service that anyone can run from a fresh clone.
 - **Requirements**
-  1. FastAPI app in `apps/m12_service/` using `mastery/service`: `POST /v1/chat`, `POST /v1/chat/stream` (SSE), `GET /v1/threads/{thread_id}` (history, owner only), `GET /healthz`.
+  1. FastAPI app in `apps/m13_service/` using `mastery/service`: `POST /v1/chat`, `POST /v1/chat/stream` (SSE), `GET /v1/threads/{thread_id}` (history, owner only), `GET /healthz`.
   2. Persistence: Postgres checkpointer (Compose service with a named volume). SQLite fallback for local runs without Docker.
   3. Security: API-key auth (`X-API-Key`), per-key rate limiting, thread ownership checks, PII redaction middleware, no secrets in the image or logs.
   4. Reliability: timeouts, model retry + fallback middleware, tool-call limits, structured JSON logs with request IDs, LangSmith tracing with cost.
@@ -896,35 +1053,35 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
   7. CI: GitHub Actions runs lint + unit tests + `docker build` on every push. Evals on manual dispatch.
   8. A runbook in the app README: env vars, start/stop, how to rotate keys, back up Postgres, roll back an image, and known limits.
 - **Acceptance criteria:** `docker compose up` from a fresh clone + `.env` (from `.env.example`) brings the API and UI up with documented commands. Requests without a valid key get `401`. A conversation survives `docker compose restart api`. A load test of 20 concurrent streaming requests finishes without unhandled errors. Traces and feedback are visible in LangSmith.
-- **Stretch:** Online evaluator + alert (Module 11). Expose the agent as an MCP server from FastAPI. Reverse proxy with TLS (for example Caddy or Traefik) in Compose. Try the optional Lesson 12.08 and write a one-page comparison: self-hosted vs LangSmith Cloud.
+- **Stretch:** Online evaluator + alert (Module 12). Expose the agent as an MCP server from FastAPI. Reverse proxy with TLS (for example Caddy or Traefik) in Compose. Serve your Project 10 deep agent (Postgres checkpointer + `PostgresStore` for its `StoreBackend`). Try the optional Lesson 13.08 and write a one-page comparison: self-hosted vs LangSmith Cloud.
 - **Stack:** Free: Groq + FastAPI + Postgres (Docker) + Streamlit/Gradio + GitHub Actions + LangSmith free tier. Paid (optional): a cloud VM or container service, managed Postgres, LangSmith Cloud deployment.
 
 ---
 
-## Module 13 — Local Models & Fine-Tuning (elective)
+## Module 14 — Local Models & Fine-Tuning (elective)
 
 *Part 2 elective: take it any time after Module 06.*
 
 **Goals:** Run models locally for privacy/cost. Know when fine-tuning beats RAG + prompting (rarely) and how to do a small QLoRA experiment responsibly.
 **Time:** 1–1.5 weeks.
 
-### Lesson 13.01 — Local models with Ollama
-- **Notebook:** `modules/13-local-models-and-fine-tuning/13-01-ollama-local-models.ipynb`
+### Lesson 14.01 — Local models with Ollama
+- **Notebook:** `modules/14-local-models-and-fine-tuning/14-01-ollama-local-models.ipynb`
 - **Objectives:** Run Ollama on Windows. Use `ChatOllama` and `OllamaEmbeddings`. Check tool-calling support per model. Compare quality and latency with Groq.
 - **Read:** [Ollama quickstart](https://docs.ollama.com/quickstart) · [Ollama on Windows](https://docs.ollama.com/windows) · [Ollama tool calling](https://docs.ollama.com/capabilities/tool-calling) · [ChatOllama](https://docs.langchain.com/oss/python/integrations/chat/ollama) · [Models: local models](https://docs.langchain.com/oss/python/langchain/models) · [Ollama library](https://ollama.com/library)
 
-### Lesson 13.02 — Hugging Face: Hub, Inference Providers, transformers
-- **Notebook:** `modules/13-local-models-and-fine-tuning/13-02-hugging-face.ipynb`
+### Lesson 14.02 — Hugging Face: Hub, Inference Providers, transformers
+- **Notebook:** `modules/14-local-models-and-fine-tuning/14-02-hugging-face.ipynb`
 - **Objectives:** Read model cards and licenses. Call models through HF Inference Providers. Run a small model locally with transformers.
 - **Read:** [Hugging Face integrations](https://docs.langchain.com/oss/python/integrations/providers/huggingface) · [HF Inference Providers](https://huggingface.co/docs/inference-providers/index) · [Transformers](https://huggingface.co/docs/transformers/index) · [Model cards](https://huggingface.co/docs/hub/model-cards)
 
-### Lesson 13.03 — When (and when not) to fine-tune
-- **Notebook:** `modules/13-local-models-and-fine-tuning/13-03-when-to-fine-tune.ipynb`
+### Lesson 14.03 — When (and when not) to fine-tune
+- **Notebook:** `modules/14-local-models-and-fine-tuning/14-03-when-to-fine-tune.ipynb`
 - **Objectives:** Use a decision tree: prompt → few-shot → RAG → tools → fine-tune. Know what fine-tuning is good for (style, format, narrow classification) vs bad for (fresh knowledge).
 - **Read:** [PEFT](https://huggingface.co/docs/peft/index) · [Unsloth docs](https://unsloth.ai/docs) · [Fine-tune models with Smithtune (LangSmith)](https://docs.langchain.com/langsmith/smithtune)
 
-### Lesson 13.04 — QLoRA experiment on Colab + serving
-- **Notebook:** `modules/13-local-models-and-fine-tuning/13-04-qlora-on-colab.ipynb` (runs on Google Colab GPU)
+### Lesson 14.04 — QLoRA experiment on Colab + serving
+- **Notebook:** `modules/14-local-models-and-fine-tuning/14-04-qlora-on-colab.ipynb` (runs on Google Colab GPU)
 - **Objectives:** Fine-tune a small model with Unsloth/QLoRA on a narrow task (e.g., ticket classification) using data exported from LangSmith traces. Evaluate it against the base model + prompting. Serve with Ollama or vLLM. Optionally run LoRA inference on Groq if available for your plan.
 - **Read:** [Unsloth docs](https://unsloth.ai/docs) · [vLLM docs](https://docs.vllm.ai/) · [Ollama docs](https://docs.ollama.com/quickstart) · [Groq LoRA inference](https://console.groq.com/docs/lora)
 
@@ -932,15 +1089,15 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 **`src/mastery` increment:** `mastery/models.py` gains `provider="ollama"` and `provider="hf"`.
 **Research checkpoint:** Check which current Ollama models support tool calling, and log the best one that fits your GPU/CPU.
 
-### Project 13 — Local-First Assistant + Fine-Tune Experiment
+### Project 14 — Local-First Assistant + Fine-Tune Experiment
 - **Requirements:** (1) Run Project 06's assistant fully local (Ollama chat + embeddings) and compare it with Groq on the same golden set. (2) A QLoRA classifier experiment with a held-out test set and a comparison against few-shot prompting on `gpt-oss-20b`.
 - **Acceptance criteria:** Honest comparison table (quality, latency, cost, privacy). A recommendation on whether fine-tuning was worth it.
-- **Stretch:** Serve the fine-tuned model with vLLM behind the Module 12 API.
+- **Stretch:** Serve the fine-tuned model with vLLM behind the Module 13 API.
 - **Stack:** Free: Ollama, Colab free GPU (when available), HF. Paid: Colab Pro / cloud GPU.
 
 ---
 
-## Capstones (choose 2 of 5)
+## Capstones (choose 2 of 6)
 
 Capstones come after Part 2. C1 and C3 can be started after Part 1 in a simpler form (no deployment or multi-agent requirements), then upgraded. Each capstone must reuse `src/mastery`, include tracing + a LangSmith eval suite, have a README with an architecture diagram (Mermaid), and pass the rubric below.
 
@@ -952,8 +1109,8 @@ RAG (hybrid + re-ranking) + agent + citations + long-term user memory. Optional 
 Groq Whisper + Orpheus + multi-agent support desk (Module 09) + HITL for refunds + PII guardrails.
 **Must have:** end-to-end latency budget per stage, a 20-conversation eval (text transcripts), injection-resistance tests.
 
-### C3 — Research & Writing Agent (LangGraph or Deep Agents)
-Planning, web + docs research (MCP), drafting, critique loop, human approval, time travel, durable execution.
+### C3 — Research & Writing Agent (LangGraph)
+A LangGraph-first build (if you want the Deep Agents version, take C6). Planning, web + docs research (MCP), drafting, critique loop, human approval, time travel, durable execution.
 **Must have:** survives restarts, approval before publishing, pairwise eval of 2 versions, cost per report.
 
 ### C4 — Internal Tool with structured output and monitoring
@@ -964,11 +1121,19 @@ Ticket classifier/router, resume screener (with bias safeguards and human review
 An agent that uses several MCP servers (your own FastMCP server + at least one third-party) to manage notes, calendar-like data, and files, with strict HITL and least-privilege scopes.
 **Must have:** threat model document, per-tool permissions, an audit log, a red-team test set.
 
+### C6 — Long-Horizon Deep Agent for a real workflow (Deep Agents)
+Pick one real, multi-hour workflow and automate it with a deep agent built on `mastery/deep/`:
+(a) **Due-diligence pack**: research a company or open-source project from the web + provided documents and produce a risk memo with citations;
+(b) **Repo maintainer**: triage issues, reproduce bugs in a sandbox, propose a patch and tests, and open a *draft* PR only after human approval;
+(c) **Content production pipeline**: research → outline → draft → fact-check → edit, with brand voice in memory and formats as skills.
+**Must have:** opt-in planning, ≥ 3 custom subagents with minimal tool sets, a `CompositeBackend` with permissions (deny secrets, read-only policies), skills + user-scoped memory, HITL on every side effect, sandboxed code execution where code runs, context compression visible in traces, a `RubricMiddleware` check, a ≥ 20-task LangSmith dataset with trajectory + file-state + LLM-as-judge evaluators, cost per task, the exact `deepagents` version pinned, and a resume-after-crash demo.
+**Deep Agents add-on to the rubric (replaces "Reliability" scoring for C6):** delegation design (right tasks isolated, concise subagent outputs) 5 pts · context management (offloading/summarization evidence, token budget met) 5 pts · execution safety (permissions, sandbox, no secrets in sandbox, HITL coverage) 5 pts.
+
 ### Capstone rubric (100 points)
 
 | Criterion | Points | What "excellent" looks like |
 |---|---|---|
-| Problem framing & architecture | 10 | Clear user, scope, Mermaid diagram, justified pattern choice (agent vs graph vs deep agent) |
+| Problem framing & architecture | 10 | Clear user, scope, Mermaid diagram, justified pattern choice (agent vs multi-agent vs graph vs deep agent) |
 | Correctness & grounding | 20 | Eval suite shows strong results; no fabricated facts or citations |
 | Reliability | 15 | Retries/fallbacks, limits, durable execution where relevant, graceful errors |
 | Safety & security | 15 | Guardrails, HITL on side effects, injection tests, secrets hygiene, PII handling |

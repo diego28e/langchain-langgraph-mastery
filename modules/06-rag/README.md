@@ -18,7 +18,7 @@
 | 06.06 | 2-step RAG with citations | `06-06-two-step-rag.ipynb` | 📝 Planned |
 | 06.07 | Agentic RAG with `create_agent` | `06-07-agentic-rag.ipynb` | 📝 Planned |
 | 06.08 | Hybrid search, query rewriting, and re-ranking | `06-08-hybrid-and-reranking.ipynb` | 📝 Planned |
-| 06.09 | Measuring RAG quality (preview of Module 11) | `06-09-rag-evaluation-preview.ipynb` | 📝 Planned |
+| 06.09 | Measuring RAG quality (preview of Module 12) | `06-09-rag-evaluation-preview.ipynb` | 📝 Planned |
 
 ## Project
 

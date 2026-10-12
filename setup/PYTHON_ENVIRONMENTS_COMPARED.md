@@ -78,7 +78,7 @@ Most tools below do one, two, or all three of these jobs. The confusion comes fr
   - **pip-compatible mode:** `uv venv`, then `uv pip install -r requirements.txt`. Same mental model as venv + pip, just faster.
   - **Project mode:** `uv init`, `uv add langchain`, `uv run ...`. Dependencies go in `pyproject.toml`, exact versions in `uv.lock`, and the `.venv` is kept in sync for you.
 - **Also:** installs Python versions (`uv python install 3.13`) and CLI tools (`uv tool install ruff`, like pipx).
-- **Use it when:** you start a new project outside conda, want reproducible lock files, or want fast CI and Docker builds (Module 12 uses it in the Dockerfile).
+- **Use it when:** you start a new project outside conda, want reproducible lock files, or want fast CI and Docker builds (Module 13 uses it in the Dockerfile).
 - **Pros:** very fast, lock files, manages Python too, great Docker/CI story, growing fast in the Python community.
 - **Cons:** PyPI only (no conda binary packages). Newer tool (0.x versions), so commands still evolve. One more mental model to learn.
 - **Windows notes:** install with PowerShell (`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`), WinGet (`winget install --id=astral-sh.uv -e`), Scoop, or `pipx install uv`. Read any script before piping it into your shell.
@@ -137,13 +137,13 @@ Docs: [Installing the IPython kernel](https://ipython.readthedocs.io/en/stable/i
 |---|---|---|
 | **Following the course on Windows with Anaconda (default)** | **conda** for the environment (`lc-mastery`, Python 3.13) + **pip** (`%pip` in notebooks) for LangChain packages | You already have it. Anaconda Prompt + Jupyter work out of the box. LangChain packages are on PyPI, so pip inside the conda env is the simplest path |
 | Starting fresh, no Anaconda, or you like modern tooling | **uv** (project mode) | Fast, one tool, lock file. Same notebooks, different setup |
-| Packaging `src/mastery` and deploying it (Module 12) | **uv** inside Docker | Reproducible, fast builds. Taught in Lesson 12.05 |
+| Packaging `src/mastery` and deploying it (Module 13) | **uv** inside Docker | Reproducible, fast builds. Taught in Lesson 13.06 |
 | Global CLI tools (ruff, pre-commit, nbstripout) | **pipx** or `uv tool install` | Keeps tools out of the course env |
-| Need heavy binary deps (CUDA, GDAL) in Module 13 | **conda** (conda-forge) or **pixi** | Binary packages pip can't easily provide |
+| Need heavy binary deps (CUDA, GDAL) in Module 14 | **conda** (conda-forge) or **pixi** | Binary packages pip can't easily provide |
 
 **Rules of thumb:** one environment per project · never install course packages into `base` · always know which Python a command uses (`where python` on Windows, `sys.executable` in Jupyter) · don't mix tools inside one environment unless you follow the tool's official advice (conda first, then pip).
 
 > ⚠️ **Production note: environments on your laptop are not deployments.**
-> A conda env you built by hand is hard to reproduce. In production, pin exact versions in a lock file (`uv.lock`, `poetry.lock`, `pixi.lock`, or a fully pinned `requirements.txt`), build in CI from a clean image, and ship a container. The course's `requirements.txt` uses minimum versions with upper bounds for learning; Module 12 shows the locked, containerised version.
+> A conda env you built by hand is hard to reproduce. In production, pin exact versions in a lock file (`uv.lock`, `poetry.lock`, `pixi.lock`, or a fully pinned `requirements.txt`), build in CI from a clean image, and ship a container. The course's `requirements.txt` uses minimum versions with upper bounds for learning; Module 13 shows the locked, containerised version.
 
 General background: [Python Packaging User Guide: tool recommendations](https://packaging.python.org/en/latest/guides/tool-recommendations/) · [Installing packages](https://packaging.python.org/en/latest/tutorials/installing-packages/).

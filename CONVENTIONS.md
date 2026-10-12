@@ -30,6 +30,7 @@ langchain-langgraph-mastery/
 │       ├── README.md         # Lesson list, project summary, status
 │       ├── NN-LL-lesson-slug.ipynb
 │       ├── project/          # The module project (notebook + any app code)
+│       ├── labs/             # Use-case labs, when a module has them (Module 10: labs/10a-repo-cartographer/ …)
 │       └── assets/           # Small images/diagrams used by the notebooks
 ├── apps/                     # Deployable apps (langgraph.json / FastAPI) from Modules 07+
 ├── capstones/
@@ -64,6 +65,7 @@ langchain-langgraph-mastery/
 
 Example: `modules/03-memory-and-context/03-02-short-term-memory.ipynb`.
 Project notebooks: `modules/03-memory-and-context/project/03-project-study-buddy.ipynb`.
+Lab notebooks: `modules/10-deep-agents/labs/10a-repo-cartographer/10a-lab-repo-cartographer.ipynb`.
 Exercise solutions (if separated): `.../solutions/03-02-short-term-memory-solutions.ipynb`.
 
 ## 3. Lesson notebook structure (template)
@@ -141,7 +143,7 @@ def get_checkpointer(kind: str = "memory"):
 6. **No hard-coded model IDs in notebooks.** Use `mastery.models.get_model(role=...)`, configured in one place.
 7. **No secrets in code or outputs.** Read from env. Never `print(os.environ[...])`.
 8. Constants in `UPPER_SNAKE_CASE` at the top. No magic numbers.
-9. Formatting and linting: `ruff format` + `ruff check` (introduced in Module 11).
+9. Formatting and linting: `ruff format` + `ruff check` (introduced in Module 12).
 10. Every function moved into `src/mastery` gets at least one unit test in `tests/unit/`.
 
 ## 5. Environment variables and `.env`
@@ -171,7 +173,7 @@ assert not missing, f"Missing env vars: {missing}. See .env.example."
 ## 6. Clearing outputs and keeping notebooks diff-friendly
 
 - **Before every commit:** in Jupyter, *Kernel → Restart Kernel and Run All Cells* (does it work?), then *Edit → Clear All Outputs* (Notebook 7 / JupyterLab), then save.
-- **Recommended automation** (Lesson 00.03 bonus, formalized in Module 11): install `nbstripout` in the course env and run `nbstripout --install` in the repo. It strips outputs automatically when you `git add`, and `nbstripout --status` shows whether it's active.
+- **Recommended automation** (Lesson 00.03 bonus, formalized in Module 12): install `nbstripout` in the course env and run `nbstripout --install` in the repo. It strips outputs automatically when you `git add`, and `nbstripout --status` shows whether it's active.
 - Exception: notebooks meant to be read on GitHub *with* outputs (e.g., a final project report) are exported to `docs/reports/*.html` or `*.md` instead of committing outputs.
 - Optional (Module 09): pair notebooks with `.py` files via Jupytext for readable diffs.
 

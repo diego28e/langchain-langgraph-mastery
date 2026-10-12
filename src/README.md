@@ -17,8 +17,9 @@ This package grows module by module. Whenever code is needed in a second noteboo
 | 06 | `mastery/rag/` | Loaders, splitter presets, indexing, retrieval, citations |
 | 07–08 | `mastery/graphs/` | State schemas, node utilities, HITL helpers |
 | 09 | `mastery/agents/` | Specialist agent factories |
-| 10 | `mastery/voice/` | `transcribe()`, `speak()` (≤ 200-char chunking), `VoicePipeline` |
-| 11 | `mastery/evals/` | Shared evaluators and dataset builders |
-| 12 | `mastery/service/` | FastAPI app factory, `pydantic-settings` config, API-key auth, SSE helpers (self-hosted with Docker) |
+| 10 | `mastery/deep/` | `build_deep_agent()` with course defaults (explicit model, `CompositeBackend` layout, deny rules for secrets, limits), `sandboxes/docker.py` (`DockerSandbox`), course `skills/`, trajectory and file-state evaluators |
+| 11 | `mastery/voice/` | `transcribe()`, `speak()` (≤ 200-char chunking), `VoicePipeline` |
+| 12 | `mastery/evals/` | Shared evaluators and dataset builders |
+| 13 | `mastery/service/` | FastAPI app factory, `pydantic-settings` config, API-key auth, SSE helpers (self-hosted with Docker) |
 
 Notebooks import it after an editable install (`pip install -e .`, set up when `pyproject.toml` is added in Module 00) and use `%autoreload 2` (Module 03) while developing.

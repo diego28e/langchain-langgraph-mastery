@@ -22,7 +22,8 @@ You will learn to:
 - orchestrate durable, stateful workflows with **LangGraph** (persistence, interrupts, time travel, subgraphs, streaming);
 - design **RAG** systems that cite their sources and are measured, not guessed;
 - connect agents to the world through **tools, web search, and MCP**;
-- coordinate **multi-agent systems** and use **Deep Agents** for long-running tasks;
+- coordinate **multi-agent systems**;
+- build long-running agents with **Deep Agents** (a full module): planning, virtual filesystems and backends, subagents, context engineering, skills and memory, sandboxed code execution, and trajectory evals;
 - add **voice and multimodal** input/output with Groq Whisper and Orpheus;
 - **test, evaluate, and trace** with pytest and LangSmith, then **deploy a self-hosted service** with FastAPI and Docker;
 - use **Jupyter** like a professional, not just as a scratchpad.
@@ -34,7 +35,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | Part | Modules | What you can do at the end | Est. time (part-time) |
 |---|---|---|---|
 | **Part 1 — Core** | 00–08 | Design, build, and debug agents, RAG systems, and LangGraph workflows with memory, guardrails, MCP tools, and human approval | ~14–16.5 weeks |
-| **Part 2 — Pro** | 09–13 | Build multi-agent and voice systems, prove quality with evals, and run agents as a self-hosted production service (plus an optional local-models/fine-tuning elective) | ~9–10 weeks + capstones |
+| **Part 2 — Pro** | 09–14 | Build multi-agent systems and long-running **deep agents**, add voice, prove quality with evals, and run agents as a self-hosted production service (plus an optional local-models/fine-tuning elective) | ~11–12.5 weeks + capstones |
 
 ## Who it's for
 
@@ -78,11 +79,12 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 
 | # | Module | Status |
 |---|---|---|
-| 09 | [Multi-Agent Systems & Deep Agents](modules/09-multi-agent-and-deep-agents/) | 📝 Planned |
-| 10 | [Multimodal & Voice](modules/10-multimodal-and-voice/) | 📝 Planned |
-| 11 | [Testing, Evaluation & Observability](modules/11-testing-evaluation-observability/) | 📝 Planned |
-| 12 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/12-production-and-deployment/) | 📝 Planned |
-| 13 | [Local Models & Fine-Tuning (elective)](modules/13-local-models-and-fine-tuning/) | 📝 Planned |
+| 09 | [Multi-Agent Systems](modules/09-multi-agent-systems/) | 📝 Planned |
+| 10 | [Deep Agents](modules/10-deep-agents/) | 📝 Planned |
+| 11 | [Multimodal & Voice](modules/11-multimodal-and-voice/) | 📝 Planned |
+| 12 | [Testing, Evaluation & Observability](modules/12-testing-evaluation-observability/) | 📝 Planned |
+| 13 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/13-production-and-deployment/) | 📝 Planned |
+| 14 | [Local Models & Fine-Tuning (elective)](modules/14-local-models-and-fine-tuning/) | 📝 Planned |
 | — | [Capstones](capstones/) | 📝 Planned |
 
 Status legend: 📝 Planned · 🚧 In progress · ✅ Complete · 🔍 Reviewed (verified end to end)
@@ -93,12 +95,13 @@ Status legend: 📝 Planned · 🚧 In progress · ✅ Complete · 🔍 Reviewed
 |---|---|---|
 | Chat & agent models | **Groq**: `openai/gpt-oss-20b`, `openai/gpt-oss-120b` · **Ollama** local models | **OpenAI** benchmark: `gpt-6-luna` (cheap), `gpt-6.1-sol` (quality ceiling). Low-cost option: **Gemini** free tier ([comparison](docs/paid-benchmark-openai-vs-gemini.md)) |
 | Web search | **Groq built-in browser search** (no extra key) | **Tavily** (1,000 free credits/month, then paid) ([comparison](docs/web-search-groq-vs-tavily.md)) |
+| Long-running agents | **Deep Agents** (open source) on Groq, or the Gemini free tier (an officially suggested Deep Agents model) · local Docker sandbox | Managed sandboxes (LangSmith, Daytona, Modal, …) · OpenAI benchmark |
 | Vision | Groq `qwen/qwen3.8-27b` (preview ⚠️) · local vision models | OpenAI / Gemini multimodal models |
 | Speech | Groq **Whisper** (STT) and **Orpheus** (TTS, preview ⚠️), low per-use cost | Specialized voice providers |
 | Embeddings | Local Hugging Face / sentence-transformers, Ollama | Hosted embedding APIs |
 | Vector store | `InMemoryVectorStore`, **Chroma** | pgvector (managed), Pinecone, Qdrant Cloud |
 | Observability & evals | **LangSmith** free tier | LangSmith paid plans |
-| Deployment | **FastAPI + Docker + Postgres**, self-hosted (Module 12) | Cloud VM/containers, managed Postgres, or LangSmith Cloud (optional reference lesson) |
+| Deployment | **FastAPI + Docker + Postgres**, self-hosted (Module 13) | Cloud VM/containers, managed Postgres, or LangSmith Cloud (optional reference lesson) |
 
 ⚠️ = preview model: fine for learning, not for production. See [production notes](docs/production-notes.md).
 

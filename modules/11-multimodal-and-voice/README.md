@@ -1,6 +1,6 @@
-# Module 10 — Multimodal & Voice
+# Module 11 — Multimodal & Voice
 
-> **Part 2 — Pro (Modules 09–13)** · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 10](../../COURSE_OUTLINE.md#module-10--multimodal--voice)
+> **Part 2 — Pro (Modules 09–14)** · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 11](../../COURSE_OUTLINE.md#module-11--multimodal--voice)
 
 **Goals:** Send images and PDFs to models, transcribe speech with Groq Whisper, synthesize speech with Groq Orpheus, and build the STT → agent → TTS "sandwich".
 
@@ -10,10 +10,10 @@
 
 | Lesson | Title | Notebook | Status |
 |---|---|---|---|
-| 10.01 | Multimodal input: images and PDFs | `10-01-multimodal-input.ipynb` | 📝 Planned |
-| 10.02 | Speech-to-text with Groq Whisper | `10-02-speech-to-text.ipynb` | 📝 Planned |
-| 10.03 | Text-to-speech with Orpheus | `10-03-text-to-speech.ipynb` | 📝 Planned |
-| 10.04 | The voice agent "sandwich" | `10-04-voice-agent-sandwich.ipynb` | 📝 Planned |
+| 11.01 | Multimodal input: images and PDFs | `11-01-multimodal-input.ipynb` | 📝 Planned |
+| 11.02 | Speech-to-text with Groq Whisper | `11-02-speech-to-text.ipynb` | 📝 Planned |
+| 11.03 | Text-to-speech with Orpheus | `11-03-text-to-speech.ipynb` | 📝 Planned |
+| 11.04 | The voice agent "sandwich" | `11-04-voice-agent-sandwich.ipynb` | 📝 Planned |
 
 ## Production notes
 
@@ -22,7 +22,7 @@
 
 ## Project
 
-**Project 10 — Voice Q&A Agent**: Ask questions about your knowledge base by voice and hear the answer.
+**Project 11 — Voice Q&A Agent**: Ask questions about your knowledge base by voice and hear the answer.
 
 Project files go in `project/`.
 
@@ -44,4 +44,4 @@ Re-check Groq's TTS model list and voices. Log whether Orpheus is still preview 
 
 ---
 
-← [Module 09](../09-multi-agent-and-deep-agents/) · [Course outline](../../COURSE_OUTLINE.md) · [Module 11](../11-testing-evaluation-observability/) →
+← [Module 10](../10-deep-agents/) · [Course outline](../../COURSE_OUTLINE.md) · [Module 12](../12-testing-evaluation-observability/) →

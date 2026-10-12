@@ -24,7 +24,8 @@ Vas a aprender a:
 - orquestar flujos durables y con estado usando **LangGraph** (persistencia, interrupciones, *time travel*, subgrafos, streaming);
 - diseñar sistemas **RAG** que citan sus fuentes y cuya calidad se mide, no se adivina;
 - conectar agentes con el mundo mediante **herramientas, búsqueda web y MCP**;
-- coordinar **sistemas multiagente** y usar **Deep Agents** para tareas largas;
+- coordinar **sistemas multiagente**;
+- construir agentes de larga duración con **Deep Agents** (un módulo completo): planificación, sistemas de archivos virtuales y *backends*, subagentes, ingeniería de contexto, *skills* y memoria, ejecución de código en *sandboxes* y evaluaciones de trayectoria;
 - agregar **voz y entrada/salida multimodal** con Whisper y Orpheus de Groq;
 - **probar, evaluar y trazar** con pytest y LangSmith, y luego **desplegar un servicio propio** con FastAPI y Docker;
 - usar **Jupyter** como profesional, no solo como borrador.
@@ -36,7 +37,7 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 | Parte | Módulos | Qué vas a poder hacer al final | Tiempo estimado (a medio tiempo) |
 |---|---|---|---|
 | **Parte 1 — Core** | 00–08 | Diseñar, construir y depurar agentes, sistemas RAG y flujos de LangGraph con memoria, guardrails, herramientas MCP y aprobación humana | ~14–16,5 semanas |
-| **Parte 2 — Pro** | 09–13 | Construir sistemas multiagente y de voz, demostrar su calidad con evaluaciones y operar agentes como un servicio propio en producción (más un electivo opcional de modelos locales y *fine-tuning*) | ~9–10 semanas + proyectos finales |
+| **Parte 2 — Pro** | 09–14 | Construir sistemas multiagente y **deep agents** de larga duración, agregar voz, demostrar su calidad con evaluaciones y operar agentes como un servicio propio en producción (más un electivo opcional de modelos locales y *fine-tuning*) | ~11–12,5 semanas + proyectos finales |
 
 ## ¿Para quién es?
 
@@ -80,11 +81,12 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 
 | # | Módulo | Estado |
 |---|---|---|
-| 09 | [Sistemas multiagente y Deep Agents](modules/09-multi-agent-and-deep-agents/) | 📝 Planificado |
-| 10 | [Multimodalidad y voz](modules/10-multimodal-and-voice/) | 📝 Planificado |
-| 11 | [Pruebas, evaluación y observabilidad](modules/11-testing-evaluation-observability/) | 📝 Planificado |
-| 12 | [Producción y despliegue (FastAPI + Docker, autoalojado)](modules/12-production-and-deployment/) | 📝 Planificado |
-| 13 | [Modelos locales y fine-tuning (electivo)](modules/13-local-models-and-fine-tuning/) | 📝 Planificado |
+| 09 | [Sistemas multiagente](modules/09-multi-agent-systems/) | 📝 Planificado |
+| 10 | [Deep Agents](modules/10-deep-agents/) | 📝 Planificado |
+| 11 | [Multimodalidad y voz](modules/11-multimodal-and-voice/) | 📝 Planificado |
+| 12 | [Pruebas, evaluación y observabilidad](modules/12-testing-evaluation-observability/) | 📝 Planificado |
+| 13 | [Producción y despliegue (FastAPI + Docker, autoalojado)](modules/13-production-and-deployment/) | 📝 Planificado |
+| 14 | [Modelos locales y fine-tuning (electivo)](modules/14-local-models-and-fine-tuning/) | 📝 Planificado |
 | — | [Proyectos finales (capstones)](capstones/) | 📝 Planificado |
 
 Leyenda: 📝 Planificado · 🚧 En progreso · ✅ Completo · 🔍 Revisado (verificado de punta a punta)
@@ -95,12 +97,13 @@ Leyenda: 📝 Planificado · 🚧 En progreso · ✅ Completo · 🔍 Revisado (
 |---|---|---|
 | Modelos de chat y agentes | **Groq**: `openai/gpt-oss-20b`, `openai/gpt-oss-120b` · modelos locales con **Ollama** | Referencia de calidad con **OpenAI**: `gpt-6-luna` (económico), `gpt-6.1-sol` (techo de calidad). Alternativa de bajo costo: plan gratuito de **Gemini** ([comparación](docs/paid-benchmark-openai-vs-gemini.md)) |
 | Búsqueda web | **Búsqueda integrada de Groq** (*browser search*, sin clave extra) | **Tavily** (1.000 créditos gratis al mes, luego pago) ([comparación](docs/web-search-groq-vs-tavily.md)) |
+| Agentes de larga duración | **Deep Agents** (código abierto) sobre Groq, o el plan gratuito de Gemini (un modelo sugerido oficialmente para Deep Agents) · *sandbox* local con Docker | *Sandboxes* administrados (LangSmith, Daytona, Modal, …) · referencia de OpenAI |
 | Visión | `qwen/qwen3.8-27b` en Groq (*preview* ⚠️) · modelos de visión locales | Modelos multimodales de OpenAI / Gemini |
 | Voz | **Whisper** (voz a texto) y **Orpheus** (texto a voz, *preview* ⚠️) en Groq, bajo costo por uso | Proveedores de voz especializados |
 | Embeddings | Hugging Face / sentence-transformers locales, Ollama | APIs de embeddings alojadas |
 | Base vectorial | `InMemoryVectorStore`, **Chroma** | pgvector (administrado), Pinecone, Qdrant Cloud |
 | Observabilidad y evaluaciones | Plan gratuito de **LangSmith** | Planes pagos de LangSmith |
-| Despliegue | **FastAPI + Docker + Postgres**, autoalojado (Módulo 12) | VM o contenedores en la nube, Postgres administrado, o LangSmith Cloud (lección opcional de referencia) |
+| Despliegue | **FastAPI + Docker + Postgres**, autoalojado (Módulo 13) | VM o contenedores en la nube, Postgres administrado, o LangSmith Cloud (lección opcional de referencia) |
 
 ⚠️ = modelo en *preview*: sirve para aprender, no para producción. Mira las [notas de producción](docs/production-notes.md).
 

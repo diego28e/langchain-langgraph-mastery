@@ -29,7 +29,8 @@ The course runs on **free Groq models** by default. A *paid benchmark* is a stro
 ### What this means in practice
 
 - **For benchmarking prompts, agents, and RAG answers:** `gpt-6-luna` is the cheapest strong paid baseline. One full course module of comparisons is usually a few cents.
-- **For LLM-as-judge evaluators (Module 11):** use the quality ceiling (`gpt-6.1-sol`) on small datasets. Judges should be stronger than the model they grade.
+- **For LLM-as-judge evaluators (Module 12):** use the quality ceiling (`gpt-6.1-sol`) on small datasets. Judges should be stronger than the model they grade.
+- **For deep agents (Module 10):** long-horizon runs use far more tokens than a single chat call, and the Deep Agents docs publish their own list of suggested models (it includes `gemini-3.6-flash`, `gpt-5.5`, and `gpt-5.4`). Benchmark with `gpt-6-luna` as usual, but check that list first: [Deep Agents models](https://docs.langchain.com/oss/python/deepagents/models).
 - **If you cannot or will not add a card:** use Gemini's free tier with **public or synthetic data only**. Swap it in by changing one config value (see below).
 - **Pricing gotcha:** Gemini 3.8 Flash's list price **doubles on January 1, 2027**. OpenAI prices go up 2× input / 1.5× output for prompts over 272K tokens. Neither matters for the course, but both matter in production.
 
@@ -47,7 +48,7 @@ optional_gemini = init_chat_model("google_genai:gemini-3.8-flash")  # needs GOOG
 ```
 
 > ⚠️ **Production note: benchmark models are not a free pass.**
-> The course pins one cheap paid model for comparisons. In production: pin exact model IDs (or dated snapshots where the provider offers them), read the provider's deprecation page, set a spend limit or budget alert in the provider console, track cost per request (Lesson 11.02), and keep a tested fallback provider (Lesson 04.02). Free tiers are for learning: they have no SLA, low rate limits, and (for Gemini) different data-use terms.
+> The course pins one cheap paid model for comparisons. In production: pin exact model IDs (or dated snapshots where the provider offers them), read the provider's deprecation page, set a spend limit or budget alert in the provider console, track cost per request (Lesson 12.02), and keep a tested fallback provider (Lesson 04.02). Free tiers are for learning: they have no SLA, low rate limits, and (for Gemini) different data-use terms.
 
 ## Research checkpoint for this page
 

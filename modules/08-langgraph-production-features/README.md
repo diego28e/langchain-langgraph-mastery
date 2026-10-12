@@ -42,4 +42,4 @@ Read [Backward compatibility](https://docs.langchain.com/oss/python/langgraph/ba
 
 ---
 
-← [Module 07](../07-langgraph-fundamentals/) · [Course outline](../../COURSE_OUTLINE.md) · [Module 09](../09-multi-agent-and-deep-agents/) →
+← [Module 07](../07-langgraph-fundamentals/) · [Course outline](../../COURSE_OUTLINE.md) · [Module 09](../09-multi-agent-systems/) →

@@ -75,7 +75,12 @@ outbox/
 !data/samples/**/*.wav
 !data/samples/**/*.mp3
 
-# Fine-tuning artifacts (Module 13)
+# Deep Agents run artifacts (Module 10): agent-written files, sandbox downloads, saved runs
+**/artifacts/
+**/deep_runs/
+.deepagents/
+
+# Fine-tuning artifacts (Module 14)
 /models/
 *.gguf
 *.safetensors
