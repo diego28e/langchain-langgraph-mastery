@@ -80,6 +80,11 @@ rag = [
     "pypdf>=6.20.1,<7",
     "beautifulsoup4>=4.15.0,<5",
 ]
+# Notebook tooling (Module 09): Jupytext pairs each .ipynb with a plain .py (percent format) for review/diffs.
+# VERIFIED 2026-10-12: jupytext 1.19.6 is current on PyPI (pure Python, pulls only small deps).
+notebooks = [
+    "jupytext>=1.19.6,<2",
+]
 # Developer tools: `python -m pip install -e ".[dev]"`
 # Includes the llm extra so every unit test runs (offline, with fake models).
 dev = [
@@ -97,6 +102,8 @@ dev = [
     "mastery[mcp]",
     # Module 06: splitters, PDF/HTML loaders and Chroma, so every RAG test runs offline.
     "mastery[rag]",
+    # Module 09: Jupytext (pairing notebooks with .py scripts, Lesson 09.01's Jupyter skill).
+    "mastery[notebooks]",
 ]
 
 [tool.setuptools.packages.find]

@@ -1,6 +1,7 @@
-"""mastery.agents: small helpers to run, inspect and display agent loops.
+"""mastery.agents.loop: small helpers to run, inspect and display agent loops.
 
-Introduced in Module 02. Everything here is plain Python over LangChain
+Introduced in Module 02 as ``mastery/agents.py``; moved here in Module 09 when
+``mastery.agents`` became a package. ``from mastery.agents import ...`` still works. Everything here is plain Python over LangChain
 messages, so it works the same with Groq, OpenAI, or the offline
 ``mastery.testing.ScriptedChatModel``.
 
@@ -17,7 +18,13 @@ import json
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
-from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
+from langchain_core.messages import (
+    AIMessage,
+    BaseMessage,
+    HumanMessage,
+    SystemMessage,
+    ToolMessage,
+)
 from langchain_core.tools import BaseTool
 
 __all__ = [

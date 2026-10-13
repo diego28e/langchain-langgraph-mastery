@@ -210,4 +210,24 @@
 - Decision: `offline_web_search(failures=N, delay=S)` returns no results but raises `ConnectionError` for the first N calls or sleeps S seconds; LIVE mode uses Groq browser search through `web_tool_search`. The v3 `stream_events` API is taught as experimental; v2 `stream` is what the helpers use.
 - Revisit: Module 12 (failure injection in evals).
 
+### D-034 · `mastery.agents` becomes a package · 2026-10-12
+- Context: Module 09 adds specialist, metrics and support-desk helpers next to the Module 02 loop helpers.
+- Decision: `src/mastery/agents.py` moved unchanged to `src/mastery/agents/loop.py`; `agents/__init__.py` re-exports it, so `from mastery.agents import run_tool_loop` keeps working. The old file must be deleted (a module and a package with the same name cannot coexist).
+- Revisit: never (import path is stable).
+
+### D-035 · A rule-based offline model for multi-agent comparisons · 2026-10-12
+- Context: comparing patterns needs repeatable call and token counts without a key.
+- Decision: `OfflineSupportModel` reads its role from the system prompt and its options from the bound tool names, and counts tool-schema tokens; lessons and the project report its numbers as "offline, deterministic", and LIVE numbers as what learners must measure themselves.
+- Revisit: Module 12 (evals on live runs).
+
+### D-036 · jupytext in a `[notebooks]` extra · 2026-10-12
+- Context: Lesson 09.01 shows notebooks as diffable `.py` files.
+- Decision: `jupytext>=1.19.6,<2` in a new `[notebooks]` extra, included by `[dev]`.
+- Revisit: if the course adopts paired notebooks for every module.
+
+### D-037 · Project 09 LIVE runs 5 conversations by default, pass mark 80% · 2026-10-12
+- Context: 15 conversations × 2 patterns can hit free-tier request limits, and a live model will miss a few.
+- Decision: `LIVE_LIMIT = 5` per pattern; the LIVE acceptance threshold is 80% of the conversations that ran (offline: ≥ 12/15). Set `LIVE_LIMIT = 15` for the full run.
+- Revisit: after measuring live pass rates in Module 12.
+
 <!-- Add your decisions below this line -->

@@ -1,0 +1,13 @@
+{
+  "customers": {
+    "C-1001": {"name": "Ana Ruiz", "email": "ana@ruiz.example", "plan": "Pro", "locked": false,
+               "invoices": [{"id": "INV-1001", "amount": 49.0, "date": "2026-09-01"},
+                            {"id": "INV-1002", "amount": 49.0, "date": "2026-10-01"},
+                            {"id": "INV-1003", "amount": 49.0, "date": "2026-10-01", "note": "duplicate charge"}]},
+    "C-1002": {"name": "Ben Ortiz", "email": "ben@ortiz.example", "plan": "Team", "locked": false,
+               "invoices": [{"id": "INV-2001", "amount": 199.0, "date": "2026-10-03"}]},
+    "C-1003": {"name": "Chen Li", "email": "chen@li.example", "plan": "Starter", "locked": true,
+               "invoices": [{"id": "INV-3001", "amount": 19.0, "date": "2026-10-05"}]}
+  },
+  "services": {"api": "operational", "station sync": "degraded (maintenance until 20:00 UTC; readings are buffered on the station)", "webhooks": "operational", "dashboard": "operational"}
+}

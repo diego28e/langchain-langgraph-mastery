@@ -91,7 +91,7 @@ Data: [`data/samples/expenses/`](../../data/samples/expenses/) (`expenses-2026.c
 | [`src/mastery/tools/calculator.py`](../../src/mastery/tools/calculator.py) | `safe_eval` (AST allow-list, no `eval`, length/exponent/magnitude limits) and the `calculator` tool | [`tests/unit/test_tools.py`](../../tests/unit/test_tools.py) |
 | [`src/mastery/tools/dates.py`](../../src/mastery/tools/dates.py) | `get_today`, `days_between`, `add_days` tools; `parse_date`, `parse_month`, `month_bounds`; `set_today` for reproducible tests | [`tests/unit/test_tools.py`](../../tests/unit/test_tools.py) |
 | [`src/mastery/tools/csv_lookup.py`](../../src/mastery/tools/csv_lookup.py) | `CsvTable` and `make_csv_lookup_tool(table, ...)`: a lookup tool bound to ONE file, column enum, capped results, rows as artifact | [`tests/unit/test_tools.py`](../../tests/unit/test_tools.py) |
-| [`src/mastery/agents.py`](../../src/mastery/agents.py) | `execute_tool_calls`, `run_tool_loop` (the 02.02 loop, tested), `format_transcript`, `agent_stats`, `format_stream_part` | [`tests/unit/test_agents.py`](../../tests/unit/test_agents.py) |
+| [`src/mastery/agents/loop.py`](../../src/mastery/agents/loop.py) (imported as `mastery.agents`) | `execute_tool_calls`, `run_tool_loop` (the 02.02 loop, tested), `format_transcript`, `agent_stats`, `format_stream_part` | [`tests/unit/test_agents.py`](../../tests/unit/test_agents.py) |
 | [`src/mastery/testing.py`](../../src/mastery/testing.py) | `ScriptedChatModel`: an offline chat model that supports `bind_tools` and streams tool calls (LangChain's fakes don't) | [`tests/unit/test_agents.py`](../../tests/unit/test_agents.py) |
 
 ## Research checkpoint

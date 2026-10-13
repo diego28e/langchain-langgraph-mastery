@@ -75,13 +75,13 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | 07 | [LangGraph Fundamentals](modules/07-langgraph-fundamentals/) | ✅ Built |
 | 08 | [LangGraph Production Features](modules/08-langgraph-production-features/) | ✅ Built |
 
-**Part 1 is complete.** Its wrap-up (what you can now build, and what to check before moving on) is in the [Module 08 README](modules/08-langgraph-production-features/README.md#part-1-complete). Part 2 starts with [Module 09 — Multi-Agent Systems](modules/09-multi-agent-systems/README.md) (planned; see the [outline](COURSE_OUTLINE.md#part-2--pro-modules-0914)).
+**Part 1 is complete.** Its wrap-up (what you can now build, and what to check before moving on) is in the [Module 08 README](modules/08-langgraph-production-features/README.md#part-1-complete). Part 2 starts with [Module 09 — Multi-Agent Systems](modules/09-multi-agent-systems/README.md) (✅ built; see the [outline](COURSE_OUTLINE.md#part-2--pro-modules-0914) for the rest of Part 2).
 
 ### Part 2 — Pro
 
 | # | Module | Status |
 |---|---|---|
-| 09 | [Multi-Agent Systems](modules/09-multi-agent-systems/) | 📝 Planned |
+| 09 | [Multi-Agent Systems](modules/09-multi-agent-systems/) | ✅ Built |
 | 10 | [Deep Agents](modules/10-deep-agents/) | 📝 Planned |
 | 11 | [Multimodal & Voice](modules/11-multimodal-and-voice/) | 📝 Planned |
 | 12 | [Testing, Evaluation & Observability](modules/12-testing-evaluation-observability/) | 📝 Planned |
