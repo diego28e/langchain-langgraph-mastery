@@ -27,7 +27,7 @@ The labelling rules are in the answer key (`_labelling_notes`). Two borderline c
 
 1. Task: extract structured info from 10 sample texts into a `JobPosting` Pydantic model (Lesson 01.04).
 2. Run at least 3 configurations: `openai/gpt-oss-20b`, `openai/gpt-oss-120b`, and one more. Default third: Groq preview `qwen/qwen3.8-27b` (free, best-effort `json_schema`). Options: local Ollama, the paid benchmark `gpt-6-luna` (`RUN_PAID = True`), or Gemini.
-3. For each: **schema-valid rate**, **field-level accuracy** against the answer key, **mean latency**, **total tokens**, **estimated cost** (`mastery.pricing`, Lesson 01.06).
+3. For each: **schema-valid rate**, **field-level accuracy** against the answer key, **median and max latency** (time only the model call: wait for the rate limiter before starting the clock), **total tokens**, **estimated cost** (`mastery.pricing`, Lesson 01.06).
 4. **Stream** one example live in the notebook (Lesson 01.05). **Batch** the rest with a concurrency limit and a rate limiter (Lessons 01.05–01.06).
 5. **Trace** everything to the LangSmith project `m01-comparison-lab` (Lesson 01.08).
 
