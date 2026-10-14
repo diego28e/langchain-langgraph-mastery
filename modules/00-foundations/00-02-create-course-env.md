@@ -1,7 +1,7 @@
 # 00.02 (guide) · Create the course environment `lc-mastery`
 
 > **Lesson 00.02, part 2.** Do this after [00-02-verify-environment.ipynb](00-02-verify-environment.ipynb) and before Lesson 00.03.
-> **Time:** 10–20 minutes (most of it is waiting for downloads).
+> **Time:** 45–90 minutes the first time on Windows (terms of service, `conda init`, the certificate check, and a ~200-package, ~700 MB install); about 20–30 minutes on macOS/Linux. Most of it is waiting for downloads.
 > **Shell:** Git Bash on Windows (Terminal on macOS/Linux). Anaconda Prompt works as a fallback; the differences are noted.
 > **Docs verified:** 2026-10-11.
 
@@ -195,20 +195,21 @@ python -m pip install -e ".[dev]"
 
 - `python -m pip` guarantees you use **this env's** pip (plain `pip` could be another one on the PATH).
 - `-e` (editable): Python imports straight from `src/mastery/`, so your edits apply after a kernel restart. No reinstall needed.
-- `".[dev]"`: this folder (`.`) plus the optional `dev` tools listed in [`pyproject.toml`](../../pyproject.toml) (`pytest`, `nbformat`). **Keep the quotes**: without them Bash may treat the square brackets as a filename pattern.
+- `".[dev]"`: this folder (`.`) plus the optional `dev` group in [`pyproject.toml`](../../pyproject.toml), which pulls in the **whole course stack**: LangChain and LangGraph, the Studio CLI, the SQLite checkpointer, FastMCP, Chroma, Jupytext, nbconvert and pytest. **Keep the quotes**: without them Bash may treat the square brackets as a filename pattern.
 
-This also installs the package's own dependencies, `python-dotenv` and `httpx`. LangChain itself comes in Lesson 00.07, with `%pip` from the notebook.
+One install covers every module (about 200 packages, ~700 MB; 5–15 minutes). Later modules re-run the same command after you pull course updates. The `%pip` cells you'll meet in Lesson 00.05 are there to teach the Jupyter skill; in a set-up env they find everything already installed.
 
 **You should now see** a final line like `Successfully installed ... mastery-0.1.0 ... python-dotenv-1.2.x ...`.
 
-**Check it, and run the course's unit tests** (offline, no API keys, a few seconds):
+**Check it, and run the course's unit tests** (offline, no API keys, about 20–40 seconds; you'll see test names from later modules, which is normal):
 
 ```bash
 python -c "import mastery, mastery.config; print('mastery', mastery.__version__)"
+python -c "import mastery; print(mastery.__file__)"
 python -m pytest
 ```
 
-**You should now see** `mastery 0.1.0`, then a pytest summary ending in `passed` (some `skipped` or `deselected` is normal). If tests fail, read the first failure: it usually names the missing package or the wrong folder. Two common, harmless-to-fix failures are in the table below.
+**You should now see** `mastery 0.1.0`, then a path to `mastery/__init__.py` inside **this** clone's `src/` folder (a path into another folder means this env was installed from another copy of the repo: rerun the install command above from this folder), then a pytest summary ending in `passed` (some `skipped` or `deselected` is normal). If tests fail, read the first failure: it usually names the missing package or the wrong folder. Two common, harmless-to-fix failures are in the table below.
 
 | Error | Fix |
 |---|---|
@@ -264,13 +265,15 @@ Then:
 If you prefer `uv` (see [the comparison](../../setup/PYTHON_ENVIRONMENTS_COMPARED.md#uv-one-fast-tool-for-almost-everything)), from the repo root in Git Bash:
 
 ```bash
-uv venv --python 3.13          # creates .venv/ (gitignored)
+uv venv --seed --python 3.13   # creates .venv/ (gitignored); --seed adds pip, which %pip cells need
 source .venv/Scripts/activate  # Windows Git Bash   (macOS/Linux: source .venv/bin/activate)
 uv pip install -e ".[dev]" ipykernel
 python -m ipykernel install --user --name lc-mastery --display-name "Python (lc-mastery)"
 ```
 
 The kernel name stays `lc-mastery`, so every notebook works unchanged. Official guide: [uv + Jupyter](https://docs.astral.sh/uv/guides/integration/jupyter/).
+
+> **Why `--seed`?** A `uv` virtual environment has no `pip` unless you seed it, and a notebook's `%pip install` runs `python -m pip` inside the kernel, so without it every `%pip` cell prints `No module named pip`. Already created the env without it? Run `uv pip install pip` with the env active, then restart the kernel.
 
 ---
 
@@ -335,6 +338,6 @@ conda init --reverse bash                 # only if you ran `conda init bash`
 - [ ] Jupyter's kernel menu lists **Python (lc-mastery)**, and `sys.executable` in a notebook points into the env.
 
 > ⚠️ **Production note: a hand-built environment is a learning shortcut.**
-> `conda create` + `pip install` with version ranges gives you a working setup today, but not an identical one tomorrow. In production: pin exact versions in a lock file, build the environment in CI from scratch, and ship it as a container image. See [Python environments, compared](../../setup/PYTHON_ENVIRONMENTS_COMPARED.md#recommendation-for-this-course) and Lesson 13.06.
+> `conda create` + `pip install` with version ranges gives you a working setup today, but not an identical one tomorrow. In production: pin exact versions in a lock file, build the environment in CI from scratch, and ship it as a container image. See [Python environments, compared](../../setup/PYTHON_ENVIRONMENTS_COMPARED.md#recommendation-for-this-course) and Lesson 12.06.
 
 **Next:** [00.03 · Jupyter fundamentals](00-03-jupyter-fundamentals.ipynb) with the **Python (lc-mastery)** kernel.
