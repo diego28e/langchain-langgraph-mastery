@@ -4,7 +4,7 @@
 # Introduced in Module 00 (Lesson 00.02 guide + Lesson 00.04). Install it into
 # the course environment ONCE, in "editable" mode, from the repo root:
 #
-#     python -m pip install -e .
+#     python -m pip install -e ".[dev]"
 #
 # "Editable" means Python imports the code straight from src/mastery/, so every
 # change you make there is visible after a kernel restart (or %autoreload,
@@ -93,6 +93,9 @@ dev = [
     # VERIFIED 2026-10-12: nbconvert 7.17.2 is current on PyPI. Gives
     # `jupyter nbconvert --clear-output --inplace` inside the course env.
     "nbconvert>=7.17.2,<8",
+    # VERIFIED 2026-10-14: markdown-it-py 4.2.0 is current on PyPI (jupytext already pulls it).
+    # tests/unit/test_notebook_markdown.py parses every notebook Markdown cell with it.
+    "markdown-it-py>=4.2.0,<5",
     "mastery[llm]",
     # Module 02: `langgraph dev` for Studio (Lesson 02.07), so one install covers it.
     "mastery[studio]",
@@ -106,15 +109,29 @@ dev = [
     "mastery[notebooks]",
 ]
 
+# CI and notebook QA: what `python -m pytest -m notebooks` needs to run every notebook headless
+# (the %pip cells install these in a learner's kernel; CI installs them up front).
+# VERIFIED 2026-10-14: floors are the versions the course's notebooks were last run with.
+ci = [
+    "mastery[dev]",
+    "nbclient>=0.11.0,<1",
+    "ipykernel>=7.3.0,<8",
+    "pandas>=3.0.6,<4",
+    "matplotlib>=3.11.2,<4",
+    "grandalf>=0.8,<1",
+]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.pytest.ini_options]
-# Lets `pytest` import `mastery` from src/ even before `pip install -e .`.
+# pytest imports `mastery` from THIS clone's src/, even before `python -m pip install -e ".[dev]"`
+# or when the env was installed from another clone. Notebook setup cells do the same.
 pythonpath = ["src"]
 testpaths = ["tests"]
 markers = [
     "integration: calls real APIs and needs keys in .env (run with: pytest -m integration)",
+    "notebooks: runs every course notebook headless with no keys, slow (run with: pytest -m notebooks)",
 ]
 # Unit tests only by default: no network, no API keys, fast.
-addopts = "-m 'not integration'"
+addopts = "-m 'not integration and not notebooks'"

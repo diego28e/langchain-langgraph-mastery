@@ -4,8 +4,9 @@
 |---|---|---|---|
 | `tests/unit/` | Tests for `src/mastery` using fake chat models and in-memory persistence | None | Every commit (locally) and in CI |
 | `tests/integration/` | Real model/API calls. Assert on structure, not exact text | Needs `.env` keys | Manually: `python -m pytest -m integration` |
+| `tests/notebooks/` | Runs **every** notebook top to bottom with no API keys (Restart & Run All, headless, outputs never saved) | None (a few cells use free public URLs) | CI on every push; locally: `python -m pytest -m notebooks` (slow) |
 
-Introduced in Module 12 (see [Unit testing](https://docs.langchain.com/oss/python/langchain/test/unit-testing) and [Integration testing](https://docs.langchain.com/oss/python/langchain/test/integration-testing)). Unit tests may appear earlier, as soon as code moves into `src/mastery`.
+Testing is taught in depth in Module 10 (see [Unit testing](https://docs.langchain.com/oss/python/langchain/test/unit-testing) and [Integration testing](https://docs.langchain.com/oss/python/langchain/test/integration-testing)). Unit tests may appear earlier, as soon as code moves into `src/mastery`.
 
 ## Running the tests (Git Bash, course env active, repo root)
 
@@ -13,6 +14,8 @@ Introduced in Module 12 (see [Unit testing](https://docs.langchain.com/oss/pytho
 python -m pytest            # unit tests only (the default, see [tool.pytest.ini_options] in pyproject.toml)
 python -m pytest -v         # one line per test
 python -m pytest -m integration   # live Groq calls; needs GROQ_API_KEY in .env
+python -m pytest -m notebooks     # every notebook, no keys (needs the ci extra: python -m pip install -e ".[ci]")
+python -m pytest -m notebooks -k 06-rag   # one module's notebooks
 ```
 
 Module 00 adds: `unit/test_config.py`, `unit/test_groq_catalog.py` (HTTP faked with `httpx.MockTransport`), `unit/test_notebook_hygiene.py` (every notebook under `modules/` is valid and has no saved outputs), and `integration/test_groq_live.py`.
@@ -58,22 +61,19 @@ Module 06 adds (all offline; no model download: `HashingEmbeddings` stands in fo
 | `unit/test_doctor.py` (Module 07 additions) | `check_dependencies`: every installed course-stack package's requirements are met (what `pip check` reports) and `langgraph-api` ≥ 0.16.0 (D-023); a fake broken distribution is reported | `importlib.metadata` of the current env; monkeypatched fake distributions |
 | `unit/test_rag.py` | Corpus loads ≥30 files with 1-based PDF pages; CRLF and HTML noise handling; the three splitter presets and overlap errors; `CachedEmbeddings` hits/misses; in-memory filters; **Chroma persisted to `tmp_path`, upserted, reopened, filtered and reset**; golden recall@5 ≥ 0.8; BM25 + RRF; reranker; metrics; context round trip and `verify_citations` (fabricated quotes, wrong page); the extractive reader (≥12/16, 0 fabricated, abstains on every out-of-corpus question); a scripted chain; the retriever tool's artifact; `create_agent` + `ToolStrategy(CitedAnswer)` | `HashingEmbeddings`, `tmp_path` Chroma, `ScriptedChatModel` |
 
-## Maintainer QA (not part of `pytest`)
+Course-wide checks (all offline):
 
-Notebooks are executed with **nbclient** twice before release, in memory (outputs never written back):
+| File | Tests | How it stays offline |
+|---|---|---|
+| `unit/test_course_references.py` | Every relative link and `#anchor` in Markdown files and notebook Markdown cells resolves (GitHub heading slugs, exact file-name case); every "Lesson NN.LL", "Project NN", "Lab NNX", "Module NN" and `NN-LL-*.ipynb` name exists in `COURSE_OUTLINE.md`; every notebook title cell names its module and part ("Part 1 (Core)" for 00–08, "Part 2 (Pro)" from 09) | Files read as text and JSON; URLs are not fetched |
+| `unit/test_module00_order.py` | Module 00's lesson order agrees everywhere: the README lesson table, the notebook file names and title cells, and `COURSE_OUTLINE.md`; each lesson's closing "What's next" cell opens the next lesson (the last one opens the project); every link to a Module 00 notebook points to a file that exists | Files read as text and JSON |
+| `unit/test_notebook_markdown.py` | No Markdown cell in any notebook (Module 00 included) renders as an indented code block (4+ leading spaces outside a fenced code block or a list), which would hide its headings from the table of contents and show its tables as raw text | Notebooks read as JSON, Markdown parsed with `markdown-it-py` (`[dev]` extra) |
+| `unit/test_bootstrap.py` | Every notebook's setup cell runs before its first `mastery` import, and Modules 01+ share one setup cell; the real setup cell (taken from the notebooks) imports `mastery` from **this clone's** `src/` even when another copy comes first on the path, prints the file it loaded, warns with the fix (`python -m pip install -e ".[dev]"`) when the env's install points elsewhere, stays quiet when it points here, and asks for a kernel restart if another copy was already imported | A fake "other clone" package in `tmp_path`; each case runs in a child Python process |
 
-```bash
-cd _maintainer/tools/qa
-python run_notebooks.py ../../../modules/01-models-messages-prompts/*.ipynb                 # no keys: 💸 cells must skip
-python run_notebooks.py --mock ../../../modules/01-models-messages-prompts/*.ipynb          # live code paths vs a local stand-in
-python run_notebooks.py --mock ../../../modules/02-tools-and-agents/*.ipynb ../../../modules/02-tools-and-agents/project/*.ipynb ../../../modules/02-tools-and-agents/project/solutions/*.ipynb
-python run_notebooks.py --mock ../../../modules/03-memory-and-context/*.ipynb ../../../modules/03-memory-and-context/project/*.ipynb ../../../modules/03-memory-and-context/project/solutions/*.ipynb
-python run_notebooks.py --mock ../../../modules/04-middleware-guardrails-hitl/*.ipynb ../../../modules/04-middleware-guardrails-hitl/project/*.ipynb ../../../modules/04-middleware-guardrails-hitl/project/solutions/*.ipynb
-python run_notebooks.py --mock ../../../modules/05-mcp-and-external-tools/*.ipynb ../../../modules/05-mcp-and-external-tools/project/*.ipynb ../../../modules/05-mcp-and-external-tools/project/solutions/*.ipynb
-python run_notebooks.py --mock ../../../modules/06-rag/*.ipynb ../../../modules/06-rag/project/*.ipynb ../../../modules/06-rag/project/solutions/*.ipynb
-python run_notebooks.py --mock ../../../modules/07-langgraph-fundamentals/*.ipynb ../../../modules/07-langgraph-fundamentals/project/*.ipynb ../../../modules/07-langgraph-fundamentals/project/solutions/*.ipynb
-```
+## Notebook QA
 
-Module 03 notebooks write SQLite files under `data/outputs/memory/`, Module 04 writes outboxes, audit logs and a SQLite file under `data/outputs/m04/`, Module 05 writes notes, an IDE config example and an audit log under `data/outputs/m05/`, Module 06 writes Chroma folders under `data/vectorstores/`, an embedding cache under `data/cache/` and reports under `data/outputs/m06/`, Module 07 writes a SQLite file, a diagram, run logs and `langgraph dev` logs under `data/outputs/m07/` (07.06 and Project 07 start `langgraph dev` on a free local port and stop it), Module 08 writes SQLite checkpoint/store files and `project08-report.json` under `data/outputs/m08/` (08.01, 08.02 and Project 08 kill a child process on purpose), Module 09 writes reports, the Project 09 ADR and a jupytext demo under `data/outputs/m09/` (Project 09 LIVE also builds a Chroma index under `data/vectorstores/`) (all git-ignored); delete those folders after QA runs. The mock also answers the two Groq safety models (Prompt Guard: a score; safeguard: a JSON verdict) and records LangSmith upload bodies (`LANGSMITH_BODIES`) so redaction can be checked.
+`tests/notebooks/test_execute_notebooks.py` executes every notebook with **nbclient**, in memory (outputs are never written back), with every provider key set to an empty string, so a local `.env` can't leak in. Live (💸) cells must print `⏭️ Skipped: ...` and offline (🧪) cells must run. CI runs it after the unit tests on every push ([`.github/workflows/ci.yml`](../.github/workflows/ci.yml)).
 
-`--mock` starts [`mock_groq.py`](../_maintainer/tools/qa/mock_groq.py), a local HTTP server that imitates the Groq API (chat, streaming with reasoning, `json_schema`/tool calls, 401, 429 + `retry-after`, decommissioned models, images, rate-limit headers, job-posting answers with deliberate mistakes; since Module 02 an **agent mode** that picks a tool from the question, fills arguments, makes one call per turn and answers `ToolStrategy` schemas from tool results; a 400 for `json_schema` + tools, as Groq documents; built-in `browser_search` with `executed_tools` incl. `search_results` URLs; since Module 05 a **Tavily** stand-in at `/tavily/search`, enabled with `TAVILY_BASE_URL` and a mock `tvly-` key) and accepts LangSmith uploads, then points `GROQ_BASE_URL`/`LANGSMITH_ENDPOINT` at it. It proves the code paths run; it says nothing about real model quality.
+Notebooks write their outputs to git-ignored folders: Module 03 SQLite files under `data/outputs/memory/`, Module 04 outboxes, audit logs and a SQLite file under `data/outputs/m04/`, Module 05 notes, an IDE config example and an audit log under `data/outputs/m05/`, Module 06 Chroma folders under `data/vectorstores/`, an embedding cache under `data/cache/` and reports under `data/outputs/m06/`, Module 07 a SQLite file, a diagram, run logs and `langgraph dev` logs under `data/outputs/m07/` (07.06 and Project 07 start `langgraph dev` on a free local port and stop it), Module 08 SQLite checkpoint/store files and `project08-report.json` under `data/outputs/m08/` (08.01, 08.02 and Project 08 kill a child process on purpose), Module 09 reports, the Project 09 ADR and a Jupytext demo under `data/outputs/m09/`. Delete those folders whenever you like.
+
+The offline runs prove that every code path runs, not that real models answer well. Before each course release the maintainer also runs the live (💸) paths, against the real APIs and against a local stand-in of the Groq API.

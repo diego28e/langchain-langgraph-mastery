@@ -1,0 +1,52 @@
+# CI: unit tests on Linux and Windows, then every notebook run headless with no API keys.
+# Nothing here needs secrets: the course is offline-first (fake models, local stand-ins).
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  unit:
+    name: Unit tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install the course stack
+        run: python -m pip install -e ".[dev]"
+      - name: Unit tests (offline; includes notebook hygiene, structure, Markdown and link checks)
+        run: python -m pytest -q
+
+  notebooks:
+    name: Notebooks run with no keys
+    needs: unit
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+      - name: Install the course stack and the notebook runner
+        run: python -m pip install -e ".[ci]"
+      - name: Restart & Run All, every notebook, headless
+        run: python -m pytest -m notebooks -q
