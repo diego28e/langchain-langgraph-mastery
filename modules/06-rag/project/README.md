@@ -15,29 +15,32 @@ Data: [`data/samples/rag/corpus/`](../../../data/samples/rag/corpus/) (Orbita La
 
 1. **Index ≥ 30 documents** with `source` / `page` (1-based) metadata: `load_corpus` → `split_documents(..., "markdown", 800, 100)` → **Chroma persisted** (cosine, ids = `chunk_id`, so re-indexing upserts).
 2. **Two variants on the same store:** 2-step (`retrieve` top-5 → one `with_structured_output(CitedAnswer)` call) and agentic (`create_agent` + `search_docs` retriever tool + `ToolStrategy(CitedAnswer)`, max 3 searches).
-3. **`CitedAnswer(answer, citations: list[Citation(source, page, quote)])`.** `enforce_citations` keeps only citations that `verify_citations` confirms (right file, right page, quote is a substring after whitespace normalization).
+3. **`CitedAnswer(answer, citations: list[Citation(source, page, quote)])`.** `enforce_citations` **fails closed**: an answer ships only if every citation passes `verify_citations` (right file, right page, a quote of at least 12 characters that is a substring after normalization); one fabricated citation turns the whole answer into `NOT_FOUND`. Dropping only the bad citations would let a false claim ship next to a valid one (Lesson 06.06, Part 3).
 4. **Golden set:** recall@5 over the 16 in-corpus questions, correctness (`answer_contains`), for both variants.
-5. **Don't-know policy:** no verifiable evidence → `NOT_FOUND`; the 4 out-of-corpus questions must get it.
+5. **Don't-know policy:** no verifiable evidence → `NOT_FOUND`; the 4 out-of-corpus questions must get it, and real questions must still get answers.
 
 | TODO | Where | What |
 |---|---|---|
-| 1 | Step 1 | `index_corpus`: `build_index(kind="chroma", collection=..., persist_dir=...)` |
-| 2 | Step 2 | `enforce_citations`: drop fabricated citations; no valid evidence → don't-know |
+| 1 | Step 1 | `index_corpus`: a persisted Chroma index whose ids make re-indexing an upsert |
+| 2 | Step 2 | `enforce_citations`: fail closed (any fabricated citation → don't-know) |
 | 3 | Step 3 | `two_step`: retrieve, call the chain, enforce citations |
 | 4 | Step 5 | `score`: recall@5, correct n/16, don't-know n/4, fabricated citations |
 
 ## Acceptance criteria (5 checks in Step 6)
 
-- **Recall@5 ≥ 0.8** for both variants (or a written explanation of why not, plus what you tried).
-- **Zero fabricated citations** in final answers, and every answer is either cited or a don't-know.
-- **Don't-know on 4/4** out-of-corpus questions, both variants.
-- **Comparison table + recommendation** (the Findings cell): quality, cost (model calls), latency, predictability.
+The checks score your runs with `mastery.rag.score_answers`, an independent reference scorer, so they can't be passed by a `score()` that reports the wrong numbers, or by a system that declines everything.
+
+- **Recall@5 ≥ 0.8** for both variants.
+- **Real answers:** correct on **≥ 60%** of the in-corpus questions that ran, **≤ 30%** "don't know" on in-corpus questions, and **don't-know on every** out-of-corpus question (at least one must run), both variants.
+- **Zero fabricated citations** in final answers, and every real answer is cited.
+- **Your `score()` agrees** with the reference scorer (TODO 4).
+- **Comparison table written** with both variants. Then write your recommendation in the Findings cell: quality, cost (model calls), latency, predictability.
 - **Restart & Run All** passes with `GROQ_API_KEY` and without any key. Outputs cleared; `data/outputs/` and `data/vectorstores/` never committed.
 
 ## Modes
 
-- **LIVE** (`GROQ_API_KEY` set): `openai/gpt-oss-20b` (`reasoning_effort="low"`) for both variants. Roughly 80–150k tokens for 2 × 20 questions on the free tier; set `LIVE_QUESTIONS = 6` to try it cheaply first. Read the ❌ lines yourself: `answer_contains` is a strict string match.
-- **OFFLINE DEMO** (no key): scripted extractive readers quote the best retrieved sentence (never invent text). Reference results with bge-small: recall@5 **1.00**, correct **12/16** for both variants, don't-know **4/4**, **0** fabricated. The untouched starter passes 2/5 checks, with ❌ pointing at the TODOs.
+- **LIVE** (`GROQ_API_KEY` set): `openai/gpt-oss-20b` (`reasoning_effort="low"`) for both variants. Roughly 80–150k tokens for 2 × 20 questions on the free tier; set `LIVE_QUESTIONS = 6` to try it cheaply first (4 in-corpus + 2 out-of-corpus questions per variant). Read the ❌ lines yourself: `answer_contains` is a strict string match.
+- **OFFLINE DEMO** (no key): scripted extractive readers quote the best retrieved sentence (never invent text). Reference results with bge-small: recall@5 **1.00**, correct **12/16** for both variants (3 false don't-knows), don't-know **4/4**, **0** fabricated. The untouched starter passes 2/5 checks, with ❌ pointing at the TODOs.
 - **Embeddings:** local `BAAI/bge-small-en-v1.5` via fastembed (`pip install -e ".[dev,embeddings]"`, ~67 MB download once). Without it the notebook falls back to `HashingEmbeddings` with a ⚠️: still 5/5 checks here, but weaker ranking (vector R@1 0.78 vs 0.91 in Step 7).
 
 ## Stretch goals

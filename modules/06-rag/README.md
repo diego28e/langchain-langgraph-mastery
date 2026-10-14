@@ -65,7 +65,7 @@ If `pip install`, `pytest` or the model download fails, see the [setup guide's t
 | 06.06 | 2-step RAG with citations | [`06-06-two-step-rag.ipynb`](06-06-two-step-rag.ipynb) | 150–180 min | `GROQ_API_KEY` (optional) |
 | 06.07 | Agentic RAG with `create_agent` | [`06-07-agentic-rag.ipynb`](06-07-agentic-rag.ipynb) | 150–180 min | `GROQ_API_KEY` (optional) |
 | 06.08 | Hybrid search, query rewriting, and re-ranking | [`06-08-hybrid-and-reranking.ipynb`](06-08-hybrid-and-reranking.ipynb) | 120–150 min | `GROQ_API_KEY`, `COHERE_API_KEY` (both optional) |
-| 06.09 | Measuring RAG quality (preview of Module 12) | [`06-09-rag-evaluation-preview.ipynb`](06-09-rag-evaluation-preview.ipynb) | 120–150 min | `GROQ_API_KEY` (optional) |
+| 06.09 | Measuring RAG quality (preview of Module 10) | [`06-09-rag-evaluation-preview.ipynb`](06-09-rag-evaluation-preview.ipynb) | 120–150 min | `GROQ_API_KEY` (optional) |
 
 **What each lesson gives you**
 
