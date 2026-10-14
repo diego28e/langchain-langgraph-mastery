@@ -14,6 +14,7 @@ from mastery.agents.loop import (
     execute_tool_calls,
     format_stream_part,
     format_transcript,
+    recursion_limit_for,
     run_tool_loop,
 )
 from mastery.agents.metrics import UsageMeter
@@ -23,6 +24,7 @@ from mastery.agents.specialists import (
     StepState,
     handoff_graph,
     handoff_tool,
+    orphaned_tool_calls,
     step_middleware,
     step_tool,
     subagent_tool,
@@ -41,6 +43,8 @@ __all__ = [
     "format_transcript",
     "handoff_graph",
     "handoff_tool",
+    "orphaned_tool_calls",
+    "recursion_limit_for",
     "run_tool_loop",
     "step_middleware",
     "step_tool",

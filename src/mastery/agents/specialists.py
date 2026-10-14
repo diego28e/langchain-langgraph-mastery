@@ -144,6 +144,18 @@ def task_tool(registry: dict[str, tuple[Any, str]], *, name: str = "task") -> Ba
 
 
 # --------------------------------------------------------------------------- handoffs (graph)
+def parallel_siblings(ai_message: AIMessage, tool_call_id: str | None) -> list[dict]:
+    """The other tool calls requested in the same model reply as ``tool_call_id``."""
+    return [c for c in ai_message.tool_calls if c.get("id") != tool_call_id]
+
+
+def orphaned_tool_calls(messages: list) -> list[str]:
+    """Ids of AIMessage tool calls with no matching ToolMessage (providers reject such histories)."""
+    answered = {m.tool_call_id for m in messages if isinstance(m, ToolMessage)}
+    return [c["id"] for m in messages if isinstance(m, AIMessage) for c in m.tool_calls if c["id"] not in answered]
+
+
+
 class HandoffState(AgentState):
     """Shared state for multi-agent handoffs: messages plus who is talking right now."""
 
@@ -163,12 +175,22 @@ def handoff_tool(target: str, *, description: str | None = None, name: str | Non
     agent did earlier in this turn (tool results!) never reaches the parent state.
     ``carry="turn"`` passes every message since the latest user message, so the next agent
     sees the work already done (and doesn't redo it).
+
+    A transfer requested **in parallel** with other tool calls is refused with a plain
+    ToolMessage: jumping now would drop the siblings' results (their ToolMessages are made in
+    the same step and never reach the parent), leaving orphaned tool calls that providers
+    reject, and a side effect whose result nobody sees. The agent gets its sibling results,
+    then calls the transfer again on its own. (The docs' handoff example assumes no parallel
+    tool calls.)
     """
     tool_name = name or f"transfer_to_{target}"
 
-    def run(runtime: ToolRuntime) -> Command:
+    def run(runtime: ToolRuntime) -> Command | ToolMessage:
         messages = list(runtime.state["messages"])
         last_ai = next(m for m in reversed(messages) if isinstance(m, AIMessage))
+        if parallel_siblings(last_ai, runtime.tool_call_id):
+            return ToolMessage(content=f"Transfer not done: call {tool_name} on its own, after your other "
+                                       "tool calls have returned.", tool_call_id=runtime.tool_call_id, name=tool_name)
         carried = [last_ai]
         if carry == "turn":
             start = max((i for i, m in enumerate(messages) if isinstance(m, HumanMessage)), default=-1)
@@ -227,7 +249,13 @@ def step_tool(step: str, *, description: str | None = None, name: str | None = N
     """A tool that switches ``current_step``; the next model call gets that step's prompt/tools."""
     tool_name = name or f"transfer_to_{step}"
 
-    def run(runtime: ToolRuntime) -> Command:
+    def run(runtime: ToolRuntime) -> Command | ToolMessage:
+        # Two transfers in one model reply would both write current_step in the same step
+        # (InvalidUpdateError): refuse when another transfer is a sibling of this call.
+        last_ai = next(m for m in reversed(runtime.state["messages"]) if isinstance(m, AIMessage))
+        if any(c["name"].startswith("transfer_to_") for c in parallel_siblings(last_ai, runtime.tool_call_id)):
+            return ToolMessage(content=f"Transfer not done: request one transfer at a time ({tool_name}).",
+                               tool_call_id=runtime.tool_call_id, name=tool_name)
         return Command(update={
             "current_step": step,
             "messages": [ToolMessage(content=f"Transferred to {step}.", tool_call_id=runtime.tool_call_id,

@@ -172,6 +172,29 @@ def test_research_graph_clarifies_vague_requests() -> None:
     assert "(the Nimbus Pro in winter)" in out["values"]["question"]
 
 
+def test_clarify_is_resume_safe_with_a_flipping_clarifier() -> None:
+    """The clarify node re-runs on resume: a second, different verdict must not drop the human's answer."""
+    from langchain_core.messages import AIMessage
+
+    from mastery.testing import ScriptedChatModel
+
+    calls = {"n": 0}
+
+    def flipping(messages: list) -> AIMessage:          # ambiguous the first time, "clear" afterwards
+        calls["n"] += 1
+        args = {"ambiguous": calls["n"] == 1, "question": "Which product?" if calls["n"] == 1 else ""}
+        return AIMessage("", tool_calls=[{"name": "Clarity", "id": f"c{calls['n']}", "args": args}])
+
+    models = offline_models() | {"clarifier": ScriptedChatModel(responses=[flipping], repeat_last=True)}
+    g = build_research_graph(models, web_search=offline_web_search(), docs_search=corpus_docs_search(),
+                             checkpointer=memory_checkpointer())
+    out = asyncio.run(adrive(g, {"question": "Battery?"}, {"configurable": {"thread_id": "flip"}},
+                             scripted_reviewer(["the Nimbus Pro in winter", "approve"])))
+    assert calls["n"] == 1                                  # the verdict was replayed, not asked again
+    assert out["values"]["clarification"] == "the Nimbus Pro in winter"
+    assert "(the Nimbus Pro in winter)" in out["values"]["question"]
+
+
 def test_search_web_retries_then_falls_back() -> None:
     flaky = offline_web_search(failures=2)
     out = asyncio.run(adrive(_research(web=flaky), {"question": QUESTION}, {"configurable": {"thread_id": "r3"}},

@@ -3,7 +3,7 @@
 Introduced in Module 01, Lesson 01.01 ("Chat models and init_chat_model").
 
 Why this module exists:
-    Model IDs change faster than course material (Lesson 00.05 found retired IDs
+    Model IDs change faster than course material (Lesson 00.06 found retired IDs
     in official docs). If every notebook wrote ``ChatGroq(model="...")`` by hand,
     one deprecation would mean editing dozens of files. Instead, notebooks ask
     for a *role* ("fast", "reasoning", "vision") and this module looks the model

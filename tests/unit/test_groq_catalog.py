@@ -1,4 +1,4 @@
-"""Unit tests for mastery.groq_catalog (Lesson 00.07, Project 00).
+"""Unit tests for mastery.groq_catalog (Lesson 00.05, Project 00).
 
 No real network calls: ``httpx.MockTransport`` answers every request with a
 canned response, so these tests run offline and without a Groq key.

@@ -210,3 +210,37 @@ def test_dev_server_command_and_missing_config(tmp_path) -> None:
         DevServer(tmp_path)
     server = DevServer(REPO / "apps" / "m07_content_pipeline", port=2999)
     assert server.studio_url == "https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2999"
+
+
+def test_canary_parallel_writes_apply_in_send_order_but_stream_in_completion_order() -> None:
+    """Canary for Lesson 07.03 Part 2 ("In which order do parallel results land?").
+
+    LangGraph 1.2 applies a super-step's writes in task order, while ``stream_mode="updates"``
+    yields them as workers finish. The docs do NOT promise either order ("updates from a
+    parallel superstep may not be ordered consistently"), which is why the course carries an
+    index in Send payloads. If this test fails after an upgrade, the runtime changed: update the
+    lesson's "You should now see" text, not the course's advice.
+    """
+    import operator
+    import time
+    from typing import Annotated, TypedDict
+
+    from langgraph.graph import END, START, StateGraph
+    from langgraph.types import Send
+
+    class Race(TypedDict):
+        out: Annotated[list[int], operator.add]
+
+    def runner(task: dict) -> dict:
+        time.sleep(0.03 * (4 - task["i"]))
+        return {"out": [task["i"]]}
+
+    builder = StateGraph(Race)
+    builder.add_node(runner)
+    builder.add_conditional_edges(START, lambda s: [Send("runner", {"i": i}) for i in range(5)], ["runner"])
+    builder.add_edge("runner", END)
+    race = builder.compile()
+
+    streamed = [u["runner"]["out"][0] for u in race.stream({"out": []}, stream_mode="updates")]
+    assert streamed == [4, 3, 2, 1, 0]
+    assert race.invoke({"out": []})["out"] == [0, 1, 2, 3, 4]

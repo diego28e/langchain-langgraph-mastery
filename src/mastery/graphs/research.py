@@ -29,6 +29,7 @@ from typing import Annotated, Any, TypedDict
 
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langgraph.errors import NodeError, NodeTimeoutError
+from langgraph.func import task
 from langgraph.graph import END, START, StateGraph
 from langgraph.runtime import Runtime
 from langgraph.types import RetryPolicy, TimeoutPolicy, interrupt
@@ -127,12 +128,20 @@ def build_research_graph(models: dict[str, Any], *, web_search: WebSearch, docs_
     plan_model = models["planner"].with_structured_output(Plan)
     writer = models["writer"]
 
+    @task
+    def assess_clarity(question: str) -> dict:
+        """The LLM verdict, as a task: its result is checkpointed, so a resume reuses it."""
+        return clarify_model.invoke([SystemMessage(CLARIFY_PROMPT), HumanMessage(question)]).model_dump()
+
     @timed("clarify_question")
     def clarify_question(state: ResearchState) -> dict:
-        verdict = clarify_model.invoke([SystemMessage(CLARIFY_PROMPT), HumanMessage(state["question"])])
-        if not verdict.ambiguous:
+        # The node re-runs from the top on resume. Calling the model directly here would ask it again,
+        # and a different verdict ("clear" this time) would skip the interrupt and silently drop the
+        # human's answer. The task replays the first verdict instead (Lesson 08.03, rules of interrupts).
+        verdict = assess_clarity(state["question"]).result()
+        if not verdict["ambiguous"]:
             return {}
-        answer = interrupt({"kind": "clarify", "question": verdict.question, "request": state["question"]})
+        answer = interrupt({"kind": "clarify", "question": verdict["question"], "request": state["question"]})
         return {"clarification": str(answer), "question": f"{state['question']} ({answer})"}
 
     @timed("plan")

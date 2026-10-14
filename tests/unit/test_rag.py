@@ -32,6 +32,7 @@ from mastery.rag import (
     recall_at_k,
     retrieve,
     rrf,
+    score_answers,
     split_documents,
     verify_citations,
 )
@@ -176,11 +177,35 @@ def test_context_roundtrip_and_verification():
     assert back[0].metadata == {"source": "m.pdf", "page": 3, "type": "pdf"} and back[1].page_content == "Returns within 30 days."
     good = CitedAnswer(answer="Blocked gauge.", citations=[Citation(source="m.pdf", page=3, quote="the rain gauge is blocked")])
     assert verify_citations(good, docs)["ok"]                          # PDF line break tolerated
-    wrong_page = CitedAnswer(answer="x", citations=[Citation(source="m.pdf", page=2, quote="rain gauge")])
+    wrong_page = CitedAnswer(answer="x", citations=[Citation(source="m.pdf", page=2, quote="the rain gauge is blocked")])
     invented = CitedAnswer(answer="x", citations=[Citation(source="r.md", quote="Returns within 60 days")])
-    assert not verify_citations(wrong_page, docs)["ok"]
-    assert verify_citations(invented, docs)["fabricated"][0].quote == "Returns within 60 days"
+    assert verify_citations(wrong_page, docs)["reasons"] == {"the rain gauge is blocked": "wrong_page"}
+    check = verify_citations(invented, docs)
+    assert check["fabricated"][0].quote == "Returns within 60 days" and check["reasons"]["Returns within 60 days"] == "not_found"
     assert "[1] m.pdf, p. 3" in format_citations(good)
+
+
+def test_verify_rejects_trivial_quotes_and_page_mismatches():
+    docs = [Document("Error E12 means the rain gauge is blocked.", metadata={"source": "m.pdf", "page": 3}),
+            Document("Returns within 30 days of delivery.", metadata={"source": "r.md"})]
+    # One word or a number is in almost every chunk: it proves nothing.
+    for trivial in ("days", "30", "."):
+        out = verify_citations(CitedAnswer(answer="x", citations=[Citation(source="r.md", quote=trivial)]), docs)
+        assert out["reasons"] == {trivial: "too_short"}
+    # A PDF chunk needs its page; a Markdown chunk must not be given one.
+    no_page = CitedAnswer(answer="x", citations=[Citation(source="m.pdf", quote="the rain gauge is blocked")])
+    assert verify_citations(no_page, docs)["reasons"] == {"the rain gauge is blocked": "missing_page"}
+    bogus_page = CitedAnswer(answer="x", citations=[Citation(source="r.md", page=99, quote="within 30 days of delivery")])
+    assert verify_citations(bogus_page, docs)["reasons"] == {"within 30 days of delivery": "wrong_page"}
+
+
+def test_verify_ignores_markdown_emphasis_but_not_changed_facts():
+    docs = [Document("Opened items: refund minus a **10% restocking fee**.\n- **Price:** US$349", metadata={"source": "r.md"})]
+    plain = CitedAnswer(answer="x", citations=[Citation(source="r.md", quote="minus a 10% restocking fee"),
+                                               Citation(source="r.md", quote="Price: US$349")])
+    assert verify_citations(plain, docs)["ok"]
+    changed = CitedAnswer(answer="x", citations=[Citation(source="r.md", quote="minus a 15% restocking fee")])
+    assert not verify_citations(changed, docs)["ok"]
 
 
 def test_extractive_reader_answers_and_abstains(chunks, golden):
@@ -235,3 +260,19 @@ def test_extractive_agent_reader_with_create_agent(chunks):
     assert "blocked" in answer.answer and verify_citations(answer, docs)["ok"]
     out = agent.invoke({"messages": [HumanMessage("Who founded Orbita Labs?")]})
     assert is_dont_know(out["structured_response"])
+
+
+def test_score_answers_exposes_a_system_that_always_declines(chunks, golden):
+    """Project 06's checks use this scorer: declining everything must not look like success."""
+    store = build_index(chunks, HashingEmbeddings(1024))
+    honest, lazy = [], []
+    for g in golden:
+        docs = retrieve(store, g["question"], k=5)
+        honest.append(g | {"docs": docs, "answer": extractive_answer(g["question"], docs)})
+        lazy.append(g | {"docs": docs, "answer": CitedAnswer(answer=NOT_FOUND, citations=[])})
+    good, bad = score_answers(honest), score_answers(lazy)
+    assert good["in_corpus"] == 16 and good["out_of_corpus"] == 4
+    assert good["correct"] >= 12 and good["dont_know"] == 4 and good["fabricated_final"] == 0 and good["uncited"] == 0
+    # Same retrieval, same "0 fabricated", same 4/4 declines... but nothing answered.
+    assert bad["recall@5"] == good["recall@5"] and bad["dont_know"] == 4 and bad["fabricated_final"] == 0
+    assert bad["correct"] == 0 and bad["false_dont_know"] == 16

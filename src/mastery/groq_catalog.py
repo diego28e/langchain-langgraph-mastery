@@ -1,6 +1,6 @@
 """List the models that are live on Groq right now, using the Groq Models API.
 
-Introduced in Module 00, Lesson 00.07 and used by Project 00 (Groq Model
+Introduced in Module 00, Lesson 00.05 and used by Project 00 (Groq Model
 Explorer). Module 01's ``mastery.models`` will use it to check that the model
 IDs in your ``.env`` still exist before a notebook spends time on them.
 

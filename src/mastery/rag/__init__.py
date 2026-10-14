@@ -17,7 +17,7 @@ from mastery.rag.citations import (
                                    parse_context,
                                    verify_citations,
 )
-from mastery.rag.eval import evaluate_retrieval, mrr, recall_at_k
+from mastery.rag.eval import evaluate_retrieval, mrr, recall_at_k, score_answers
 from mastery.rag.index import (
                                    CachedEmbeddings,
                                    build_index,
@@ -71,6 +71,7 @@ __all__ = [
                                    "open_chroma",
                                    "parse_context",
                                    "recall_at_k",
+                                   "score_answers",
                                    "reset_chroma",
                                    "retrieve",
                                    "rrf",

@@ -54,7 +54,7 @@ def planner_prompt(topic: str) -> list:
 def _notes_block(outline: Outline, sections: list[SectionNote]) -> str:
     by_title = {s["title"]: s for s in sections}
     blocks = []
-    for plan in outline.sections:                    # outline order, not completion order
+    for plan in outline.sections:                    # outline order: parallel results have no documented order
         note = by_title.get(plan.title, {"notes": "(no research)", "sources": []})
         blocks.append(f'<notes title="{plan.title}" sources="{", ".join(note["sources"])}">\n{note["notes"]}\n</notes>')
     return "\n".join(blocks)

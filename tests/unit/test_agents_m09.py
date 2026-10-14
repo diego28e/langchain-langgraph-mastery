@@ -154,6 +154,42 @@ def test_handoff_carry_last_vs_turn():
     assert turn["active_agent"] == "b"
 
 
+def _parallel(*names: str, i: int = 0) -> AIMessage:
+    """One model reply with several tool calls (what real models do; the scripted policy never does)."""
+    return AIMessage("", tool_calls=[{"name": n, "args": {"x": "1"} if n == "lookup" else {}, "id": f"p{i}-{k}"}
+                                     for k, n in enumerate(names)])
+
+
+def test_parallel_transfer_is_refused_and_history_stays_valid():
+    from mastery.agents import orphaned_tool_calls
+
+    @tool
+    def lookup(x: str) -> str:
+        """Look up."""
+        return f"found {x}"
+
+    for carry in ("last", "turn"):
+        a = create_agent(ScriptedChatModel(responses=[_parallel("lookup", "transfer_to_b", i=1),
+                                                      call("transfer_to_b", {}, 2)]),
+                         tools=[lookup, handoff_tool("b", carry=carry)], name="a")
+        b = create_agent(ScriptedChatModel(responses=["b here"], repeat_last=True), tools=[], name="b")
+        out = handoff_graph({"a": a, "b": b}, entry="a", checkpointer=InMemorySaver()).invoke(
+            {"messages": [HumanMessage("go")]}, cfg(f"par-{carry}"))
+        assert out["active_agent"] == "b" and out["messages"][-1].text == "b here"
+        assert orphaned_tool_calls(out["messages"]) == [], carry
+        if carry == "turn":                                  # the lookup result reached the parent state
+            assert any(isinstance(m, ToolMessage) and m.name == "lookup" for m in out["messages"])
+
+
+def test_two_parallel_step_transfers_are_refused_not_crashing():
+    app = build_single_agent_desk(
+        ScriptedChatModel(responses=[_parallel("transfer_to_billing", "transfer_to_technical", i=1), "done"]),
+        make_support_tools(SupportDesk()), checkpointer=InMemorySaver())
+    out = app.invoke({"messages": [HumanMessage("refund and a broken sensor")]}, cfg("steps"))
+    refused = [m for m in out["messages"] if isinstance(m, ToolMessage) and m.text.startswith("Transfer not done")]
+    assert len(refused) == 2 and out["messages"][-1].text == "done"
+
+
 def test_handoff_graph_next_turn_starts_at_active_agent(desk, tools):
     app = build_handoffs_desk(offline_model, tools, checkpointer=InMemorySaver())
     meter = UsageMeter()
@@ -262,6 +298,47 @@ def test_skills_load_once_per_conversation(desk, tools):
     run_conversation(app, load_conversations()[11], desk, thread_id="sk")   # S12: two billing turns
     msgs = app.get_state({"configurable": {"thread_id": "sk"}}).values["messages"]
     assert [c["name"] for m in msgs if isinstance(m, AIMessage) for c in m.tool_calls].count("load_skill") == 1
+
+
+def _answers(*values):
+    """A reviewer that gives these answers in order, recording each pause's payload."""
+    seen, queue = [], list(values)
+
+    def reviewer(payload):
+        seen.append(payload)
+        return queue.pop(0)
+    return reviewer, seen
+
+
+def test_manager_edit_is_revalidated_agent_path(desk, tools):
+    """A manager's edit is a new amount: it gets the same rule as the agent's request, and a bad answer re-asks."""
+    app = build_handoffs_desk(offline_model, tools, checkpointer=InMemorySaver())
+    reviewer, seen = _answers({"action": "edit", "text": "1990"}, "yes", {"action": "edit", "text": "$150"})
+    out = run_conversation(app, {"id": "e", "turns": ["C-1002 refund $199 of INV-2001"]}, desk, reviewer=reviewer)
+    assert [r["amount"] for r in out["refunds"]] == [150.0]
+    assert out["interrupts"] == 3 and all("error" in p for p in seen[1:]) and seen[0]["max_amount"] == 199.0
+    logged = [e["args"] for e in desk.events if e["tool"] == "issue_refund"]
+    assert logged[-1]["amount"] == 150.0 and logged[-1]["requested"] == 199.0     # the log matches the refund
+
+
+def test_manager_gives_up_after_three_invalid_answers(desk, tools):
+    app = build_handoffs_desk(offline_model, tools, checkpointer=InMemorySaver())
+    reviewer, _ = _answers("yes", "ok", {"action": "edit", "text": "lots"})
+    out = run_conversation(app, {"id": "g", "turns": ["C-1002 refund $199 of INV-2001"]}, desk, reviewer=reviewer)
+    assert out["refunds"] == [] and "no valid decision after 3 tries" in out["answer"]
+
+
+def test_manager_edit_is_revalidated_workflow_path(desk):
+    from mastery.agents.support import _echo_writer
+
+    app = build_refund_workflow(desk, _echo_writer(), checkpointer=InMemorySaver())
+    config = cfg("wf-edit")
+    app.invoke({"messages": [HumanMessage("C-1002 refund $199 for INV-2001")]}, config)
+    out = app.invoke(Command(resume={"action": "edit", "text": "-5"}), config)
+    assert "error" in out["__interrupt__"][0].value and desk.refunds == []
+    out = app.invoke(Command(resume={"action": "edit", "text": "60"}), config)
+    assert "Refunded $60.00" in out["messages"][-1].text and desk.refunds[0]["amount"] == 60.0
+    assert desk.events[-1]["args"]["amount"] == 60.0 and desk.events[-1]["args"]["requested"] == 199.0
 
 
 def test_refund_workflow_policy_in_code(desk):

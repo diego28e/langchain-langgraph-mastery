@@ -197,3 +197,32 @@ def test_audit_log_tool_error_and_custom_event():
     assert audit.of("tool_error")[0]["error"] == "ValueError"
     assert audit.record("injection_blocked", source="mail from x@y.io")["source"] == "mail from [REDACTED_EMAIL]"
     assert read_audit_log("does/not/exist.jsonl") == []
+
+
+# --- async: the course's middleware works under ainvoke (Module 05 and servers run async) ------
+def test_course_middleware_works_under_ainvoke(tmp_path):
+    import asyncio
+
+    model = ScriptedChatModel(responses=[call("send_email", {"email_id": "e-1"}), "Done."])
+    middleware = [RoleToolFilterMiddleware({"admin": ["*"]}), AuditLogMiddleware(tmp_path / "a.jsonl", clock=lambda: 1.0),
+                  TokenBudgetMiddleware(run_limit=100_000)]
+    agent = create_agent(model, [send_email], middleware=middleware, context_schema=Ctx)
+    result = asyncio.run(agent.ainvoke({"messages": [HumanMessage("send e-1")]}, context=Ctx("admin")))
+    assert result["messages"][-1].content == "Done."
+    assert [e["event"] for e in middleware[1].events] == ["run_start", "model_call", "tool_call", "model_call", "run_end"]
+
+
+def test_sync_only_wrap_hook_fails_under_ainvoke():
+    """Why Lesson 04.01 lists the async twins: a sync-only wrap-style hook can't run async."""
+    import asyncio
+
+    from langchain.agents.middleware import wrap_model_call
+
+    @wrap_model_call
+    def passthrough(request, handler):
+        return handler(request)
+
+    agent = create_agent(ScriptedChatModel(responses=["hi"]), [], middleware=[passthrough])
+    assert agent.invoke({"messages": [HumanMessage("x")]})["messages"][-1].content == "hi"
+    with pytest.raises(NotImplementedError, match="awrap_model_call"):
+        asyncio.run(agent.ainvoke({"messages": [HumanMessage("x")]}))

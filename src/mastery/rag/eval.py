@@ -1,4 +1,4 @@
-"""Retrieval metrics on a golden set: recall@k, hit rate, MRR (a preview of Module 09)."""
+"""Retrieval metrics on a golden set: recall@k, hit rate, MRR (a preview of Module 10)."""
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -44,3 +44,32 @@ def evaluate_retrieval(search: Callable[[str], list[Document]], golden: list[dic
     return {"k": k, "questions": len(rows), "recall": round(sum(r["recall"] for r in rows) / n, 3),
             "hit_rate": round(sum(r["hit"] for r in rows) / n, 3), "mrr": round(sum(r["mrr"] for r in rows) / n, 3),
             "rows": rows}
+
+
+def score_answers(rows: list[dict[str, Any]], k: int = 5) -> dict[str, Any]:
+    """Reference scorer for a cited-RAG run (Project 06), computed independently of learner code.
+
+    Each row is a golden item plus the run's output: ``in_corpus``, ``answer_contains``,
+    ``expected_sources``, ``docs`` (retrieved) and ``answer`` (a ``CitedAnswer``).
+
+    Returns counts, not just rates, so a check can say "12/16": ``in_corpus``/``out_of_corpus``
+    (questions that ran), ``recall@k`` (in-corpus mean), ``correct``, ``false_dont_know`` (in-corpus
+    questions answered with "don't know"), ``dont_know`` (out-of-corpus questions correctly
+    declined), ``fabricated_final`` (citations in final answers that fail ``verify_citations``) and
+    ``uncited`` (real answers shipped without a citation).
+    """
+    from mastery.rag.citations import is_dont_know, verify_citations  # local import: no cycle at load time
+
+    inside = [r for r in rows if r["in_corpus"]]
+    outside = [r for r in rows if not r["in_corpus"]]
+    recall = sum(recall_at_k(r["docs"], r["expected_sources"], k=k) for r in inside) / max(len(inside), 1)
+    return {
+        "in_corpus": len(inside),
+        "out_of_corpus": len(outside),
+        f"recall@{k}": round(recall, 2),
+        "correct": sum(r["answer_contains"].lower() in r["answer"].answer.lower() for r in inside),
+        "false_dont_know": sum(is_dont_know(r["answer"]) for r in inside),
+        "dont_know": sum(is_dont_know(r["answer"]) for r in outside),
+        "fabricated_final": sum(len(verify_citations(r["answer"], r["docs"])["fabricated"]) for r in rows),
+        "uncited": sum(not r["answer"].citations and not is_dont_know(r["answer"]) for r in rows),
+    }

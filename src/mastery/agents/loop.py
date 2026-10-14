@@ -10,6 +10,7 @@ messages, so it works the same with Groq, OpenAI, or the offline
 - :func:`run_tool_loop`: the whole hand-written loop with a step limit.
 - :func:`format_transcript` / :func:`agent_stats`: read an agent run at a glance.
 - :func:`format_stream_part`: one readable line per ``agent.stream(..., version="v2")`` part.
+- :func:`recursion_limit_for`: a ``recursion_limit`` derived from the agent's real graph (Lesson 02.03).
 """
 
 from __future__ import annotations
@@ -187,3 +188,26 @@ def format_stream_part(part: Mapping[str, Any], *, max_chars: int = 160) -> str 
             return None
         return token.text or None
     return None
+
+
+def recursion_limit_for(agent: Any, max_model_calls: int) -> int:
+    """The smallest ``recursion_limit`` that lets ``agent`` make ``max_model_calls`` model calls.
+
+    LangGraph counts super-steps: every node that runs is one step (parallel tool calls share
+    one), and the run must end strictly below the limit. In ``create_agent`` one round is the
+    ``model`` node, the ``tools`` node, and **one node per** ``before_model``/``after_model``
+    middleware hook; ``before_agent``/``after_agent`` hooks run once per invocation. So a plain
+    agent needs ``2 × calls + 2`` and an agent with ``ModelCallLimitMiddleware`` needs
+    ``4 × run_limit + 2`` for its graceful stop to fire before ``GraphRecursionError``
+    (measured on langchain 1.4.5 / langgraph 1.2.15; tests/unit/test_agents.py pins it).
+
+    Args:
+        agent: A compiled agent or graph (anything with ``get_graph()``).
+        max_model_calls: The model-call budget, e.g. ``ModelCallLimitMiddleware(run_limit=...)``.
+
+    Returns:
+        The limit to pass as ``{"recursion_limit": ...}``.
+    """
+    nodes = [n for n in agent.get_graph().nodes if n not in ("__start__", "__end__")]
+    once = sum(n.endswith((".before_agent", ".after_agent")) for n in nodes)
+    return (len(nodes) - once) * max_model_calls + once + 2

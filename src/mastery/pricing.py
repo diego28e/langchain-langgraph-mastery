@@ -6,7 +6,7 @@ used by Project 01 (Multi-Model Comparison Lab).
 Why a table in code:
     Providers report token counts (``AIMessage.usage_metadata``), not money.
     To compare models you need ``tokens x price``. Keeping the prices in one
-    dated table makes it obvious when they go stale (Lesson 00.06).
+    dated table makes it obvious when they go stale (Lesson 00.07).
 
 Limits of this estimate (read before trusting it):
     - List prices for the standard tier. Cached-input discounts, batch/flex

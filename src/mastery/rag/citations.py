@@ -19,7 +19,8 @@ class Citation(BaseModel):
 
     source: str = Field(description="The source path exactly as shown in the context header, e.g. data/samples/rag/policies/returns.md")
     page: int | None = Field(default=None, description="PDF page number from the context header; null for Markdown/HTML")
-    quote: str = Field(description="A short passage copied word for word from that source's text (no paraphrase)")
+    quote: str = Field(description="A passage of at least five words copied word for word from that source's text "
+                                   "(no paraphrase); it must contain the fact you state")
 
 
 class CitedAnswer(BaseModel):
@@ -54,27 +55,55 @@ def parse_context(text: str) -> list[Document]:
 
 
 def normalize_text(text: str) -> str:
-    """Collapse whitespace and unify quotes/dashes, so PDF line breaks don't fail an honest quote."""
+    """Collapse whitespace, unify quotes/dashes and drop Markdown emphasis/code marks.
+
+    PDF line breaks and ``**bold**`` in the source must not fail an honest quote: models usually
+    copy the words, not the formatting.
+    """
     table = str.maketrans({"\u2018": "'", "\u2019": "'", "\u201c": '"', "\u201d": '"', "\u2013": "-", "\u2014": "-"})
-    return re.sub(r"\s+", " ", text.translate(table)).strip().lower()
+    text = re.sub(r"[*_`]+", "", text.translate(table))
+    return re.sub(r"\s+", " ", text).strip().lower()
 
 
-def verify_citations(answer: CitedAnswer, docs: list[Document]) -> dict[str, Any]:
+# A quote shorter than this proves nothing: "days" or "30" appear in almost any chunk.
+MIN_QUOTE_CHARS = 12
+
+
+def verify_citations(answer: CitedAnswer, docs: list[Document], *,
+                     min_quote_chars: int = MIN_QUOTE_CHARS) -> dict[str, Any]:
     """Check every citation against the *retrieved* chunks.
 
-    A citation is valid only if its quote (normalised) is a substring of a retrieved chunk with the
-    same ``source`` (and ``page``, when given). Returns ``{"valid": [...], "fabricated": [...], "ok": bool}``.
+    A citation is valid only if its quote (normalised) has at least ``min_quote_chars`` characters
+    and is a substring of a retrieved chunk with the same ``source`` and the same ``page``: a PDF
+    chunk needs the right page, and a page-less chunk (Markdown/HTML) must be cited without one.
+
+    A valid citation proves **provenance** (the words exist in what the model saw), not that the
+    answer is right or that every claim in it is supported.
+
+    Returns:
+        ``{"valid": [...], "fabricated": [...], "ok": bool, "reasons": {quote: reason}}`` where a
+        reason is ``"too_short"``, ``"wrong_page"``, ``"missing_page"`` or ``"not_found"``.
     """
-    valid, fabricated = [], []
+    valid, fabricated, reasons = [], [], {}
     for cite in answer.citations:
         quote = normalize_text(cite.quote)
-        hit = bool(quote) and any(
-            doc.metadata.get("source") == cite.source
-            and (cite.page is None or doc.metadata.get("page") in (None, cite.page))
-            and quote in normalize_text(doc.page_content)
-            for doc in docs)
-        (valid if hit else fabricated).append(cite)
-    return {"valid": valid, "fabricated": fabricated, "ok": not fabricated}
+        if len(quote) < min_quote_chars:
+            fabricated.append(cite)
+            reasons[cite.quote] = "too_short"
+            continue
+        same_text = [doc for doc in docs if doc.metadata.get("source") == cite.source
+                     and quote in normalize_text(doc.page_content)]
+        if any(doc.metadata.get("page") == cite.page for doc in same_text):
+            valid.append(cite)
+            continue
+        fabricated.append(cite)
+        if not same_text:
+            reasons[cite.quote] = "not_found"
+        elif cite.page is None:
+            reasons[cite.quote] = "missing_page"
+        else:
+            reasons[cite.quote] = "wrong_page"
+    return {"valid": valid, "fabricated": fabricated, "ok": not fabricated, "reasons": reasons}
 
 
 def is_dont_know(answer: CitedAnswer | str) -> bool:

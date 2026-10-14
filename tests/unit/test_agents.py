@@ -122,3 +122,35 @@ def test_scripted_model_repeat_last_simulates_a_stuck_model():
 
     model = ScriptedChatModel(responses=["again"], repeat_last=True)
     assert [model.invoke("x").content for _ in range(3)] == ["again"] * 3
+
+
+def test_recursion_limit_for_matches_the_real_step_count():
+    """Lesson 02.03: middleware hooks are graph nodes, so they change the limit an agent needs."""
+    from langchain.agents import create_agent
+    from langchain.agents.middleware import ModelCallLimitMiddleware
+    from langchain.tools import tool
+    from langgraph.errors import GraphRecursionError
+
+    from mastery.agents import recursion_limit_for
+
+    @tool
+    def calc(expression: str) -> str:
+        """Calc."""
+        return "2"
+
+    loop = AIMessage("", tool_calls=[{"name": "calc", "args": {"expression": "1+1"}, "id": "x"}])
+    stuck = ScriptedChatModel(repeat_last=True, responses=[loop])
+    limited = create_agent(stuck, tools=[calc], middleware=[ModelCallLimitMiddleware(run_limit=3, exit_behavior="end")])
+    limit = recursion_limit_for(limited, 3)
+    assert limit == 14                                         # 4 nodes per round x 3 + 2
+    limited.invoke({"messages": [{"role": "user", "content": "go"}]}, {"recursion_limit": limit})
+    assert len(stuck.calls) == 3                               # the graceful stop fired
+    stuck.reset()
+    with pytest.raises(GraphRecursionError):                   # one less: the safety net fires first
+        limited.invoke({"messages": [{"role": "user", "content": "go"}]}, {"recursion_limit": limit - 1})
+
+    plain_model = ScriptedChatModel(responses=[loop, loop, "done"])
+    plain = create_agent(plain_model, tools=[calc])
+    assert recursion_limit_for(plain, 3) == 8                  # 2 nodes per round x 3 + 2
+    out = plain.invoke({"messages": [{"role": "user", "content": "go"}]}, {"recursion_limit": 8})
+    assert out["messages"][-1].text == "done"

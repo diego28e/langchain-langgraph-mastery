@@ -18,6 +18,7 @@ behaves like a (very literal) tool-calling LLM. Swap in ``mastery.models.get_mod
 from __future__ import annotations
 
 import json
+import math
 import re
 import uuid
 from collections.abc import Callable, Iterable
@@ -172,6 +173,50 @@ def _passages(docs: list[Document]) -> str:
 
 
 # --------------------------------------------------------------------------- tools
+# --------------------------------------------------------------------------- manager review (HITL)
+_EDIT_AMOUNT = re.compile(r"\s*\$?\s*([0-9][0-9,]*(?:\.[0-9]+)?)\s*(?:usd)?\s*", re.IGNORECASE)
+
+
+def parse_amount(text: Any) -> float | None:
+    """``"150"``, ``"$150"``, ``"$1,990.00"``, ``"150 USD"`` → 150.0; anything else (or non-finite) → None."""
+    if isinstance(text, int | float):
+        return float(text) if math.isfinite(text) else None
+    match = _EDIT_AMOUNT.fullmatch(str(text or ""))
+    return float(match.group(1).replace(",", "")) if match else None
+
+
+def manager_review(payload: dict[str, Any], *, max_amount: float, max_invalid: int = 3) -> tuple[str, float | None, str]:
+    """Ask a billing manager (``interrupt``) and validate the ANSWER before anything can raise.
+
+    An edit is a new amount, so it gets the same rule as the agent's request: ``0 < amount <= max_amount``.
+    An invalid answer ("yes", "$abc", "1990" on a $199 invoice) re-asks with a NEW interrupt that
+    carries an ``error``, instead of crashing the run (a crash would store the bad answer and replay
+    it on every resume: a poisoned thread, Lesson 08.03). ``interrupt()`` is never inside a ``try``.
+
+    Returns:
+        ``(action, amount, feedback)``: ``("approve", None, "")``, ``("edit", 150.0, "")`` or
+        ``("reject", None, feedback)``. After ``max_invalid`` invalid answers it rejects.
+    """
+    from mastery.graphs.hitl import parse_decision
+
+    error = ""
+    for attempt in range(1, max_invalid + 1):
+        answer = interrupt({**payload, "max_amount": max_amount} | ({"error": error, "attempt": attempt} if error else {}))
+        try:
+            decision = parse_decision(answer)
+        except ValueError as exc:
+            error = f"Not a valid decision ({exc}). Answer approve, reject, or edit with a new amount."
+            continue
+        if decision.action != "edit":
+            return decision.action, None, decision.feedback or ""
+        amount = parse_amount(decision.text)
+        if amount is None or not 0 < amount <= max_amount:
+            error = f"An edit needs an amount between $0 and ${max_amount:.2f}; got {decision.text!r}."
+            continue
+        return "edit", amount, decision.feedback or ""
+    return "reject", None, f"no valid decision after {max_invalid} tries"
+
+
 def make_support_tools(desk: SupportDesk, search: Callable[[str], list[Document]] | None = None, *,
                        threshold: float = REFUND_THRESHOLD) -> dict[str, list[Any]]:
     """The specialists' tools, grouped by domain. Every call is logged in ``desk.events``."""
@@ -196,40 +241,42 @@ def make_support_tools(desk: SupportDesk, search: Callable[[str], list[Document]
         """Refund part or all of an invoice. Refunds above the approval threshold pause for a billing manager."""
         # Log AFTER any interrupt: on resume this whole function runs again from the top,
         # so a side effect placed before interrupt() would happen twice (Lesson 08.03).
-        result = _refund(customer_id, invoice_id, float(amount), reason)
-        desk.log("issue_refund", customer_id=customer_id, invoice_id=invoice_id, amount=amount)
+        result, refunded = _refund(customer_id, invoice_id, float(amount), reason)
+        # The audit log records what was actually refunded (after a manager's edit), and what was asked.
+        desk.log("issue_refund", customer_id=customer_id, invoice_id=invoice_id,
+                 amount=refunded if refunded is not None else amount, requested=amount)
         return result
 
-    def _refund(customer_id: str, invoice_id: str, amount: float, reason: str) -> str:
+    def _refund(customer_id: str, invoice_id: str, amount: float, reason: str) -> tuple[str, float | None]:
+        """Returns (message for the model, amount actually refunded or None)."""
         c = customer(customer_id)
         if c is None:
-            return f"No customer {customer_id}."
+            return f"No customer {customer_id}.", None
         invoice = next((i for i in c["invoices"] if i["id"] == invoice_id.strip().upper()), None)
         if invoice is None:
-            return f"Invoice {invoice_id} does not belong to {customer_id}."
+            return f"Invoice {invoice_id} does not belong to {customer_id}.", None
         if any(r["invoice_id"] == invoice["id"] for r in desk.refunds):
-            return f"Invoice {invoice['id']} was already refunded."
+            return f"Invoice {invoice['id']} was already refunded.", None
         amount = float(amount)
-        if amount <= 0 or amount > invoice["amount"]:
-            return f"Refund amount must be between $0 and ${invoice['amount']:.2f}."
+        if not math.isfinite(amount) or amount <= 0 or amount > invoice["amount"]:
+            return f"Refund amount must be between $0 and ${invoice['amount']:.2f}.", None
         approved_by = "policy"
         if amount > threshold:
-            from mastery.graphs.hitl import parse_decision
-
-            decision = parse_decision(interrupt({
+            action, edited, feedback = manager_review({
                 "type": "refund_approval", "customer_id": customer_id, "invoice_id": invoice["id"],
                 "amount": amount, "threshold": threshold, "reason": reason,
                 "question": f"Approve a ${amount:.2f} refund (over ${threshold:.0f})? approve / edit (new amount) / reject",
-            }))
-            if decision.action == "reject":
+            }, max_amount=invoice["amount"])
+            if action == "reject":
                 return (f"Refund of ${amount:.2f} for {invoice['id']} was not approved by a billing manager"
-                        f" ({decision.feedback}).")
-            if decision.action == "edit":
-                amount = float(decision.text or amount)
+                        f" ({feedback}).", None)
+            if action == "edit":
+                amount = edited
             approved_by = "billing manager"
         desk.refunds.append({"customer_id": customer_id, "invoice_id": invoice["id"], "amount": amount,
                              "approved_by": approved_by, "over_threshold": amount > threshold})
-        return f"Refunded ${amount:.2f} for {invoice['id']} (approved by {approved_by}); it arrives in 5-10 business days."
+        return (f"Refunded ${amount:.2f} for {invoice['id']} (approved by {approved_by}); "
+                "it arrives in 5-10 business days.", amount)
 
     @tool
     def search_faq(query: str) -> str:
@@ -544,8 +591,6 @@ def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = 
     """
     from langgraph.graph import END, START, StateGraph
 
-    from mastery.graphs.hitl import parse_decision
-
     def parse(state: RefundState) -> dict:
         return {"request": parse_refund(state["messages"]), "problem": "", "approved_by": "", "result": ""}
 
@@ -570,16 +615,19 @@ def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = 
         if r["amount"] <= threshold:
             desk.log("issue_refund", customer_id=r["customer_id"], invoice_id=r["invoice_id"], amount=r["amount"])
             return {"approved_by": "policy"}
-        decision = parse_decision(interrupt({
+        invoice = next(i for i in desk.customers[r["customer_id"]]["invoices"] if i["id"] == r["invoice_id"])
+        action, edited, feedback = manager_review({
             "type": "refund_approval", **{k: r[k] for k in ("customer_id", "invoice_id", "amount", "reason")},
             "threshold": threshold,
             "question": f"Approve a ${r['amount']:.2f} refund (over ${threshold:.0f})? approve / edit (new amount) / reject",
-        }))
-        desk.log("issue_refund", customer_id=r["customer_id"], invoice_id=r["invoice_id"], amount=r["amount"])
-        if decision.action == "reject":
-            return {"approved_by": "", "problem": f"not approved by a billing manager ({decision.feedback})"}
-        if decision.action == "edit":
-            return {"approved_by": "billing manager", "request": {**r, "amount": float(decision.text or r["amount"])}}
+        }, max_amount=invoice["amount"])
+        final = edited if action == "edit" else r["amount"]
+        desk.log("issue_refund", customer_id=r["customer_id"], invoice_id=r["invoice_id"],
+                 amount=final, requested=r["amount"])
+        if action == "reject":
+            return {"approved_by": "", "problem": f"not approved by a billing manager ({feedback})"}
+        if action == "edit":
+            return {"approved_by": "billing manager", "request": {**r, "amount": edited}}
         return {"approved_by": "billing manager"}
 
     def issue(state: RefundState) -> dict:

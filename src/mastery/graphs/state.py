@@ -85,7 +85,7 @@ class ContentState(TypedDict, total=False):
     """State of the Project 07 content pipeline."""
     topic: str
     outline: Outline
-    sections: Annotated[list[SectionNote], operator.add]   # parallel workers append; order = completion order
+    sections: Annotated[list[SectionNote], operator.add]   # parallel workers append; no documented order (see _notes_block)
     draft: str
     critique: Critique
     iteration: int                                           # number of revisions done so far
