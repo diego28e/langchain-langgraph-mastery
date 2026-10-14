@@ -55,4 +55,4 @@
 
 ## Stack
 
-Free: Groq + SQLite + local embeddings. Paid (later): Postgres checkpointer and store (Module 13).
+Free: Groq + SQLite + local embeddings. Paid (later): Postgres checkpointer and store (Module 12).
