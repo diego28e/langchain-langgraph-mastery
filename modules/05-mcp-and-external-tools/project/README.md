@@ -25,22 +25,22 @@ Data: [`data/samples/mcp/benchmark.jsonl`](../../../data/samples/mcp/benchmark.j
 | 3 | Step 2 | `approval_policy_for`: HITL on `save_note`; reviewed reads and `web_search` run freely |
 | 4 | Step 5 | `score`: does a cited source match the expected docs page? |
 
-## Acceptance criteria (6 checks in Step 5)
+## Acceptance criteria (8 checks in Step 5 offline; 6 in LIVE)
 
-- **≥8/10** benchmark answers cite the docs page that contains the answer (prefix match on `expected_page`; anchors count). **Spot-check** two or three cited pages by hand in LIVE mode.
-- **0 invented URLs** reach an answer (validated), and every answer has at least one source.
-- `save_note`: a reject saves nothing; an approve saves exactly one note; every `save_note` that ran was approved first (audit log).
+- **≥8/10** benchmark answers cite the docs page that contains the answer (the `expected_page` itself or one of its sub-pages; anchors count, look-alike pages such as `...-guide` don't). **Spot-check** two or three cited pages by hand in LIVE mode.
+- **0 invented URLs** reach an answer, and every answer has at least one source. The check compares your `validate_sources` with an independent check of the model's raw sources, and offline an "inventive" model must have its fake URL removed while the real source is kept (2 checks).
+- `save_note` (loaded, TODO 1): a reject saves nothing; an approve saves exactly one note; every `save_note` that ran was approved first (audit log).
 - **Restart & Run All** passes with `GROQ_API_KEY` and without any key. Outputs cleared; `data/outputs/` never committed.
 
 ## Modes
 
 - **LIVE** (`GROQ_API_KEY` set): `openai/gpt-oss-20b` (`reasoning_effort="low"`) with the real docs server (falls back to the stand-in if unreachable). About 60–120k tokens for the full benchmark, free tier. Results vary run to run: read the transcript as well as the ✅.
-- **OFFLINE DEMO** (no key): a scripted "reader" searches the **docs stand-in** with the question's keywords and cites the result it judges best. It is honest, not tuned per question: it gets **8/10** (q05 and q08 pick a neighbouring page). An "inventive" variant adds a fake URL so you can see `validate_sources` remove it. With all TODOs done: **6/6**; the untouched starter shows 2/6 with ❌ pointing at the TODOs.
+- **OFFLINE DEMO** (no key): a scripted "reader" searches the **docs stand-in** with the question's keywords and cites the result it judges best. It is honest, not tuned per question: it gets **8/10** (q05 and q08 pick a neighbouring page). An "inventive" variant adds a fake URL so you can see `validate_sources` remove it. With all TODOs done: **8/8**; the untouched starter shows 1/8 with ❌ pointing at the TODOs.
 - **Tavily** (`MASTERY_WEB_SEARCH=tavily` + `TAVILY_API_KEY`, optional): only changes `web_search`; 1 credit per search.
 
 ## Stretch goal (`RUN_STRETCH = True`)
 
-Expose the agent itself as an MCP tool: a FastMCP server with `ask_docs(question) -> {answer, sources}` (read-only to callers: its reviewer rejects `save_note`), tested through `MCPAdapter`. Serve it with `run(transport="http", host="127.0.0.1", port=8771)` from a `.py` file; later from your FastAPI service (Module 13) or the [Agent Server MCP endpoint](https://docs.langchain.com/langsmith/server-mcp) (optional Lesson 13.08).
+Expose the agent itself as an MCP tool: a FastMCP server with `ask_docs(question) -> {answer, sources}` (read-only to callers: its reviewer rejects `save_note`), tested through `MCPAdapter`. Serve it with `run(transport="http", host="127.0.0.1", port=8771)` from a `.py` file; later from your FastAPI service (Module 12) or the [Agent Server MCP endpoint](https://docs.langchain.com/langsmith/server-mcp) (optional Lesson 12.08).
 
 ## Stack
 
