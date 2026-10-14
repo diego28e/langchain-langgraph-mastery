@@ -2,13 +2,13 @@
 
 > **Part 2 — Pro (Modules 09–14)** · the first module of Part 2 · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 09](../../COURSE_OUTLINE.md#module-09--multi-agent-systems)
 
-**Goals:** Know the current multi-agent patterns (subagents, handoffs, skills, router, custom workflow), what each one costs in model calls, tokens, and control, and how to pick one from requirements. Build the same system two ways and measure the difference. This module uses plain `create_agent` and LangGraph; Module 10 then shows what a full agent harness (Deep Agents) adds on top.
+**Goals:** Know the current multi-agent patterns (subagents, handoffs, skills, router, custom workflow), what each one costs in model calls, tokens, and control, and how to pick one from requirements. Build the same system two ways and measure the difference. This module uses plain `create_agent` and LangGraph; Module 10 turns your measurements into a real evaluation workflow, and Module 11 shows what a full agent harness (Deep Agents) adds on top.
 
 **Estimated time:** 1.5 weeks (about 9–11 hours of lessons plus 6–8 hours for the project).
 
 ## Welcome to Part 2 — Pro
 
-Part 1 taught you to build agents, RAG systems and production-grade LangGraph workflows. **Part 2 makes them coordinated, long-running, multimodal, measured and deployed**: multi-agent systems (this module), Deep Agents (10), voice (11), testing and evaluation (12), a self-hosted production service (13) and, optionally, local models and fine-tuning (14). See the [Part 2 overview](../../COURSE_OUTLINE.md#part-2--pro-modules-0914).
+Part 1 taught you to build agents, RAG systems and production-grade LangGraph workflows. **Part 2 makes them coordinated, measured, long-running and deployed**: multi-agent systems (this module), testing and evaluation (10), Deep Agents (11), a self-hosted production service (12) and two electives: multimodal and voice (13), local models and fine-tuning (14). See the [Part 2 overview](../../COURSE_OUTLINE.md#part-2--pro-modules-0914).
 
 What changes in Part 2:
 
@@ -82,7 +82,7 @@ If `pip install` or `pytest` fails, see the [setup guide's troubleshooting](../0
 - **09.02:** specialists as tools, written by hand (the docs pattern) and with `subagent_tool`; isolated vs forked context (the "what's your customer ID?" bug and its fix); one `task` dispatch tool with an enum; an `interrupt()` inside a subagent pausing the outer agent; per-agent counts with `UsageMeter`; migrating from `langgraph-supervisor`.
 - **09.03:** handoffs in one agent (middleware swaps prompt and tools by `current_step`) and as agent subgraphs (`Command(graph=Command.PARENT)`, `active_agent`); why the next turn skips triage; `carry="last"` vs `"turn"` (a measured ping-pong that hits the recursion limit); HITL refunds inside a handoff.
 - **09.04:** skills (`load_skill`, progressive disclosure; prompt tokens measured with and without) and a router (classify → `Send` fan-out in parallel → join); stateless routing and where the customer ID comes from; keyword vs LLM classifier.
-- **09.05:** Pattern C, a custom refund workflow (deterministic parse/validate/approve/issue + one agent node); embedding it in a router; all patterns on the 15-conversation test set in one table; an ADR template written to `data/outputs/m09/`; what a harness (Module 10) would add.
+- **09.05:** Pattern C, a custom refund workflow (deterministic parse/validate/approve/issue + one agent node); embedding it in a router; all patterns on the 15-conversation test set in one table; an ADR template written to `data/outputs/m09/`; what a harness (Module 11) would add.
 
 ## Project
 
@@ -139,4 +139,4 @@ Re-read the [Multi-agent](https://docs.langchain.com/oss/python/langchain/multi-
 
 ---
 
-← [Module 08](../08-langgraph-production-features/README.md) · [Course outline](../../COURSE_OUTLINE.md) · [Module 10](../10-deep-agents/README.md) →
+← [Module 08](../08-langgraph-production-features/README.md) · [Course outline](../../COURSE_OUTLINE.md) · [Module 10 — Testing, Evaluation & Observability](../10-testing-evaluation-observability/README.md) →

@@ -23,15 +23,15 @@ Docs search uses **Project 06's Chroma index** when it exists in `data/vectorsto
 
 | TODO | Where | What |
 |---|---|---|
-| 1 | Step 2 | `clarify_question`: `interrupt({"kind": "clarify", ...})` when the clarifier says the request is ambiguous |
+| 1 | Step 2 | `clarify_question`: pause with a clarifying question when the request is ambiguous, and make it resume-safe |
 | 2 | Step 2 | `web_node_options`: `TimeoutPolicy(run_timeout=...)`, `RetryPolicy(retry_on=(ConnectionError, TimeoutError, NodeTimeoutError))`, `error_handler=web_failed` |
 | 3 | Step 2 | `make_approval`: `approval_node(approved="finalize", rejected="draft", max_rejections=3, give_up="finalize")` + destinations |
 | 4 | Step 5 | `fork_from_plan`: find the checkpoint with `next == ("research",)`, `aupdate_state(..., as_node="plan")`, run the branch with `metadata={"branch", "forked_from"}` |
 
-## Acceptance criteria (9 checks in Step 7)
+## Acceptance criteria (9 checks in Step 7 offline; 8 in LIVE)
 
-- **Survives a restart:** a thread paused at `approval` finalizes after the database is closed and reopened; a run killed mid-search in a child process resumes from SQLite and finishes without re-running `clarify_question` and `plan`.
-- **Approval is required before finalization:** the run pauses at `approval`; a rejection sends it back to `draft` with the feedback; a vague request triggers a clarifying question first.
+- **Survives a restart:** a thread of **your** graph paused at `approval` finalizes after the database is closed and reopened. (Step 4b also kills the reference graph in a child process mid-search and resumes it from SQLite: a runtime demo, reported but not graded.)
+- **Approval is required before finalization:** the run pauses at `approval`; a rejection sends it back to `draft` with the feedback; a vague request triggers a clarifying question first, and the clarify step is **resume-safe** (the model's verdict is computed once and replayed on resume, so the human's answer can't be dropped).
 - **The fork is a different, traceable branch:** different plan, different sources, different final answer, and checkpoints labelled `branch=fork-1` with `forked_from=<checkpoint id>`. With LangSmith tracing on, filter by tag `fork` or `metadata.branch`.
 - **Fault tolerance:** a transient web failure is retried invisibly; a dead or hanging web search ends in `Web search unavailable (...)` and a docs-only answer instead of a failed run.
 - **Restart & Run All** passes with `GROQ_API_KEY` and without any key. Outputs cleared; `data/outputs/` never committed.
@@ -39,7 +39,7 @@ Docs search uses **Project 06's Chroma index** when it exists in `data/vectorsto
 ## Modes
 
 - **LIVE** (`GROQ_API_KEY` set): `openai/gpt-oss-20b` (`reasoning_effort="low"`) clarifies, plans and writes; the web is Groq's built-in browser search (`mastery.web_search`). One run ≈ 5–15k tokens; the notebook makes ~4 runs: free on the free tier, under $0.02 at paid prices. Step 6 (retry/timeout) always uses the offline web stand-ins, so it costs nothing extra.
-- **OFFLINE DEMO** (no key): `offline_models()` scripts the three roles (a request under 4 words is "ambiguous"; the writer makes one bullet per finding, two after "shorter" feedback, one paragraph for a "paragraph" preference). `offline_web_search()` returns no results but can fail (`failures=N`) or hang (`delay=S`) on purpose. Reference result: 9/9 checks. The untouched starter passes 1/9 (the crash check tests the reference graph), with ❌ pointing at the TODOs.
+- **OFFLINE DEMO** (no key): `offline_models()` scripts the three roles (a request under 4 words is "ambiguous"; the writer makes one bullet per finding, two after "shorter" feedback, one paragraph for a "paragraph" preference). `offline_web_search()` returns no results but can fail (`failures=N`) or hang (`delay=S`) on purpose. Reference result: 9/9 checks. The untouched starter passes 0/9, with ❌ pointing at the TODOs.
 
 ## Run it in Studio (once, by hand)
 

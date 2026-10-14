@@ -27,7 +27,7 @@ Outputs go to the git-ignored `data/outputs/m09/` (`project09-report.json`, `pro
 | 1 | Step 3 | `build_pattern_a`: `handoff_tool(d, carry="turn")` per domain, `make_specialists(tools, handoffs=True)`, a triage `create_agent` with only transfer tools, each specialist with transfers to the **other** domains, then `handoff_graph(agents, entry="triage", checkpointer=...)` |
 | 2 | Step 4 | `build_pattern_b`: `subagent_tool(spec.build(model), name=f"{d}_agent", ...)` per domain, a coordinator `create_agent(..., system_prompt=COORDINATOR_PROMPT, checkpointer=...)` |
 | 3 | Step 5 | `manager_review(payload)`: approve refunds of the **full** invoice amount; reject partial refunds with `{"action": "reject", "feedback": ...}` |
-| 4 | Step 7 | `write_adr(reports, path)`: context, the measured table, a `## Recommendation` section, consequences, and the specialist that would benefit from a harness (Module 10) |
+| 4 | Step 7 | `write_adr(reports, path)`: context, the measured table, a `## Recommendation` section, consequences, and the specialist that would benefit from a harness (Module 11) |
 
 ## The test set
 
@@ -63,7 +63,7 @@ Each line has `turns`, an optional manager `decision` (used by the lessons' defa
 ## Stretch goals
 
 - **Pattern C** (Step 9): `build_custom_desk` routes refund-only messages through the custom refund workflow of Lesson 09.05 (parse → validate → approve → issue → reply) and everything else through the handoffs desk. Offline it needs 42 model calls for the test set. Build your own version of the workflow instead of the reference one, and add a duplicate-charge rule.
-- **Harness candidate:** name the specialist that would benefit from a full harness (planning, a filesystem, its own subagents) in your ADR. Module 10 rebuilds it as a deep agent.
+- **Harness candidate:** name the specialist that would benefit from a full harness (planning, a filesystem, its own subagents) in your ADR. Module 11 rebuilds it as a deep agent.
 - **Stronger coordinator (paid or free-tier 120b):** give only Pattern B's coordinator `get_model("reasoning")` and compare pass rate and tokens.
 - **One-agent handoffs:** add `build_single_agent_desk` (Lesson 09.03 Part 1) as a third column.
 - **Harder conversations:** add 5 of your own (typos, two refunds in one message, "the invoice from last month") to a copy of the JSONL.
@@ -80,4 +80,4 @@ Free: Groq (`gpt-oss-20b`), Chroma + fastembed (local embeddings) or BM25, `InMe
 
 ---
 
-← [Module 09 README](../README.md) · [Course outline](../../../COURSE_OUTLINE.md#project-09--multi-agent-support-desk) · Next: [Module 10 — Deep Agents](../../10-deep-agents/README.md) →
+← [Module 09 README](../README.md) · [Course outline](../../../COURSE_OUTLINE.md#project-09--multi-agent-support-desk) · Next: [Module 10 — Testing, Evaluation & Observability](../../10-testing-evaluation-observability/README.md) →

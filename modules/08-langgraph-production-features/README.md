@@ -123,7 +123,7 @@ This module ends **Part 1 — Core (Modules 00–08)**. You can now:
 
 **Before you move on:** Projects 01–08 pass their acceptance checks, `python -m pytest -q` is green, and your [`docs/research-log.md`](../../docs/research-log.md) and [`docs/decision-log.md`](../../docs/decision-log.md) have your own entries.
 
-**What's next: Part 2 — Pro (Modules 09–14)** makes these systems coordinated, long-running, multimodal, measured and deployed. It starts with **[Module 09 — Multi-Agent Systems](../09-multi-agent-systems/README.md)** (subagents, handoffs, router, custom workflows; [outline](../../COURSE_OUTLINE.md#module-09--multi-agent-systems)), which builds directly on this module's subgraphs, interrupts and stores. Module 09 is ✅ built (Modules 10–14 are 📝 planned): start with its README's **Before you start this module** block.
+**What's next: Part 2 — Pro (Modules 09–14)** makes these systems coordinated, measured, long-running and deployed (multimodal/voice and local models are electives). It starts with **[Module 09 — Multi-Agent Systems](../09-multi-agent-systems/README.md)** (subagents, handoffs, router, custom workflows; [outline](../../COURSE_OUTLINE.md#module-09--multi-agent-systems)), which builds directly on this module's subgraphs, interrupts and stores. Module 09 is ✅ built (Modules 10–14 are 📝 planned): start with its README's **Before you start this module** block.
 
 ## Status
 

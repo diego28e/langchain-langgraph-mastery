@@ -101,7 +101,7 @@ If `pip install` or `pytest` fails, see the [setup guide's troubleshooting](../0
 > Evaluator-optimizer loops stop on "good enough" **or** after N iterations (`loop_router`), and the graph has a `recursion_limit`. Log which one fired.
 
 > ⚠️ **Production note: `langgraph dev` is a development server.**
-> In-memory, single process, no auth. Production uses a persistent Agent Server (LangSmith Deployment) or your own FastAPI service with a durable checkpointer (Modules 08 and 13).
+> In-memory, single process, no auth. Production uses a persistent Agent Server (LangSmith Deployment) or your own FastAPI service with a durable checkpointer (Modules 08 and 12).
 
 > ⚠️ **Production note: model-written SQL is untrusted code.**
 > Read-only credentials at the database, an allow-list of tables, statement checks, row limits and timeouts. A "check query" prompt is a second opinion, not a security control.
