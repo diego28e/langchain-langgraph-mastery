@@ -44,10 +44,10 @@
 - Trade-offs: Groq browser search is not compatible with structured outputs and only works on GPT-OSS models.
 - Revisit: when Groq changes its built-in tools (check the Groq built-in tools page).
 
-### D-004 · Model for deep agents (Module 10) · 2026-10-11
+### D-004 · Model for deep agents (Module 11) · 2026-10-11
 - Context: Deep agents make many model calls per task and spawn subagents. They need a model that handles long tool-calling loops well, and enough free quota to finish a run.
 - Options: (A) Groq `openai/gpt-oss-120b` + `openai/gpt-oss-20b` (course default elsewhere, free tier 8K tokens/min and 200K tokens/day, not in the official Deep Agents eval matrix); (B) Gemini `gemini-3.6-flash` (stable, on the official Deep Agents suggested list, free tier with no billing account); (C) OpenAI `gpt-6-luna` (paid).
-- Decision: B by default for Module 10, A as a documented option, C as the paid benchmark.
+- Decision: B by default for Module 11, A as a documented option, C as the paid benchmark.
 - Evidence: https://docs.langchain.com/oss/python/deepagents/models (suggested models), https://ai.google.dev/gemini-api/docs/pricing (free tier), https://ai.google.dev/gemini-api/docs/models/gemini-3.6-flash (stable ID), https://console.groq.com/docs/rate-limits.
 - Trade-offs: Gemini's free tier may use prompts for product improvement and human reviewers may read them, so only public or synthetic data. Free-tier limits are not published as fixed numbers (check AI Studio). Web search stays a tool (Groq or Tavily) because Google Search grounding is paid only.
 - Revisit: when `gemini-3.6-flash` gets a shutdown date, when the Deep Agents suggested list changes, or on 2027-01-01 (price change).
@@ -71,7 +71,7 @@
 ### D-007 · Persistence and local embeddings for Module 03 · 2026-10-12
 - Context: Module 03 needs memory that survives kernel restarts on a Windows laptop, and the project's stretch asks for semantic memory search with free, local embeddings.
 - Options: persistence (A) SQLite (`langgraph-checkpoint-sqlite`: `SqliteSaver` + `SqliteStore`), (B) Postgres in Docker; embeddings (C) `fastembed` (ONNX Runtime, no PyTorch), (D) `langchain-huggingface` + `sentence-transformers` (PyTorch), (E) Ollama embeddings.
-- Decision: A for Modules 03 and 08 (one file per kind of memory under git-ignored `data/outputs/memory/`; Postgres in Module 13). C for Module 03 as an optional `[embeddings]` extra, wrapped by `mastery.memory.local_embeddings()` with `BAAI/bge-small-en-v1.5` (384 dims), cached in `~/.cache/fastembed`. Offline cells and tests use `HashingEmbeddings` (deterministic, no download).
+- Decision: A for Modules 03 and 08 (one file per kind of memory under git-ignored `data/outputs/memory/`; Postgres in Module 12). C for Module 03 as an optional `[embeddings]` extra, wrapped by `mastery.memory.local_embeddings()` with `BAAI/bge-small-en-v1.5` (384 dims), cached in `~/.cache/fastembed`. Offline cells and tests use `HashingEmbeddings` (deterministic, no download).
 - Evidence: PyPI 2026-10-12: langgraph-checkpoint-sqlite 3.1.1 (requires aiosqlite, sqlite-vec), fastembed 0.9.0 (onnxruntime, no torch). `langchain-huggingface[full]` 1.2.3 pins `sentence-transformers<6` while 6.1.0 is current, and pulls PyTorch (hundreds of MB). Measured on the box: fastembed model load + 3 embeddings ≈ 2 s on CPU; `SqliteStore` vector search via sqlite-vec works.
 - Trade-offs: fastembed is not the embedding stack of Module 06 (sentence-transformers / Ollama, compared there). SQLite is single-process; `SqliteSaver` turns on WAL (`-wal`/`-shm` files); Windows locks open files (`close()` first).
 - Revisit: in Module 06 (pick one local embedding stack for the course), or when `langchain-huggingface` supports sentence-transformers 6.
@@ -208,7 +208,7 @@
 ### D-033 · Offline web stand-in that fails on purpose · 2026-10-12
 - Context: retries, timeouts and fallbacks must be visible without a key or network.
 - Decision: `offline_web_search(failures=N, delay=S)` returns no results but raises `ConnectionError` for the first N calls or sleeps S seconds; LIVE mode uses Groq browser search through `web_tool_search`. The v3 `stream_events` API is taught as experimental; v2 `stream` is what the helpers use.
-- Revisit: Module 12 (failure injection in evals).
+- Revisit: Module 10 (failure injection in evals).
 
 ### D-034 · `mastery.agents` becomes a package · 2026-10-12
 - Context: Module 09 adds specialist, metrics and support-desk helpers next to the Module 02 loop helpers.
@@ -218,7 +218,7 @@
 ### D-035 · A rule-based offline model for multi-agent comparisons · 2026-10-12
 - Context: comparing patterns needs repeatable call and token counts without a key.
 - Decision: `OfflineSupportModel` reads its role from the system prompt and its options from the bound tool names, and counts tool-schema tokens; lessons and the project report its numbers as "offline, deterministic", and LIVE numbers as what learners must measure themselves.
-- Revisit: Module 12 (evals on live runs).
+- Revisit: Module 10 (evals on live runs).
 
 ### D-036 · jupytext in a `[notebooks]` extra · 2026-10-12
 - Context: Lesson 09.01 shows notebooks as diffable `.py` files.
@@ -228,6 +228,6 @@
 ### D-037 · Project 09 LIVE runs 5 conversations by default, pass mark 80% · 2026-10-12
 - Context: 15 conversations × 2 patterns can hit free-tier request limits, and a live model will miss a few.
 - Decision: `LIVE_LIMIT = 5` per pattern; the LIVE acceptance threshold is 80% of the conversations that ran (offline: ≥ 12/15). Set `LIVE_LIMIT = 15` for the full run.
-- Revisit: after measuring live pass rates in Module 12.
+- Revisit: after measuring live pass rates in Module 10.
 
 <!-- Add your decisions below this line -->

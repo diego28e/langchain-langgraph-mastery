@@ -39,4 +39,4 @@ Check which current Ollama models support tool calling, and log the best one tha
 
 ---
 
-← [Module 13](../13-production-and-deployment/) · [Course outline](../../COURSE_OUTLINE.md)
+← [Module 13](../13-multimodal-and-voice/) · [Course outline](../../COURSE_OUTLINE.md)

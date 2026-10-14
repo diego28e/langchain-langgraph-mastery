@@ -14,7 +14,7 @@ Never commit personal or confidential documents. Use public or synthetic data fo
 
 | File | Used in | What it is |
 |---|---|---|
-| `samples/groq-models-sample.json` | Lesson 00.07, Project 00 | Illustrative Groq Models API response (offline demo mode; not live data) |
+| `samples/groq-models-sample.json` | Project 00, `tests/unit/test_groq_catalog.py` | Illustrative Groq Models API response (offline demo mode; not live data) |
 | `samples/images/quarterly-signups.png` | Lesson 01.02 | Small bar chart for the image content-block demo (generated with Matplotlib, synthetic numbers) |
 | `samples/support-tickets.jsonl` | Lesson 01.03 | 12 synthetic support tickets with labels (`billing`, `bug`, `feature_request`, `account`, `other`) |
 | `samples/job-postings/jp-01.txt` … `jp-10.txt` | Project 01 | 10 synthetic job postings (fictional companies), deliberately varied in format and wording |

@@ -1,9 +1,9 @@
 # Paid Quality Benchmark: OpenAI vs Google Gemini
 
-> Used in **Lesson 00.06** (provider decision framework), every "paid contrast" stretch goal, and **Module 10**, where Gemini is the default model (see [below](#module-10-gemini-is-the-default-for-deep-agents)).
+> Used in **Lesson 00.07** (provider decision framework), every "paid contrast" stretch goal, and **Module 11**, where Gemini is the default model (see [below](#module-11-gemini-is-the-default-for-deep-agents)).
 > **Prices and model IDs verified on October 11, 2026.** They change often: re-check the linked pages before you spend money, and log what you find in [decision-log.md](decision-log.md).
 
-The course runs on **free Groq models** by default (Module 10, Deep Agents, is the one exception: it defaults to Gemini's free tier). A *paid benchmark* is a stronger model you run on the same prompts to answer one question: *"Is the free model good enough here, or am I leaving quality on the table?"* You only need it for comparisons, stretch goals, and LLM-as-judge evaluators. A few dollars cover the whole course if you keep prompts small.
+The course runs on **free Groq models** by default (Module 11, Deep Agents, is the one exception: it defaults to Gemini's free tier). A *paid benchmark* is a stronger model you run on the same prompts to answer one question: *"Is the free model good enough here, or am I leaving quality on the table?"* You only need it for comparisons, stretch goals, and LLM-as-judge evaluators. A few dollars cover the whole course if you keep prompts small.
 
 ## TL;DR
 
@@ -29,14 +29,14 @@ The course runs on **free Groq models** by default (Module 10, Deep Agents, is t
 ### What this means in practice
 
 - **For benchmarking prompts, agents, and RAG answers:** `gpt-6-luna` is the cheapest strong paid baseline. One full course module of comparisons is usually a few cents.
-- **For LLM-as-judge evaluators (Module 12):** use the quality ceiling (`gpt-6.1-sol`) on small datasets. Judges should be stronger than the model they grade.
-- **For deep agents (Module 10):** Gemini is the **default model** there, not just a benchmark. See the next section.
+- **For LLM-as-judge evaluators (Module 10):** use the quality ceiling (`gpt-6.1-sol`) on small datasets. Judges should be stronger than the model they grade.
+- **For deep agents (Module 11):** Gemini is the **default model** there, not just a benchmark. See the next section.
 - **If you cannot or will not add a card:** use Gemini's free tier with **public or synthetic data only**. Swap it in by changing one config value (see below).
 - **Pricing gotcha:** Gemini 3.8 Flash's list price **doubles on January 1, 2027**. OpenAI prices go up 2× input / 1.5× output for prompts over 272K tokens. Neither matters for the course, but both matter in production.
 
-## Module 10: Gemini is the default for deep agents
+## Module 11: Gemini is the default for deep agents
 
-Deep agents run long loops of model calls and spawn subagents, so one run can use tens of thousands of tokens. The Deep Agents docs publish a list of **suggested models** that pass their eval suite; Groq models are not on it, and Groq's free tier (8K tokens/minute, 200K tokens/day for `gpt-oss-*`) is too small for full runs. So Module 10 uses **`google_genai:gemini-3.6-flash`** for the orchestrator and subagents, and keeps Groq as a documented option. OpenAI `gpt-6-luna` stays the paid benchmark (the docs also suggest `gpt-5.5` and `gpt-5.4`).
+Deep agents run long loops of model calls and spawn subagents, so one run can use tens of thousands of tokens. The Deep Agents docs publish a list of **suggested models** that pass their eval suite; Groq models are not on it, and Groq's free tier (8K tokens/minute, 200K tokens/day for `gpt-oss-*`) is too small for full runs. So Module 11 uses **`google_genai:gemini-3.6-flash`** for the orchestrator and subagents, and keeps Groq as a documented option. OpenAI `gpt-6-luna` stays the paid benchmark (the docs also suggest `gpt-5.5` and `gpt-5.4`).
 
 | Fact (verified October 11, 2026) | Value | Source |
 |---|---|---|
@@ -64,11 +64,11 @@ from langchain.chat_models import init_chat_model
 free_model = init_chat_model("groq:openai/gpt-oss-20b")        # course default
 paid_benchmark = init_chat_model("openai:gpt-6-luna")          # needs OPENAI_API_KEY
 optional_gemini = init_chat_model("google_genai:gemini-3.8-flash")  # needs GOOGLE_API_KEY
-deep_agent_model = "google_genai:gemini-3.6-flash"  # Module 10 default, passed to create_deep_agent(model=...)
+deep_agent_model = "google_genai:gemini-3.6-flash"  # Module 11 default, passed to create_deep_agent(model=...)
 ```
 
 > ⚠️ **Production note: benchmark models are not a free pass.**
-> The course pins one cheap paid model for comparisons. In production: pin exact model IDs (or dated snapshots where the provider offers them), read the provider's deprecation page, set a spend limit or budget alert in the provider console, track cost per request (Lesson 12.02), and keep a tested fallback provider (Lesson 04.02). Free tiers are for learning: they have no SLA, low rate limits, and (for Gemini) different data-use terms.
+> The course pins one cheap paid model for comparisons. In production: pin exact model IDs (or dated snapshots where the provider offers them), read the provider's deprecation page, set a spend limit or budget alert in the provider console, track cost per request (Lesson 10.02), and keep a tested fallback provider (Lesson 04.02). Free tiers are for learning: they have no SLA, low rate limits, and (for Gemini) different data-use terms.
 
 ## Research checkpoint for this page
 

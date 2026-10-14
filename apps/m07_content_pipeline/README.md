@@ -17,6 +17,6 @@ langgraph dev                 # opens Studio in your browser; API at http://127.
 
 In Studio, pick **content_pipeline**, enter `{"topic": "Battery care in winter"}` and run. Stop with **Ctrl + C**.
 
-- `langgraph dev` is an in-memory development server: runs, threads and checkpoints disappear when you stop it. Not for production (Module 13).
+- `langgraph dev` is an in-memory development server: runs, threads and checkpoints disappear when you stop it. Not for production (Module 12).
 - Studio needs a (free) LangSmith account to open; the local API works without one.
 - Port in use? `langgraph dev --port 2025`.
