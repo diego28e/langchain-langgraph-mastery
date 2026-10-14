@@ -31,7 +31,7 @@ langchain-langgraph-mastery/
 │       ├── README.md         # Lesson list, project summary, status
 │       ├── NN-LL-lesson-slug.ipynb
 │       ├── project/          # The module project (notebook + any app code)
-│       ├── labs/             # Use-case labs, when a module has them (Module 10: labs/10a-repo-cartographer/ …)
+│       ├── labs/             # Use-case labs, when a module has them (Module 11: labs/11a-repo-cartographer/ …)
 │       ├── studio/           # A tiny `langgraph dev` app for a Studio lesson (langgraph.json + agent.py; Module 02: 02.07)
 │       └── assets/           # Small images/diagrams used by the notebooks
 ├── apps/                     # Deployable apps (langgraph.json / FastAPI) from Modules 07+
@@ -41,6 +41,7 @@ langchain-langgraph-mastery/
 │   └── mastery/              # Reusable package grown across modules
 ├── tests/
 │   ├── unit/                 # No network, no API keys, fast
+│   ├── notebooks/            # Every notebook, headless, no keys. Marked, opt-in (CI runs it)
 │   └── integration/          # Real APIs. Marked, skipped by default
 └── data/
     ├── samples/              # Small, committed sample data (< 1 MB per file)
@@ -52,7 +53,7 @@ langchain-langgraph-mastery/
 **Rules**
 - Folder and file names: lowercase, kebab-case for folders/notebooks, snake_case for Python modules.
 - No file over 5 MB is committed. Large data is downloaded by a notebook cell into `data/raw/`.
-- `apps/` and `.github/workflows/` appear only when a module introduces them.
+- `apps/` appears only when a module introduces it. `.github/workflows/ci.yml` runs the unit tests and every notebook (no keys) on each push; Module 10 teaches how to build eval gates on top of it.
 - Folders starting with `_` are private working notes. They are gitignored and never part of the course.
 
 ## 2. Notebook naming
@@ -67,7 +68,7 @@ langchain-langgraph-mastery/
 
 Example: `modules/03-memory-and-context/03-02-short-term-memory.ipynb`.
 Project notebooks: `modules/03-memory-and-context/project/03-project-study-buddy.ipynb`.
-Lab notebooks: `modules/10-deep-agents/labs/10a-repo-cartographer/10a-lab-repo-cartographer.ipynb`.
+Lab notebooks: `modules/11-deep-agents/labs/11a-repo-cartographer/11a-lab-repo-cartographer.ipynb`.
 Exercise solutions (if separated): `.../solutions/03-02-short-term-memory-solutions.ipynb`.
 Project solutions: `modules/00-foundations/project/solutions/00-project-groq-model-explorer-solution.ipynb`.
 Terminal-heavy lessons: a Markdown guide with the same `NN-LL-` prefix next to the notebook, e.g. `00-02-create-course-env.md`.
@@ -78,6 +79,23 @@ Terminal-heavy lessons: a Markdown guide with the same `NN-LL-` prefix next to t
 - `project/README.md`: the spec (requirements, acceptance criteria, stretch goals, TODO list, rubric).
 - `project/NN-project-<slug>.ipynb`: the **starter**. It runs top to bottom from day one; each unfinished part prints `❌ TODO n`, so learners always see what's left.
 - `project/solutions/NN-project-<slug>-solution.ipynb`: the **reference solution**, same structure and cell order as the starter so the two can be compared side by side.
+
+**Hints are goals, not code.** A TODO says *what* to achieve and *where to look* (an API, a docs page, an earlier lesson). When exact code would help someone who is stuck, it goes in a collapsed block under a 💡 hint in the Markdown cell before the TODO, and **only there**: never in the starter's code comments, where it would be read before the learner has tried.
+
+````markdown
+> 💡 **Hint:** <the goal, and which API or page to look at>
+
+<details>
+<summary>Still stuck? Show one way to write it</summary>
+
+```python
+<one way to write it>
+```
+
+</details>
+````
+
+**Acceptance checks fail on the untouched starter.** Every check prints ❌ until its TODO is done and ✅ on the reference solution. A check that already passes on the starter tests nothing, so it is rewritten, not shipped.
 
 ## 3. Lesson notebook structure (template)
 
@@ -92,8 +110,11 @@ Every lesson notebook follows the same order, so learners (and video viewers) al
 | 5 | **Concept sections** | Repeat: Markdown explanation → small code cell(s) → **"What just happened?"** Markdown recap |
 | 6 | **Pitfalls** | Common errors and how to read them |
 | 7 | **Exercises** | 2–4 exercises, from easy to stretch. Solutions in a collapsed cell or in `solutions/` |
-| 8 | **Research checkpoint** | The prompt from the outline + a link to `docs/research-log.md` |
-| 9 | **Summary & next** | 3–5 bullet takeaways and a link to the next lesson |
+| 8 | **🔎 Docs drill** | One time-boxed lookup (`## 🔎 Docs drill (N min)`): a question the learner answers from the official docs, the API reference or the installed source (`??` in Jupyter), with the path to the answer in a collapsed **Path to the answer** block |
+| 9 | **Research checkpoint** | An investigation, logged in [`docs/research-log.md`](docs/research-log.md): a question (from the outline) → an answer in ≤ 150 words → two primary sources, each with the package version it applies to → what changes in my code |
+| 10 | **Summary & next** | 3–5 bullet takeaways and a link to the next lesson |
+
+**Drill or research checkpoint?** A docs drill has one known answer and takes minutes: it trains *finding* things. A research checkpoint is open: the answer can differ from what the course says, so it needs evidence (a quoted line, a code output) and primary sources (official docs, API reference, source code, changelog or release notes, the package's own tests), not blog posts or model answers.
 
 **Notebook rules**
 - **Restart & Run All must pass** before every commit (with only the keys listed in the setup cell).
@@ -155,7 +176,7 @@ def make_checkpointer(kind: str = "memory"):
 6. **No hard-coded model IDs in notebooks.** Use `mastery.models.get_model(role=...)` (from Module 01; in Module 00, `mastery.config.load_settings()`), configured in one place. A model ID that must appear in code (e.g. a retired ID used as an example) carries a `VERIFIED` comment.
 7. **No secrets in code or outputs.** Read from env. Never `print(os.environ[...])`.
 8. Constants in `UPPER_SNAKE_CASE` at the top. No magic numbers.
-9. Formatting and linting: `ruff format` + `ruff check` (introduced in Module 12).
+9. Formatting and linting: `ruff format` + `ruff check` (introduced in Module 10).
 10. Every function moved into `src/mastery` gets at least one unit test in `tests/unit/`.
 
 ## 5. Environment variables and `.env`
@@ -182,7 +203,7 @@ except MissingSettingError as error:
 ## 6. Clearing outputs and keeping notebooks diff-friendly
 
 - **Before every commit:** in Jupyter, *Kernel → Restart Kernel and Run All Cells…* (does it work?), then *Edit → Clear Outputs of All Cells* (Notebook 7 and JupyterLab), then save. From the terminal instead: `jupyter nbconvert --clear-output --inplace path/to/notebook.ipynb` (`nbconvert` comes with the course's `[dev]` install (`python -m pip install -e ".[dev]"`); if you see `Jupyter command jupyter-nbconvert not found`, install it in the active env with `python -m pip install nbconvert`). `python -m pytest tests/unit/test_notebook_hygiene.py` fails if any notebook under `modules/` still has outputs.
-- **Recommended automation** (Lesson 00.03 bonus, formalized in Module 12): install `nbstripout` in the course env and run `nbstripout --install` in the repo. It strips outputs automatically when you `git add`, and `nbstripout --status` shows whether it's active.
+- **Recommended automation** (Lesson 00.03 bonus, formalized in Module 10): install `nbstripout` in the course env and run `nbstripout --install` in the repo. It strips outputs automatically when you `git add`, and `nbstripout --status` shows whether it's active.
 - Exception: notebooks meant to be read on GitHub *with* outputs (e.g., a final project report) are exported to `docs/reports/*.html` or `*.md` instead of committing outputs.
 - Optional (Module 09): pair notebooks with `.py` files via Jupytext for readable diffs.
 
@@ -205,7 +226,7 @@ Format: `<type>(<scope>): <summary>` ([spec](https://www.conventionalcommits.org
 | `ci` | GitHub Actions and pre-commit config |
 | `style` | Formatting only |
 
-**Scopes:** `m00` … `m13` for modules, `cap1` … `cap5` for capstones, `src`, `setup`, `repo`.
+**Scopes:** `m00` … `m14` for modules, `cap1` … `cap6` for capstones, `src`, `setup`, `repo`.
 
 **Examples**
 
@@ -236,6 +257,7 @@ ci(repo): add GitHub Actions workflow for unit tests
 - [ ] Model IDs come from `mastery.models`. Any new model ID has a `VERIFIED` tag
 - [ ] Reusable code extracted to `src/mastery` with a unit test
 - [ ] Research checkpoint logged
+- [ ] Every evaluation result has an interval or is labelled as noise (§11)
 - [ ] Every shortcut has a ⚠️ Production note, and new ones are added to `docs/production-notes.md`
 - [ ] Module README status updated
 
@@ -276,4 +298,14 @@ Course commands are written for **bash**. On Windows that means **Git Bash** (in
 | Copying files | `cp .env.example .env` (cmd fallback: `copy`) |
 | Comments in command blocks | `#` (cmd fallback: `::` or `REM`) |
 | Code blocks | Fenced as ` ```bash `; cmd-only blocks as ` ```bat ` |
+
+## 11. Statistics on small evaluations
+
+Course evaluations are small, and model answers vary from run to run, so a single number hides how uncertain it is: 9 correct answers out of 10 is a 90% pass rate, but its 95% Wilson interval runs from about 60% to 98%. The rule:
+
+> Every result of a small evaluation (a pass rate, a mean score, "A beats B") is reported **with an interval from `mastery.evals`**, or it is **labelled as noise**.
+
+- **One rate or score:** estimate, 95% interval and `n`, e.g. `0.90 [0.60, 0.98] (n=10)`.
+- **A vs B** (two prompts, two models): run both on the same examples and compare them pair by pair. If the interval of the difference includes 0, write "no detectable difference" and do not pick a winner on that number.
+- **No interval?** Say so next to the number: "n=8, one run: treat as noise". Never write "B is better" from a handful of examples without an interval.
 

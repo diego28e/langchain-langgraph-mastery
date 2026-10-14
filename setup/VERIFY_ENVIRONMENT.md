@@ -18,7 +18,7 @@
 | Jupyter Notebook / JupyterLab | Notebook 7.x or JupyterLab 4.x recommended | Course notebooks | |
 | git | Any recent version | Version control | |
 | uv *(optional)* | Any 0.x version | Optional alternative to conda + pip ([comparison](PYTHON_ENVIRONMENTS_COMPARED.md)) | not required |
-| Docker Desktop *(Lab 10B and Module 13 only)* | Any recent version | Self-hosted deployment | not required yet |
+| Docker Desktop *(Lab 11B and Module 12 only)* | Any recent version | Self-hosted deployment | not required yet |
 
 ---
 

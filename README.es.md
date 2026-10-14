@@ -25,19 +25,22 @@ Vas a aprender a:
 - diseñar sistemas **RAG** que citan sus fuentes y cuya calidad se mide, no se adivina;
 - conectar agentes con el mundo mediante **herramientas, búsqueda web y MCP**;
 - coordinar **sistemas multiagente**;
+- **probar, evaluar y trazar** con pytest y LangSmith;
 - construir agentes de larga duración con **Deep Agents** (un módulo completo): planificación, sistemas de archivos virtuales y *backends*, subagentes, ingeniería de contexto, *skills* y memoria, ejecución de código en *sandboxes* y evaluaciones de trayectoria;
-- agregar **voz y entrada/salida multimodal** con Whisper y Orpheus de Groq;
-- **probar, evaluar y trazar** con pytest y LangSmith, y luego **desplegar un servicio propio** con FastAPI y Docker;
+- **desplegar un servicio propio** con FastAPI y Docker;
+- de forma opcional, agregar **voz y entrada/salida multimodal** con Whisper y Orpheus de Groq, o usar **modelos locales** y hacerles *fine-tuning* (dos electivos);
 - usar **Jupyter** como profesional, no solo como borrador.
 
 Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenamiento local) viene con una **⚠️ Nota de producción** que explica qué hacer en un sistema real ([todas las notas de producción](docs/production-notes.md)).
 
 ## Dos partes
 
-| Parte | Módulos | Qué vas a poder hacer al final | Tiempo estimado (a medio tiempo) |
+| Parte | Módulos | Qué vas a poder hacer al final | Tiempo estimado |
 |---|---|---|---|
-| **Parte 1 — Core** | 00–08 | Diseñar, construir y depurar agentes, sistemas RAG y flujos de LangGraph con memoria, guardrails, herramientas MCP y aprobación humana | ~14–16,5 semanas |
-| **Parte 2 — Pro** | 09–14 | Construir sistemas multiagente y **deep agents** de larga duración, agregar voz, demostrar su calidad con evaluaciones y operar agentes como un servicio propio en producción (más un electivo opcional de modelos locales y *fine-tuning*) | ~11–12,5 semanas + proyectos finales |
+| **Parte 1 — Core** | 00–08 | Diseñar, construir y depurar agentes, sistemas RAG y flujos de LangGraph con memoria, guardrails, herramientas MCP y aprobación humana | unas 150–195 h (lecciones ~107–136 h + proyectos ~41–58 h) |
+| **Parte 2 — Pro** | 09–14 | Construir sistemas multiagente, demostrar su calidad con evaluaciones, construir **deep agents** de larga duración y operar agentes como un servicio propio en producción (más dos electivos opcionales: voz/multimodal, y modelos locales/*fine-tuning*) | unas 125–160 h para el núcleo (09–12) + 31–41 h para los electivos (13–14) + 25–40 h por proyecto final (los Módulos 10–14 están planificados, así que sus horas son aproximadas) |
+
+**Planifica tu tiempo.** Las horas salen de la estimación de cada notebook. La Parte 1 a 6 h/semana toma unas 25–32 semanas; a 8 h/semana, 19–24 semanas; a 10 h/semana, 15–20 semanas. Si ya tienes experiencia, avanzarás más rápido por el Módulo 00.
 
 ## ¿Para quién es?
 
@@ -54,7 +57,8 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 
 ## Cómo usar este repositorio
 
-1. **Verifica tu entorno** con [setup/VERIFY_ENVIRONMENT.md](setup/VERIFY_ENVIRONMENT.md). En este paso no se instala nada; solo revisas lo que ya tienes. ¿Te confunden los entornos? Lee [Python environments, compared](setup/PYTHON_ENVIRONMENTS_COMPARED.md) (pip, venv, conda, uv, Poetry y más, explicados en lenguaje sencillo; en inglés). Las instrucciones completas de instalación llegarán al final del curso en [setup/FULL_SETUP_APPENDIX.md](setup/FULL_SETUP_APPENDIX.md).
+0. **Obtén el repositorio de la forma correcta:** clónalo, no modifiques `main` y haz tu trabajo en una carpeta `workspace/` ignorada por git, para que las actualizaciones del curso nunca choquen con tus notebooks ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md), en inglés).
+1. **Verifica tu entorno** con [setup/VERIFY_ENVIRONMENT.md](setup/VERIFY_ENVIRONMENT.md) (no se instala nada; solo revisas lo que ya tienes) y luego **crea el entorno del curso** con la [guía de la Lección 00.02](modules/00-foundations/00-02-create-course-env.md). ¿Te confunden los entornos? Lee [Python environments, compared](setup/PYTHON_ENVIRONMENTS_COMPARED.md) (pip, venv, conda, uv, Poetry y más, explicados en lenguaje sencillo; en inglés).
 2. Copia `.env.example` a `.env` y agrega solo las claves que necesita el módulo actual (el Módulo 00 solo necesita `GROQ_API_KEY`).
 3. Lee el [temario del curso](COURSE_OUTLINE.md). Ahí está cada lección, notebook, lista de lecturas y especificación de proyecto.
 4. Avanza por `modules/` en orden. Cada carpeta de módulo tiene un README con sus lecciones.
@@ -67,29 +71,31 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 
 | # | Módulo | Estado |
 |---|---|---|
-| 00 | [Fundamentos, herramientas y habilidades de investigación](modules/00-foundations/) | 📝 Planificado |
-| 01 | [Modelos, mensajes y prompts](modules/01-models-messages-prompts/) | 📝 Planificado |
-| 02 | [Herramientas y tus primeros agentes](modules/02-tools-and-agents/) | 📝 Planificado |
-| 03 | [Memoria e ingeniería de contexto](modules/03-memory-and-context/) | 📝 Planificado |
-| 04 | [Middleware, guardrails y aprobación humana](modules/04-middleware-guardrails-hitl/) | 📝 Planificado |
-| 05 | [MCP y herramientas externas](modules/05-mcp-and-external-tools/) | 📝 Planificado |
-| 06 | [Documentos, embeddings y RAG](modules/06-rag/) | 📝 Planificado |
-| 07 | [Fundamentos de LangGraph](modules/07-langgraph-fundamentals/) | 📝 Planificado |
-| 08 | [LangGraph para producción](modules/08-langgraph-production-features/) | 📝 Planificado |
+| 00 | [Fundamentos, herramientas y habilidades de investigación](modules/00-foundations/) | ✅ Construido |
+| 01 | [Modelos, mensajes y prompts](modules/01-models-messages-prompts/) | ✅ Construido |
+| 02 | [Herramientas y tus primeros agentes](modules/02-tools-and-agents/) | ✅ Construido |
+| 03 | [Memoria e ingeniería de contexto](modules/03-memory-and-context/) | ✅ Construido |
+| 04 | [Middleware, guardrails y aprobación humana](modules/04-middleware-guardrails-hitl/) | ✅ Construido |
+| 05 | [MCP y herramientas externas](modules/05-mcp-and-external-tools/) | ✅ Construido |
+| 06 | [Documentos, embeddings y RAG](modules/06-rag/) | ✅ Construido |
+| 07 | [Fundamentos de LangGraph](modules/07-langgraph-fundamentals/) | ✅ Construido |
+| 08 | [LangGraph para producción](modules/08-langgraph-production-features/) | ✅ Construido |
+
+**La Parte 1 está completa.** Su cierre (qué puedes construir ahora y qué revisar antes de seguir) está en el [README del Módulo 08](modules/08-langgraph-production-features/README.md#part-1-complete) (en inglés). La Parte 2 empieza con el [Módulo 09 — Sistemas multiagente](modules/09-multi-agent-systems/README.md) (✅ construido; el resto de la Parte 2 está en el [temario](COURSE_OUTLINE.md#part-2--pro-modules-0914)).
 
 ### Parte 2 — Pro
 
 | # | Módulo | Estado |
 |---|---|---|
-| 09 | [Sistemas multiagente](modules/09-multi-agent-systems/) | 📝 Planificado |
-| 10 | [Deep Agents](modules/10-deep-agents/) | 📝 Planificado |
-| 11 | [Multimodalidad y voz](modules/11-multimodal-and-voice/) | 📝 Planificado |
-| 12 | [Pruebas, evaluación y observabilidad](modules/12-testing-evaluation-observability/) | 📝 Planificado |
-| 13 | [Producción y despliegue (FastAPI + Docker, autoalojado)](modules/13-production-and-deployment/) | 📝 Planificado |
+| 09 | [Sistemas multiagente](modules/09-multi-agent-systems/) | ✅ Construido |
+| 10 | [Pruebas, evaluación y observabilidad](modules/10-testing-evaluation-observability/) | 📝 Planificado |
+| 11 | [Deep Agents](modules/11-deep-agents/) | 📝 Planificado |
+| 12 | [Producción y despliegue (FastAPI + Docker, autoalojado)](modules/12-production-and-deployment/) | 📝 Planificado |
+| 13 | [Multimodalidad y voz (electivo)](modules/13-multimodal-and-voice/) | 📝 Planificado |
 | 14 | [Modelos locales y fine-tuning (electivo)](modules/14-local-models-and-fine-tuning/) | 📝 Planificado |
 | — | [Proyectos finales (capstones)](capstones/) | 📝 Planificado |
 
-Leyenda: 📝 Planificado · 🚧 En progreso · ✅ Completo · 🔍 Revisado (verificado de punta a punta)
+Leyenda: 📝 Planificado · 🚧 En progreso · ✅ Construido · 🔍 Revisado (verificado de punta a punta)
 
 ## Filosofía de herramientas: primero lo gratuito, lo pago solo cuando aporta de verdad
 
@@ -97,13 +103,13 @@ Leyenda: 📝 Planificado · 🚧 En progreso · ✅ Completo · 🔍 Revisado (
 |---|---|---|
 | Modelos de chat y agentes | **Groq**: `openai/gpt-oss-20b`, `openai/gpt-oss-120b` · modelos locales con **Ollama** | Referencia de calidad con **OpenAI**: `gpt-6-luna` (económico), `gpt-6.1-sol` (techo de calidad). Alternativa de bajo costo: plan gratuito de **Gemini** ([comparación](docs/paid-benchmark-openai-vs-gemini.md)) |
 | Búsqueda web | **Búsqueda integrada de Groq** (*browser search*, sin clave extra) | **Tavily** (1.000 créditos gratis al mes, luego pago) ([comparación](docs/web-search-groq-vs-tavily.md)) |
-| Agentes de larga duración (Módulo 10) | **Deep Agents** (código abierto) sobre el **plan gratuito de Gemini** por defecto (`gemini-3.6-flash`, un modelo sugerido oficialmente para Deep Agents; solo datos públicos o sintéticos) · Groq como opción documentada · *sandbox* local con Docker | *Sandboxes* administrados (LangSmith, Daytona, Modal, …) · referencia de OpenAI |
+| Agentes de larga duración (Módulo 11) | **Deep Agents** (código abierto) sobre el **plan gratuito de Gemini** por defecto (`gemini-3.6-flash`, un modelo sugerido oficialmente para Deep Agents; solo datos públicos o sintéticos) · Groq como opción documentada · *sandbox* local con Docker | *Sandboxes* administrados (LangSmith, Daytona, Modal, …) · referencia de OpenAI |
 | Visión | `qwen/qwen3.8-27b` en Groq (*preview* ⚠️) · modelos de visión locales | Modelos multimodales de OpenAI / Gemini |
 | Voz | **Whisper** (voz a texto) y **Orpheus** (texto a voz, *preview* ⚠️) en Groq, bajo costo por uso | Proveedores de voz especializados |
 | Embeddings | Hugging Face / sentence-transformers locales, Ollama | APIs de embeddings alojadas |
 | Base vectorial | `InMemoryVectorStore`, **Chroma** | pgvector (administrado), Pinecone, Qdrant Cloud |
 | Observabilidad y evaluaciones | Plan gratuito de **LangSmith** | Planes pagos de LangSmith |
-| Despliegue | **FastAPI + Docker + Postgres**, autoalojado (Módulo 13) | VM o contenedores en la nube, Postgres administrado, o LangSmith Cloud (lección opcional de referencia) |
+| Despliegue | **FastAPI + Docker + Postgres**, autoalojado (Módulo 12) | VM o contenedores en la nube, Postgres administrado, o LangSmith Cloud (lección opcional de referencia) |
 
 ⚠️ = modelo en *preview*: sirve para aprender, no para producción. Mira las [notas de producción](docs/production-notes.md).
 
@@ -141,12 +147,9 @@ Consulta [RESOURCES.md](RESOURCES.md) para la lista completa de recursos.
 
 ## Estado del proyecto
 
-| Hito | Estado |
-|---|---|
-| Temario del curso | ✅ Listo |
-| Estructura del repositorio | ✅ Creada |
-| Notebooks del Módulo 00 | 📝 Lo siguiente |
-| Apéndice de instalación completa | 📝 Se escribe al final del curso |
+- **La Parte 1 (Módulos 00–08) y el Módulo 09 están construidos**: cada notebook se ejecuta de principio a fin sin claves de API (modo offline), y las pruebas unitarias corren en cada *push* (GitHub Actions).
+- **Los Módulos 10–14 y los proyectos finales están planificados**; sus especificaciones completas están en el [temario del curso](COURSE_OUTLINE.md).
+- Qué cambió y cuándo: [COURSE_CHANGELOG.md](COURSE_CHANGELOG.md) (en inglés).
 
 ## Licencia
 

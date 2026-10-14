@@ -5,6 +5,9 @@
 # --- Private working notes (not part of the course) -------------------------
 _maintainer/
 
+# --- Learner workspace: your copies of notebooks and logs (setup/LEARNER_WORKFLOW.md) ---
+workspace/
+
 # --- Secrets & environment --------------------------------------------------
 .env
 .env.*
@@ -80,7 +83,7 @@ outbox/
 !data/samples/**/*.wav
 !data/samples/**/*.mp3
 
-# Deep Agents run artifacts (Module 10): agent-written files, sandbox downloads, saved runs
+# Deep Agents run artifacts (Module 11): agent-written files, sandbox downloads, saved runs
 **/artifacts/
 **/deep_runs/
 .deepagents/

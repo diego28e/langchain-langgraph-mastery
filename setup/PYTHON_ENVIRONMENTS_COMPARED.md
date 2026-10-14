@@ -75,14 +75,14 @@ Most tools below do one, two, or all three of these jobs. The confusion comes fr
 ### uv: one fast tool for (almost) everything
 - **What it is:** a Python package and project manager written in Rust by Astral. Its docs call it "a single tool to replace pip, pip-tools, pipx, poetry, pyenv, twine, virtualenv, and more", and "10-100x faster than pip".
 - **Two ways to use it:**
-  - **pip-compatible mode:** `uv venv`, then `uv pip install -r requirements.txt`. Same mental model as venv + pip, just faster.
+  - **pip-compatible mode:** `uv venv --seed`, then `uv pip install -r requirements.txt`. Same mental model as venv + pip, just faster. (`--seed` installs `pip` into the env; without it, notebook `%pip` cells fail with `No module named pip`.)
   - **Project mode:** `uv init`, `uv add langchain`, `uv run ...`. Dependencies go in `pyproject.toml`, exact versions in `uv.lock`, and the `.venv` is kept in sync for you.
 - **Also:** installs Python versions (`uv python install 3.13`) and CLI tools (`uv tool install ruff`, like pipx).
-- **Use it when:** you start a new project outside conda, want reproducible lock files, or want fast CI and Docker builds (Module 13 uses it in the Dockerfile).
+- **Use it when:** you start a new project outside conda, want reproducible lock files, or want fast CI and Docker builds (Module 12 uses it in the Dockerfile).
 - **Pros:** very fast, lock files, manages Python too, great Docker/CI story, growing fast in the Python community.
 - **Cons:** PyPI only (no conda binary packages). Newer tool (0.x versions), so commands still evolve. One more mental model to learn.
 - **Windows notes:** from Git Bash, the simplest options are WinGet (`winget install --id=astral-sh.uv -e`) or `pipx install uv`; the official installer script for Windows runs in PowerShell (`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`), WinGet (`winget install --id=astral-sh.uv -e`), Scoop, or `pipx install uv`. Read any script before piping it into your shell.
-- **Jupyter (official uv guide):** `uv add --dev ipykernel`, then `uv run ipython kernel install --user --env VIRTUAL_ENV <project>\.venv --name=<project>`, then start Jupyter with `uv run --with jupyter jupyter lab`. Inside a notebook, `!uv add <pkg>` updates the project, and `%pip install` still works.
+- **Jupyter (official uv guide):** `uv add --dev ipykernel`, then `uv run ipython kernel install --user --env VIRTUAL_ENV <project>\.venv --name=<project>`, then start Jupyter with `uv run --with jupyter jupyter lab`. Inside a notebook, `!uv add <pkg>` updates the project. `%pip install` works only if the env has `pip` (create it with `uv venv --seed`, or run `uv pip install pip`): `%pip` runs `python -m pip` in the kernel.
 - **Docs:** [uv](https://docs.astral.sh/uv/) · [Installation](https://docs.astral.sh/uv/getting-started/installation/) · [Projects](https://docs.astral.sh/uv/guides/projects/) · [Install Python](https://docs.astral.sh/uv/guides/install-python/) · [Tools](https://docs.astral.sh/uv/guides/tools/) · [pip interface: environments](https://docs.astral.sh/uv/pip/environments/) · [uv with Jupyter](https://docs.astral.sh/uv/guides/integration/jupyter/)
 
 ### Poetry: dependency management and packaging
@@ -137,13 +137,13 @@ Docs: [Installing the IPython kernel](https://ipython.readthedocs.io/en/stable/i
 |---|---|---|
 | **Following the course on Windows with Anaconda (default)** | **conda** for the environment (`lc-mastery`, Python 3.13) + **pip** (`%pip` in notebooks) for LangChain packages | You already have it. Git Bash (with conda loaded, see Lesson 00.02) + Jupyter work out of the box; the Anaconda Prompt is a fallback. LangChain packages are on PyPI, so pip inside the conda env is the simplest path |
 | Starting fresh, no Anaconda, or you like modern tooling | **uv** (project mode) | Fast, one tool, lock file. Same notebooks, different setup |
-| Packaging `src/mastery` and deploying it (Module 13) | **uv** inside Docker | Reproducible, fast builds. Taught in Lesson 13.06 |
+| Packaging `src/mastery` and deploying it (Module 12) | **uv** inside Docker | Reproducible, fast builds. Taught in Lesson 12.06 |
 | Global CLI tools (ruff, pre-commit, nbstripout) | **pipx** or `uv tool install` | Keeps tools out of the course env |
 | Need heavy binary deps (CUDA, GDAL) in Module 14 | **conda** (conda-forge) or **pixi** | Binary packages pip can't easily provide |
 
 **Rules of thumb:** one environment per project · never install course packages into `base` · always know which Python a command uses (`which -a python` in Git Bash, macOS, and Linux; `where python` in cmd; `sys.executable` in Jupyter) · don't mix tools inside one environment unless you follow the tool's official advice (conda first, then pip).
 
 > ⚠️ **Production note: environments on your laptop are not deployments.**
-> A conda env you built by hand is hard to reproduce. In production, pin exact versions in a lock file (`uv.lock`, `poetry.lock`, `pixi.lock`, or a fully pinned `requirements.txt`), build in CI from a clean image, and ship a container. The course's `requirements.txt` uses minimum versions with upper bounds for learning; Module 13 shows the locked, containerised version.
+> A conda env you built by hand is hard to reproduce. In production, pin exact versions in a lock file (`uv.lock`, `poetry.lock`, `pixi.lock`, or a fully pinned `requirements.txt`), build in CI from a clean image, and ship a container. The course's `requirements.txt` uses minimum versions with upper bounds for learning; Module 12 shows the locked, containerised version.
 
 General background: [Python Packaging User Guide: tool recommendations](https://packaging.python.org/en/latest/guides/tool-recommendations/) · [Installing packages](https://packaging.python.org/en/latest/tutorials/installing-packages/).

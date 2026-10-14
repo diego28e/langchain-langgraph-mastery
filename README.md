@@ -23,19 +23,22 @@ You will learn to:
 - design **RAG** systems that cite their sources and are measured, not guessed;
 - connect agents to the world through **tools, web search, and MCP**;
 - coordinate **multi-agent systems**;
+- **test, evaluate, and trace** with pytest and LangSmith;
 - build long-running agents with **Deep Agents** (a full module): planning, virtual filesystems and backends, subagents, context engineering, skills and memory, sandboxed code execution, and trajectory evals;
-- add **voice and multimodal** input/output with Groq Whisper and Orpheus;
-- **test, evaluate, and trace** with pytest and LangSmith, then **deploy a self-hosted service** with FastAPI and Docker;
+- **deploy a self-hosted service** with FastAPI and Docker;
+- optionally, add **voice and multimodal** input/output with Groq Whisper and Orpheus, or run **local models** and fine-tune them (two electives);
 - use **Jupyter** like a professional, not just as a scratchpad.
 
 Every shortcut the course takes (free tiers, preview models, local storage) comes with a **⚠️ Production note** that explains what to do in a real system ([all production notes](docs/production-notes.md)).
 
 ## Two parts
 
-| Part | Modules | What you can do at the end | Est. time (part-time) |
+| Part | Modules | What you can do at the end | Est. time |
 |---|---|---|---|
-| **Part 1 — Core** | 00–08 | Design, build, and debug agents, RAG systems, and LangGraph workflows with memory, guardrails, MCP tools, and human approval | ~14–16.5 weeks |
-| **Part 2 — Pro** | 09–14 | Build multi-agent systems and long-running **deep agents**, add voice, prove quality with evals, and run agents as a self-hosted production service (plus an optional local-models/fine-tuning elective) | ~11–12.5 weeks + capstones |
+| **Part 1 — Core** | 00–08 | Design, build, and debug agents, RAG systems, and LangGraph workflows with memory, guardrails, MCP tools, and human approval | about 150–195 h (lessons ~107–136 h + projects ~41–58 h) |
+| **Part 2 — Pro** | 09–14 | Build multi-agent systems, prove quality with evals, build long-running **deep agents**, and run agents as a self-hosted production service (plus two optional electives: voice/multimodal, and local models/fine-tuning) | about 125–160 h for the core (09–12) + 31–41 h for the electives (13–14) + 25–40 h per capstone (Modules 10–14 are planned, so their hours are rough) |
+
+**Plan your time.** The hours come from each notebook's own estimate. Part 1 at 6 h/week takes about 25–32 weeks; at 8 h/week, 19–24 weeks; at 10 h/week, 15–20 weeks. Experienced developers move faster through Module 00.
 
 ## Who it's for
 
@@ -52,7 +55,8 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 
 ## How to use this repo
 
-1. **Verify your environment** with [setup/VERIFY_ENVIRONMENT.md](setup/VERIFY_ENVIRONMENT.md). Nothing gets installed at this step; you only check what you have. New to environments? Read [Python environments, compared](setup/PYTHON_ENVIRONMENTS_COMPARED.md) (pip, venv, conda, uv, Poetry, and more, in plain English). Full setup instructions will come later in [setup/FULL_SETUP_APPENDIX.md](setup/FULL_SETUP_APPENDIX.md).
+0. **Get the repo the right way:** clone it, keep `main` untouched, and do your work in a git-ignored `workspace/` folder, so course updates never collide with your notebooks ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)).
+1. **Verify your environment** with [setup/VERIFY_ENVIRONMENT.md](setup/VERIFY_ENVIRONMENT.md) (nothing gets installed; you only check what you have), then **create the course environment** with the [Lesson 00.02 guide](modules/00-foundations/00-02-create-course-env.md). New to environments? Read [Python environments, compared](setup/PYTHON_ENVIRONMENTS_COMPARED.md) (pip, venv, conda, uv, Poetry, and more, in plain English).
 2. Copy `.env.example` to `.env` and add the keys you need for the current module (Module 00 only needs `GROQ_API_KEY`).
 3. Read the [Course Outline](COURSE_OUTLINE.md). It lists every lesson, notebook, reading list, and project spec.
 4. Work through `modules/` in order. Each module folder has a README listing its lessons.
@@ -82,10 +86,10 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | # | Module | Status |
 |---|---|---|
 | 09 | [Multi-Agent Systems](modules/09-multi-agent-systems/) | ✅ Built |
-| 10 | [Deep Agents](modules/10-deep-agents/) | 📝 Planned |
-| 11 | [Multimodal & Voice](modules/11-multimodal-and-voice/) | 📝 Planned |
-| 12 | [Testing, Evaluation & Observability](modules/12-testing-evaluation-observability/) | 📝 Planned |
-| 13 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/13-production-and-deployment/) | 📝 Planned |
+| 10 | [Testing, Evaluation & Observability](modules/10-testing-evaluation-observability/) | 📝 Planned |
+| 11 | [Deep Agents](modules/11-deep-agents/) | 📝 Planned |
+| 12 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/12-production-and-deployment/) | 📝 Planned |
+| 13 | [Multimodal & Voice (elective)](modules/13-multimodal-and-voice/) | 📝 Planned |
 | 14 | [Local Models & Fine-Tuning (elective)](modules/14-local-models-and-fine-tuning/) | 📝 Planned |
 | — | [Capstones](capstones/) | 📝 Planned |
 
@@ -97,13 +101,13 @@ Status legend: 📝 Planned · 🚧 In progress · ✅ Complete · 🔍 Reviewed
 |---|---|---|
 | Chat & agent models | **Groq**: `openai/gpt-oss-20b`, `openai/gpt-oss-120b` · **Ollama** local models | **OpenAI** benchmark: `gpt-6-luna` (cheap), `gpt-6.1-sol` (quality ceiling). Low-cost option: **Gemini** free tier ([comparison](docs/paid-benchmark-openai-vs-gemini.md)) |
 | Web search | **Groq built-in browser search** (no extra key) | **Tavily** (1,000 free credits/month, then paid) ([comparison](docs/web-search-groq-vs-tavily.md)) |
-| Long-running agents (Module 10) | **Deep Agents** (open source) on the **Gemini free tier** by default (`gemini-3.6-flash`, an officially suggested Deep Agents model; public/synthetic data only) · Groq as the documented option · local Docker sandbox | Managed sandboxes (LangSmith, Daytona, Modal, …) · OpenAI benchmark |
+| Long-running agents (Module 11) | **Deep Agents** (open source) on the **Gemini free tier** by default (`gemini-3.6-flash`, an officially suggested Deep Agents model; public/synthetic data only) · Groq as the documented option · local Docker sandbox | Managed sandboxes (LangSmith, Daytona, Modal, …) · OpenAI benchmark |
 | Vision | Groq `qwen/qwen3.8-27b` (preview ⚠️) · local vision models | OpenAI / Gemini multimodal models |
 | Speech | Groq **Whisper** (STT) and **Orpheus** (TTS, preview ⚠️), low per-use cost | Specialized voice providers |
 | Embeddings | Local Hugging Face / sentence-transformers, Ollama | Hosted embedding APIs |
 | Vector store | `InMemoryVectorStore`, **Chroma** | pgvector (managed), Pinecone, Qdrant Cloud |
 | Observability & evals | **LangSmith** free tier | LangSmith paid plans |
-| Deployment | **FastAPI + Docker + Postgres**, self-hosted (Module 13) | Cloud VM/containers, managed Postgres, or LangSmith Cloud (optional reference lesson) |
+| Deployment | **FastAPI + Docker + Postgres**, self-hosted (Module 12) | Cloud VM/containers, managed Postgres, or LangSmith Cloud (optional reference lesson) |
 
 ⚠️ = preview model: fine for learning, not for production. See [production notes](docs/production-notes.md).
 
@@ -141,12 +145,9 @@ See [RESOURCES.md](RESOURCES.md) for the full curated list.
 
 ## Project status
 
-| Milestone | Status |
-|---|---|
-| Course outline | ✅ Done |
-| Repository skeleton | ✅ Created |
-| Module 00 notebooks | 📝 Next |
-| Full setup appendix | 📝 Written at the end of the course |
+- **Part 1 (Modules 00–08) and Module 09 are built**: every notebook runs top to bottom with no API keys (offline mode), and the unit tests run on every push (GitHub Actions).
+- **Modules 10–14 and the capstones are planned**; their full specs are in the [Course Outline](COURSE_OUTLINE.md).
+- What changed and when: [COURSE_CHANGELOG.md](COURSE_CHANGELOG.md).
 
 ## License
 
