@@ -46,7 +46,7 @@ def evaluate_retrieval(search: Callable[[str], list[Document]], golden: list[dic
             "rows": rows}
 
 
-def score_answers(rows: list[dict[str, Any]], k: int = 5) -> dict[str, Any]:
+def score_answers(rows: list[dict[str, Any]], k: int = 5, *, require_chunk_id: bool = False) -> dict[str, Any]:
     """Reference scorer for a cited-RAG run (Project 06), computed independently of learner code.
 
     Each row is a golden item plus the run's output: ``in_corpus``, ``answer_contains``,
@@ -56,7 +56,8 @@ def score_answers(rows: list[dict[str, Any]], k: int = 5) -> dict[str, Any]:
     (questions that ran), ``recall@k`` (in-corpus mean), ``correct``, ``false_dont_know`` (in-corpus
     questions answered with "don't know"), ``dont_know`` (out-of-corpus questions correctly
     declined), ``fabricated_final`` (citations in final answers that fail ``verify_citations``) and
-    ``uncited`` (real answers shipped without a citation).
+    ``uncited`` (real answers shipped without a citation). ``require_chunk_id=True`` also counts
+    citations without a valid ``chunk_id`` as fabricated.
     """
     from mastery.rag.citations import is_dont_know, verify_citations  # local import: no cycle at load time
 
@@ -70,6 +71,41 @@ def score_answers(rows: list[dict[str, Any]], k: int = 5) -> dict[str, Any]:
         "correct": sum(r["answer_contains"].lower() in r["answer"].answer.lower() for r in inside),
         "false_dont_know": sum(is_dont_know(r["answer"]) for r in inside),
         "dont_know": sum(is_dont_know(r["answer"]) for r in outside),
-        "fabricated_final": sum(len(verify_citations(r["answer"], r["docs"])["fabricated"]) for r in rows),
+        "fabricated_final": sum(len(verify_citations(r["answer"], r["docs"], require_chunk_id=require_chunk_id)["fabricated"])
+                                for r in rows),
         "uncited": sum(not r["answer"].citations and not is_dont_know(r["answer"]) for r in rows),
     }
+
+
+def is_right(row: dict[str, Any]) -> bool:
+    """One row's grade: the expected text for an in-corpus question; a decline for any other (correct refusal)."""
+    from mastery.rag.citations import is_dont_know
+
+    if row["in_corpus"]:
+        return row["answer_contains"].lower() in row["answer"].answer.lower()
+    return is_dont_know(row["answer"])
+
+
+def score_by_stratum(rows: list[dict[str, Any]], key: str = "stratum") -> dict[str, dict[str, Any]]:
+    """Per-stratum ``{"n", "right", "rate"}`` with :func:`is_right` (out-of-scope rows: right = declined)."""
+    out: dict[str, dict[str, Any]] = {}
+    for row in rows:
+        cell = out.setdefault(row.get(key, "?"), {"n": 0, "right": 0})
+        cell["n"] += 1
+        cell["right"] += is_right(row)
+    for cell in out.values():
+        cell["rate"] = round(cell["right"] / cell["n"], 2)
+    return out
+
+
+def stratified_sample(items: list[dict[str, Any]], n: int, key: str = "stratum") -> list[dict[str, Any]]:
+    """About ``n`` items, taken round-robin across strata in file order, so every stratum is represented."""
+    groups: dict[str, list[dict[str, Any]]] = {}
+    for item in items:
+        groups.setdefault(item.get(key, "?"), []).append(item)
+    picked: list[dict[str, Any]] = []
+    while len(picked) < min(n, len(items)):
+        for group in groups.values():
+            if group and len(picked) < n:
+                picked.append(group.pop(0))
+    return sorted(picked, key=items.index)

@@ -5,6 +5,8 @@ and re-ranking use ``fastembed`` (the ``[embeddings]`` extra) when installed.
 """
 from mastery.rag.citations import (
                                    NOT_FOUND,
+                                   ChunkCitation,
+                                   ChunkCitedAnswer,
                                    Citation,
                                    CitedAnswer,
                                    extractive_agent_reader,
@@ -17,15 +19,17 @@ from mastery.rag.citations import (
                                    parse_context,
                                    verify_citations,
 )
-from mastery.rag.eval import evaluate_retrieval, mrr, recall_at_k, score_answers
+from mastery.rag.eval import evaluate_retrieval, is_right, mrr, recall_at_k, score_answers, score_by_stratum, stratified_sample
 from mastery.rag.index import (
                                    CachedEmbeddings,
                                    build_index,
+                                   collection_name,
                                    default_embeddings,
                                    embedding_label,
                                    folder_size,
                                    open_chroma,
                                    reset_chroma,
+                                   sync_index,
                                    vectorstore_dir,
 )
 from mastery.rag.loaders import load_corpus, load_html, load_markdown, load_pdf
@@ -44,10 +48,13 @@ __all__ = [
                                    "BM25",
                                    "NOT_FOUND",
                                    "CachedEmbeddings",
+                                   "ChunkCitation",
+                                   "ChunkCitedAnswer",
                                    "Citation",
                                    "CitedAnswer",
                                    "OverlapReranker",
                                    "build_index",
+                                   "collection_name",
                                    "chunk_stats",
                                    "cross_encoder_reranker",
                                    "default_embeddings",
@@ -72,7 +79,11 @@ __all__ = [
                                    "parse_context",
                                    "recall_at_k",
                                    "score_answers",
+                                   "score_by_stratum",
+                                   "stratified_sample",
+                                   "is_right",
                                    "reset_chroma",
+                                   "sync_index",
                                    "retrieve",
                                    "rrf",
                                    "split_documents",

@@ -19,6 +19,18 @@ def _key(doc: Document) -> str:
     return doc.metadata.get("chunk_id") or doc.id or doc.page_content[:80]
 
 
+def matches(metadata: dict, where: dict | None) -> bool:
+    """Exact-match metadata filter (``{"tenant": "a"}``; ``{"type": {"$in": [...]}}``), shared by both search legs."""
+    for key, want in (where or {}).items():
+        value = metadata.get(key)
+        if isinstance(want, dict) and set(want) == {"$in"}:
+            if value not in want["$in"]:
+                return False
+        elif value != want:
+            return False
+    return True
+
+
 def retrieve(store: Any, query: str, k: int = 5, filter: dict | None = None) -> list[Document]:
     """Top-``k`` chunks with ``metadata["score"]`` = cosine similarity (higher is better) for both stores.
 
@@ -32,7 +44,7 @@ def retrieve(store: Any, query: str, k: int = 5, filter: dict | None = None) -> 
         fn = None
         if filter:
             def fn(doc: Document) -> bool:
-                return all(doc.metadata.get(key) == value for key, value in filter.items())
+                return matches(doc.metadata, filter)
         pairs = store.similarity_search_with_score(query, k=k, filter=fn)
     out = []
     for doc, score in pairs:
@@ -54,10 +66,17 @@ class BM25:
         n = len(docs)
         self._idf = {t: math.log(1 + (n - f + 0.5) / (f + 0.5)) for t, f in df.items()}
 
-    def search(self, query: str, k: int = 5) -> list[Document]:
+    def search(self, query: str, k: int = 5, filter: dict | None = None) -> list[Document]:
+        """Top-``k`` by BM25. ``filter`` drops chunks whose metadata doesn't match (see :func:`matches`).
+
+        IDF is still computed over every chunk, so term statistics from other tenants leak into scores
+        a little; build one index per tenant when that matters.
+        """
         q = terms(query)
         scored = []
         for i, tf in enumerate(self._tf):
+            if filter and not matches(self.docs[i].metadata, filter):
+                continue
             s = 0.0
             for t in q:
                 if t in tf:
@@ -92,9 +111,14 @@ def rrf(*rankings: list[Document], k: int = 60, top_n: int | None = None) -> lis
     return out
 
 
-def hybrid_search(store: Any, bm25: BM25, query: str, k: int = 5, fetch_k: int = 20) -> list[Document]:
-    """Vector top-``fetch_k`` + BM25 top-``fetch_k``, fused with RRF, cut to ``k``."""
-    return rrf(retrieve(store, query, k=fetch_k), bm25.search(query, k=fetch_k), top_n=k)
+def hybrid_search(store: Any, bm25: BM25, query: str, k: int = 5, fetch_k: int = 20,
+                  filter: dict | None = None) -> list[Document]:
+    """Vector top-``fetch_k`` + BM25 top-``fetch_k``, fused with RRF, cut to ``k``.
+
+    ``filter`` applies to BOTH legs: a tenant or type filter on the vector leg alone would let the
+    keyword leg return other tenants' chunks.
+    """
+    return rrf(retrieve(store, query, k=fetch_k, filter=filter), bm25.search(query, k=fetch_k, filter=filter), top_n=k)
 
 
 class OverlapReranker:
@@ -137,11 +161,13 @@ def cross_encoder_reranker(model_name: str = "Xenova/ms-marco-MiniLM-L-6-v2", ca
     return _FastEmbedReranker(model_name, cache_dir)
 
 
-def make_retriever_tool(search: Any, name: str = "search_docs", description: str | None = None, k: int = 4) -> Any:
+def make_retriever_tool(search: Any, name: str = "search_docs", description: str | None = None, k: int = 4, *,
+                        with_ids: bool = False) -> Any:
     """Wrap a store (or any ``query -> list[Document]`` callable) as an agent tool.
 
     The model sees numbered, labelled chunks; the raw ``Document`` list rides along as the
     ``ToolMessage.artifact`` so code can verify citations against exactly what was retrieved.
+    ``with_ids=True`` shows each chunk's ``id=`` in its header (for :class:`ChunkCitedAnswer`).
     """
     from langchain_core.tools import StructuredTool
 
@@ -149,9 +175,8 @@ def make_retriever_tool(search: Any, name: str = "search_docs", description: str
 
     def run(query: str) -> tuple[str, list[Document]]:
         docs = search(query) if callable(search) else retrieve(search, query, k=k)
-        return (format_context(docs) if docs else "No matching passages."), docs
+        return (format_context(docs, with_ids=with_ids) if docs else "No matching passages."), docs
 
     return StructuredTool.from_function(
         func=run, name=name, response_format="content_and_artifact",
         description=description or "Search the product documentation. Input: a short search query.")
-

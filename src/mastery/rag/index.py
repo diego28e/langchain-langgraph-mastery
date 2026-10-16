@@ -125,8 +125,68 @@ def build_index(chunks: list[Document], embeddings: Embeddings, kind: Literal["m
     else:
         raise ValueError(f"kind must be 'memory' or 'chroma', got {kind!r}")
     for start in range(0, len(docs), batch_size):
-        store.add_documents(docs[start:start + batch_size], ids=ids[start:start + batch_size])
+        try:
+            store.add_documents(docs[start:start + batch_size], ids=ids[start:start + batch_size])
+        except Exception as exc:  # Chroma: "Collection expecting embedding with dimension of 1024, got 384"
+            if kind == "chroma" and "dimension" in str(exc).lower():
+                raise ValueError(
+                    f"Collection {collection!r} was built with a different embedding model ({exc}). "
+                    "Use a new collection name per embedding model, or delete it first with reset_chroma()."
+                ) from exc
+            raise
     return store
+
+
+def collection_name(prefix: str, embeddings: Any, *, preset: str = "", chunk_size: int | None = None,
+                    chunk_overlap: int | None = None) -> str:
+    """A Chroma-safe collection name that changes whenever the chunks or the vectors would.
+
+    ``collection_name("project06", emb, preset="markdown", chunk_size=800, chunk_overlap=100)`` gives
+    ``project06-md800-100-bge-small-en-v1-5``. Different splitter settings or embedding models never
+    share a collection, so an experiment can't leave stale chunks (or wrong-sized vectors) behind.
+    Chroma names: 3-63 characters, letters, digits, ``.``, ``_``, ``-``, starting and ending alphanumeric.
+    """
+    model = "".join(ch if ch.isalnum() else "-" for ch in embedding_label(embeddings).split("/")[-1].lower())
+    short = {"markdown": "md", "recursive": "rc", "semantic": "se"}.get(preset, preset[:2])
+    split = f"{short}{chunk_size}-{chunk_overlap}" if chunk_size is not None else ""
+    name = "-".join(part for part in (prefix, split, model) if part)
+    name = "-".join(filter(None, name.split("-")))[:63].strip("-._")
+    return name if len(name) >= 3 else (name + "-ix")[:63]
+
+
+def _ids_for_sources(store: Any, sources: list[str]) -> set[str]:
+    if hasattr(store, "_collection"):                       # Chroma
+        found: set[str] = set()
+        for start in range(0, len(sources), 100):
+            batch = sources[start:start + 100]
+            found |= set(store.get(where={"source": {"$in": batch}}, include=[])["ids"])
+        return found
+    if hasattr(store, "store"):                             # InMemoryVectorStore
+        wanted = set(sources)
+        return {doc_id for doc_id, rec in store.store.items() if rec.get("metadata", {}).get("source") in wanted}
+    raise TypeError(f"sync_index supports Chroma and InMemoryVectorStore, got {type(store).__name__}")
+
+
+def sync_index(store: Any, chunks: list[Document], *, batch_size: int = 256) -> dict[str, int]:
+    """Make ``store`` hold exactly ``chunks`` for every source in ``chunks``: upsert them, delete the rest.
+
+    ``build_index`` only upserts by ``chunk_id``: re-index a shortened document and its old tail
+    chunks stay behind (orphans) and keep being retrieved. ``sync_index`` deletes, per source, every
+    id that is not in the new chunks. Sources that are absent from ``chunks`` are left alone (pass a
+    removed file's source explicitly by deleting its ids if a file disappears).
+
+    Returns ``{"added": n, "updated": n, "deleted": n}``.
+    """
+    ids = [c.metadata.get("chunk_id") or hashlib.sha1(c.page_content.encode()).hexdigest() for c in chunks]
+    sources = sorted({c.metadata.get("source", "") for c in chunks})
+    existing = _ids_for_sources(store, sources)
+    stale = sorted(existing - set(ids))
+    if stale:
+        store.delete(ids=stale)
+    docs = [Document(page_content=c.page_content, metadata=_clean(c.metadata)) for c in chunks]
+    for start in range(0, len(docs), batch_size):
+        store.add_documents(docs[start:start + batch_size], ids=ids[start:start + batch_size])
+    return {"added": len(set(ids) - existing), "updated": len(set(ids) & existing), "deleted": len(stale)}
 
 
 def open_chroma(collection: str, embeddings: Embeddings, persist_dir: str | Path | None = None) -> Any:

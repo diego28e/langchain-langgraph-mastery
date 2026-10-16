@@ -276,3 +276,138 @@ def test_score_answers_exposes_a_system_that_always_declines(chunks, golden):
     # Same retrieval, same "0 fabricated", same 4/4 declines... but nothing answered.
     assert bad["recall@5"] == good["recall@5"] and bad["dont_know"] == 4 and bad["fabricated_final"] == 0
     assert bad["correct"] == 0 and bad["false_dont_know"] == 16
+
+
+def test_hybrid_filter_applies_to_both_legs() -> None:
+    from langchain_core.vectorstores import InMemoryVectorStore
+    from mastery.rag.retrieve import BM25, hybrid_search
+
+    docs = [Document(page_content="zorblax refund policy for tenant a", metadata={"tenant": "a"}, id="a1"),
+            Document(page_content="zorblax refund policy for tenant b", metadata={"tenant": "b"}, id="b1"),
+            Document(page_content="unrelated text about shipping", metadata={"tenant": "b"}, id="b2")]
+    store = InMemoryVectorStore(HashingEmbeddings())
+    store.add_documents(docs)
+    hits = hybrid_search(store, BM25(docs), "zorblax", k=5, filter={"tenant": "a"})
+    assert hits and {d.metadata["tenant"] for d in hits} == {"a"}
+    assert {d.metadata["tenant"] for d in BM25(docs).search("zorblax", filter={"tenant": {"$in": ["b"]}})} == {"b"}
+
+
+def _doc_chunks(source: str, n: int) -> list[Document]:
+    return [Document(page_content=f"{source} part {i} " + "word " * 5, metadata={"source": source, "page": 0,
+                                                                              "chunk_id": f"{source}#p0-c{i}"})
+            for i in range(n)]
+
+
+def _sync_roundtrip(store) -> None:
+    from mastery.rag import sync_index
+
+    first = sync_index(store, _doc_chunks("x.md", 4) + _doc_chunks("y.md", 2))
+    assert first == {"added": 6, "updated": 0, "deleted": 0}
+    shrunk = sync_index(store, _doc_chunks("x.md", 1))            # x.md got shorter; y.md untouched
+    assert shrunk == {"added": 0, "updated": 1, "deleted": 3}
+    remaining = sorted(d.metadata["chunk_id"] for d in store.similarity_search("part", k=20))
+    assert remaining == ["x.md#p0-c0", "y.md#p0-c0", "y.md#p0-c1"]
+
+
+def test_sync_index_removes_orphans_memory() -> None:
+    from langchain_core.vectorstores import InMemoryVectorStore
+
+    _sync_roundtrip(InMemoryVectorStore(HashingEmbeddings(dims=64)))
+
+
+def test_sync_index_removes_orphans_chroma(tmp_path) -> None:
+    pytest.importorskip("langchain_chroma")
+    store = build_index([], HashingEmbeddings(dims=64), kind="chroma", collection="sync-test", persist_dir=tmp_path)
+    _sync_roundtrip(store)
+
+
+def test_collection_name_tracks_splitter_and_model() -> None:
+    from mastery.rag import collection_name
+
+    emb = HashingEmbeddings(dims=1024)
+    a = collection_name("project06", emb, preset="markdown", chunk_size=800, chunk_overlap=100)
+    b = collection_name("project06", emb, preset="markdown", chunk_size=300, chunk_overlap=50)
+    assert a == "project06-md800-100-hashingembeddings-1024" and a != b
+    assert collection_name("support_faq", HashingEmbeddings(dims=384)) != collection_name("support_faq", emb)
+    long = collection_name("x" * 80, emb)
+    assert 3 <= len(long) <= 63 and long[0].isalnum() and long[-1].isalnum()
+
+
+# --- Chunk-id citations and the Project 06 test set -------------------------------------------------
+
+def _chunks() -> list[Document]:
+    from mastery.rag import load_corpus, split_documents
+
+    return split_documents(load_corpus(SAMPLES / "corpus"), "markdown", 800, 100)
+
+
+def test_format_context_with_ids_round_trips_through_parse_context() -> None:
+    from mastery.rag import format_context, parse_context
+
+    chunks = _chunks()[:3]
+    parsed = parse_context(format_context(chunks, with_ids=True))
+    assert [d.metadata["chunk_id"] for d in parsed] == [c.metadata["chunk_id"] for c in chunks]
+    assert "id=" not in format_context(chunks)          # default output unchanged
+
+
+def test_chunk_citations_must_name_the_quoted_chunk() -> None:
+    from mastery.rag import ChunkCitation, ChunkCitedAnswer, CitedAnswer, Citation, verify_citations
+
+    chunks = _chunks()
+    returns = next(c for c in chunks if c.metadata["source"] == "policies/returns.md")
+    other = next(c for c in chunks if c.metadata["source"] != "policies/returns.md")
+    quote = "minus a 10% restocking fee"
+    good = ChunkCitation(source="policies/returns.md", quote=quote, chunk_id=returns.metadata["chunk_id"])
+    wrong = ChunkCitation(source="policies/returns.md", quote=quote, chunk_id=other.metadata["chunk_id"])
+    ghost = ChunkCitation(source="policies/returns.md", quote=quote, chunk_id="policies/returns.md#p0-c99")
+    assert verify_citations(ChunkCitedAnswer(answer="x", citations=[good]), chunks)["ok"]
+    assert verify_citations(ChunkCitedAnswer(answer="x", citations=[wrong]), chunks)["reasons"] == {quote: "wrong_chunk"}
+    assert verify_citations(ChunkCitedAnswer(answer="x", citations=[ghost]), chunks)["reasons"] == {quote: "unknown_chunk"}
+    plain = CitedAnswer(answer="x", citations=[Citation(source="policies/returns.md", quote=quote)])
+    assert verify_citations(plain, chunks)["ok"]                                   # lessons: unchanged
+    assert verify_citations(plain, chunks, require_chunk_id=True)["reasons"] == {quote: "missing_chunk_id"}
+
+
+def test_extractive_answer_can_cite_chunk_ids() -> None:
+    from mastery.rag import extractive_answer, verify_citations
+
+    chunks = _chunks()
+    answer = extractive_answer("How often should a Marine station be rinsed with fresh water?", chunks, chunk_ids=True)
+    assert answer.citations[0].chunk_id == "manuals/nimbus-marine-manual.pdf#p2-c0"
+    assert verify_citations(answer, chunks, require_chunk_id=True)["ok"]
+
+
+def _test_set() -> list[dict]:
+    return [json.loads(line) for line in (SAMPLES / "project06-test-set.jsonl").read_text(encoding="utf-8").splitlines()]
+
+
+def test_project06_test_set_is_stratified_held_out_and_answerable(golden: list[dict]) -> None:
+    from collections import Counter
+
+    from mastery.rag import load_corpus, normalize_text
+
+    rows = _test_set()
+    assert 60 <= len(rows) <= 80 and len({r["id"] for r in rows}) == len(rows)
+    strata = Counter(r["stratum"] for r in rows)
+    assert {"unanswerable", "out_of_scope"} <= set(strata) and len(strata) >= 6
+    assert all(n >= 4 for n in strata.values())
+    assert all(not r["in_corpus"] and not r["expected_sources"] for r in rows if r["stratum"] in ("unanswerable", "out_of_scope"))
+    assert not {g["question"] for g in golden} & {r["question"] for r in rows}, "the test set must not repeat development (golden) questions"
+    text: dict[str, str] = {}
+    for doc in load_corpus(SAMPLES / "corpus"):
+        text[doc.metadata["source"]] = text.get(doc.metadata["source"], "") + " " + normalize_text(doc.page_content)
+    for r in (r for r in rows if r["in_corpus"]):
+        assert all(s in text for s in r["expected_sources"]), r["id"]
+        assert any(normalize_text(r["answer_contains"]) in text[s] for s in r["expected_sources"]), r["id"]
+
+
+def test_stratified_sample_and_score_by_stratum() -> None:
+    from mastery.rag import CitedAnswer, NOT_FOUND, score_by_stratum, stratified_sample
+
+    rows = _test_set()
+    sample = stratified_sample(rows, 24)
+    assert len(sample) == 24 and len({r["stratum"] for r in sample}) == len({r["stratum"] for r in rows})
+    graded = [r | {"answer": CitedAnswer(answer=NOT_FOUND)} for r in rows]
+    by = score_by_stratum(graded)
+    assert by["out_of_scope"]["right"] == by["out_of_scope"]["n"]       # a decline is the correct answer
+    assert by["product"]["right"] == 0                                   # declining a real question is wrong
