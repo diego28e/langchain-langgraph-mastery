@@ -40,7 +40,8 @@ TEST_TOPICS = ["Battery care in winter", "Calibrating the sensors", "Mounting th
 PLANNER_PROMPT = ("You plan short, practical blog posts. Return a title and 3 sections. Each section has a heading "
                   "and ONE concrete question that research must answer.")
 WRITER_PROMPT = ("You write clear blog posts (300-500 words) in Markdown. Use ONLY the research notes. "
-                 "Every section must cite its sources as [source: <name>]. Start with a 2-sentence introduction and "
+                 "Every section must cite its sources as [source: <name>], one name per tag, copied exactly from the notes' "
+                 "sources attribute. Start with a 2-sentence introduction and "
                  "end with a '## Conclusion' section. When issues are listed, fix all of them and keep what works.")
 CRITIC_PROMPT = ("You are a strict editor. Score the draft from 1 to 10 (8 = publishable) and list concrete issues, "
                  "most important first. Check: introduction, every section cites a source, a conclusion, "
@@ -70,6 +71,11 @@ def writer_prompt(topic: str, outline: Outline, sections: list[SectionNote], dra
 
 def critic_prompt(topic: str, draft: str) -> list:
     return [SystemMessage(CRITIC_PROMPT), HumanMessage(f"Topic: {topic}\n\n<draft>\n{draft}\n</draft>")]
+
+
+def content_recursion_limit(max_iterations: int) -> int:
+    """The ``recursion_limit`` for the content pipeline: 5 + 2 × revisions steps, + 1 (must end below), + 4 margin."""
+    return 2 * max_iterations + 10
 
 
 def build_content_graph(planner: Any, writer: Any, critic: Any, researcher: Researcher, *,
@@ -127,7 +133,9 @@ def build_content_graph(planner: Any, writer: Any, critic: Any, researcher: Rese
                                   ["revise", "finalize"])
     builder.add_edge("revise", "critique")
     builder.add_edge("finalize", END)
-    return builder.compile(checkpointer=checkpointer, name=name)
+    # Worst case: plan, research, write, critique (4 steps) + 2 per revision + finalize, below the limit.
+    # A small margin on top; a bug loop still fails fast instead of running 10,000 steps.
+    return builder.compile(checkpointer=checkpointer, name=name).with_config(recursion_limit=content_recursion_limit(max_iterations))
 
 
 # --- Researchers --------------------------------------------------------------------------------------

@@ -115,6 +115,8 @@ def show_graph(graph: Any, *, png: bool = True, xray: bool = False) -> str:
             display(Image(data))
             return "png"
         except Exception as exc:  # noqa: BLE001 - offline, proxy, or mermaid.ink down: fall back
-            print(f"⚠️ PNG unavailable ({type(exc).__name__}); showing Mermaid text instead.")
+            from mastery.models import safe_print
+
+            safe_print(f"⚠️ PNG unavailable ({type(exc).__name__}); showing Mermaid text instead.")
     display(Markdown(mermaid_markdown(graph, xray=xray)))
     return "mermaid"

@@ -267,3 +267,11 @@ def test_resume_with_command_payload_for_parallel_interrupts() -> None:
     first = g.invoke({"items": ["a", "b"]}, cfg)
     answers = {i.id: i.value.upper() for i in first["__interrupt__"]}
     assert sorted(g.invoke(Command(resume=answers), cfg)["out"]) == ["a=A", "b=B"]
+
+
+def test_in_memory_saver_does_not_implement_prune_either() -> None:
+    """Canary for Lesson 03.02's text: when upstream implements prune(), update the lesson."""
+    from langgraph.checkpoint.memory import InMemorySaver
+
+    with pytest.raises(NotImplementedError):
+        InMemorySaver().prune(["t"], strategy="keep_latest")

@@ -10,6 +10,7 @@ from __future__ import annotations
 import csv
 import re
 import sqlite3
+import time
 from pathlib import Path
 
 __all__ = ["check_sql", "list_tables", "run_readonly_query", "sqlite_from_csv", "table_schema"]
@@ -80,7 +81,9 @@ def table_schema(db_path: Path, tables: list[str], sample_rows: int = 3) -> str:
 def check_sql(sql: str, max_rows: int = 50) -> tuple[bool, str]:
     """Static checks before running model-written SQL. Returns ``(ok, sql_or_reason)``.
 
-    One statement, starting with SELECT or WITH; adds ``LIMIT max_rows`` when missing.
+    One statement, starting with SELECT or WITH; adds ``LIMIT max_rows`` when missing. A query that
+    already ends in ``LIMIT n``, or has another LIMIT form (``LIMIT a OFFSET b``, ``LIMIT a, b``) or a
+    ``--`` comment, is wrapped as ``SELECT * FROM (<query>) LIMIT max_rows`` instead of appended to.
     """
     text = sql.strip().rstrip(";").strip()
     text = re.sub(r"^```(?:sql)?\s*|\s*```$", "", text, flags=re.IGNORECASE).strip()
@@ -90,17 +93,25 @@ def check_sql(sql: str, max_rows: int = 50) -> tuple[bool, str]:
         return False, "only one statement is allowed"
     if not re.match(r"(?is)^(select|with)\b", text):
         return False, "only SELECT queries are allowed"
-    if not re.search(r"(?i)\blimit\s+\d+\s*$", text):
-        text += f" LIMIT {max_rows}"
-    return True, text
+    if re.search(r"(?i)\blimit\s+\d+\s*$", text):
+        return True, text
+    if re.search(r"(?i)\blimit\b", text) or "--" in text:
+        return True, f"SELECT * FROM (\n{text}\n) LIMIT {max_rows}"
+    return True, text + f" LIMIT {max_rows}"
 
 
-def run_readonly_query(db_path: Path, sql: str, max_rows: int = 50) -> str:
-    """Run one checked query on a read-only connection. Errors come back as text for the model to fix."""
+def run_readonly_query(db_path: Path, sql: str, max_rows: int = 50, timeout_s: float = 5.0) -> str:
+    """Run one checked query on a read-only connection. Errors come back as text for the model to fix.
+
+    A query running longer than ``timeout_s`` is interrupted (``Error: interrupted``), so a runaway
+    join can't block the graph.
+    """
     ok, checked = check_sql(sql, max_rows)
     if not ok:
         return f"Error: {checked}"
     con = _connect(db_path)
+    deadline = time.monotonic() + timeout_s
+    con.set_progress_handler(lambda: int(time.monotonic() > deadline), 10_000)
     try:
         cur = con.execute(checked)
         cols = [d[0] for d in cur.description or []]

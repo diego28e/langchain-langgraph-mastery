@@ -11,7 +11,7 @@ Models:
 - `GROQ_API_KEY` set → gpt-oss-20b plans, writes and critiques (💸 free tier, ~6-12k tokens per run).
 - No key, or `MASTERY_OFFLINE=1` → scripted offline models (free), so Studio works without any key.
 Research always comes from the Module 06 corpus (offline, BM25). The graph itself is
-`mastery.graphs.content.build_content_graph`: the same code the Project 07 notebook runs.
+`mastery.graphs.content.build_content_graph`: the reference implementation of Project 07 (same node names and offline scores as your notebook graph, not your code).
 """
 
 from __future__ import annotations

@@ -191,11 +191,24 @@ def test_sql_helpers_are_read_only(tmp_path) -> None:
     out = run_readonly_query(db, "SELECT COUNT(*) AS n FROM expenses")
     assert out.splitlines() == ["n", "128"]
     assert check_sql("select 1") == (True, "select 1 LIMIT 50")
+    assert check_sql("SELECT * FROM expenses LIMIT 3 OFFSET 5")[1].startswith("SELECT * FROM (")
+    assert check_sql("SELECT * FROM expenses -- top rows")[1].endswith("\n) LIMIT 50")
     assert not check_sql("DROP TABLE expenses")[0]
     assert not check_sql("SELECT 1; DELETE FROM expenses")[0]
     assert run_readonly_query(db, "SELECT nope FROM expenses").startswith("Error:")
     # A WITH that tries to write is refused by the authorizer / read-only connection, and the data survives.
     assert run_readonly_query(db, "WITH x AS (SELECT 1) DELETE FROM expenses").startswith("Error:")
+    # ...and the refusal comes from the authorizer itself, not from the appended LIMIT (a syntax error).
+    import sqlite3
+
+    from mastery.graphs.sql import _connect
+
+    con = _connect(db)
+    try:
+        with pytest.raises(sqlite3.DatabaseError, match="not authorized"):
+            con.execute("WITH x AS (SELECT 1) DELETE FROM expenses")
+    finally:
+        con.close()
     assert run_readonly_query(db, "SELECT COUNT(*) FROM expenses").splitlines()[1] == "128"
     with pytest.raises(ValueError):
         sqlite_from_csv(REPO / "data" / "samples" / "expenses" / "expenses-2026.csv", tmp_path / "x.sqlite", "bad name")
@@ -244,3 +257,20 @@ def test_canary_parallel_writes_apply_in_send_order_but_stream_in_completion_ord
     streamed = [u["runner"]["out"][0] for u in race.stream({"out": []}, stream_mode="updates")]
     assert streamed == [4, 3, 2, 1, 0]
     assert race.invoke({"out": []})["out"] == [0, 1, 2, 3, 4]
+
+
+def test_content_graph_sets_a_tight_recursion_limit():
+    from langchain_core.messages import AIMessage
+
+    from mastery.graphs.content import content_recursion_limit
+    from mastery.testing import ScriptedChatModel
+    m = offline_models()
+    harsh = ScriptedChatModel(responses=[AIMessage("", tool_calls=[{"name": "Critique", "id": "c",
+                                                                   "args": {"score": 1, "issues": ["Again."]}}])],
+                              repeat_last=True)
+    graph = build_content_graph(m["planner"], m["writer"], harsh, corpus_researcher(), max_iterations=3)
+    assert graph.config["recursion_limit"] == content_recursion_limit(3) == 16
+    assert graph.invoke({"topic": "Battery care in winter"})["iteration"] == 3      # the harsh critic fits
+    with pytest.raises(GraphRecursionError):                                        # a runaway loop fails fast
+        build_content_graph(m["planner"], m["writer"], harsh, corpus_researcher(), max_iterations=50).invoke(
+            {"topic": "Battery care in winter"}, {"recursion_limit": content_recursion_limit(3)})
