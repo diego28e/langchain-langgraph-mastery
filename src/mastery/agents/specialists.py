@@ -252,8 +252,8 @@ def handoff_graph(agents: dict[str, Any], *, entry: str, checkpointer: Any = Non
     """
     names = list(agents)
 
-    def make_node(agent: Any) -> Callable[[dict], dict]:
-        def node(state: dict) -> dict:
+    def make_node(agent: Any) -> Any:
+        def escalation(state: dict) -> dict | None:
             # The guard runs where the handoff lands: a transfer's Command(goto=...) already picked
             # this node, so the check happens here instead of in a separate (parallel) branch.
             if max_handoffs is not None and transfers_this_turn(state["messages"]) > max_handoffs:
@@ -262,8 +262,19 @@ def handoff_graph(agents: dict[str, Any], *, entry: str, checkpointer: Any = Non
                 # An AIMessage after the transfer ToolMessage keeps the history valid; the next turn
                 # starts at ``entry`` again.
                 return {"messages": [AIMessage(content=ESCALATION_MESSAGE, name="escalation")], "active_agent": entry}
-            return agent.invoke(state)
-        return node
+            return None
+
+        def node(state: dict) -> dict:
+            return escalation(state) or agent.invoke(state)
+
+        async def anode(state: dict) -> dict:
+            # Async twin (Lesson 12.03): under ainvoke/astream the agent runs on the event loop
+            # instead of occupying a worker thread for the whole turn.
+            return escalation(state) or await agent.ainvoke(state)
+
+        from langchain_core.runnables import RunnableLambda
+
+        return RunnableLambda(node, afunc=anode)
 
     builder = StateGraph(state_schema, context_schema=context_schema) if context_schema else StateGraph(state_schema)
     for agent_name, agent in agents.items():
