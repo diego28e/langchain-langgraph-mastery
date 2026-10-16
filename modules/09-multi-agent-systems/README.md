@@ -49,7 +49,7 @@ python -c "import mastery.agents as a; print(a.__file__)"   # expect: ...src/mas
 | | |
 |---|---|
 | 🔑 Keys | `GROQ_API_KEY` (optional: without it 💸 cells print `⏭️ Skipped` and an offline, rule-based support model stands in). **No new keys** |
-| 💰 Cost | $0. Every pattern runs and is measured offline. LIVE cells use `gpt-oss-20b` on the Groq free tier: a few thousand tokens per cell; Project 09 LIVE ≈ 3–6k tokens per conversation per pattern (`LIVE_LIMIT` caps how many run) |
+| 💰 Cost | $0. Every pattern runs and is measured offline. LIVE cells use `gpt-oss-20b` on the Groq free tier: a few thousand tokens per cell; Project 09 LIVE ≈ 3–6k tokens per conversation per pattern per arm (`LIVE_IDS` picks 8 by default, `TRIALS` repeats them) |
 | 💾 Disk | Small: an ADR and JSON reports in `data/outputs/m09/` (git-ignored, < 1 MB); Project 09 LIVE builds a small Chroma index in `data/vectorstores/` (< 5 MB) |
 | ⏱️ Free-tier note | Multi-agent patterns make **many** small calls. On the free tier you may hit the requests-per-minute limit; `get_model` retries `429`s, so a LIVE run is slower, not broken |
 | ✅ Ready when | `pip check` is clean, `pytest` passes, the versions print and `mastery.agents` resolves to the package |
