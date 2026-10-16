@@ -24,7 +24,7 @@ python -m mastery.mcp_servers.notes_server --help   # expect: "usage: notes_serv
 |---|---|
 | 🔑 Keys | `GROQ_API_KEY` (optional: without it 💸 cells print `⏭️ Skipped`). **New, optional: `TAVILY_API_KEY`** (free, no card: [app.tavily.com](https://app.tavily.com), 1,000 credits/month) for 05.01 Parts 6–7 and `MASTERY_WEB_SEARCH=tavily` in the project. Add it to `.env` as `TAVILY_API_KEY=tvly-...` and restart the kernel. The LangChain docs MCP server needs **no key** |
 | 💰 Cost | $0. Groq free tier (browser search reads pages, so input tokens are higher than a plain chat: ~2–10k per search with `reasoning_effort="low"`). Tavily: 1 credit per basic search |
-| 📦 Optional extras | [Node.js LTS](https://nodejs.org/) only if you want the **MCP Inspector** (`npx @modelcontextprotocol/inspector`, 05.02/05.04). VS Code or Cursor to connect the notes server to an IDE (05.04) |
+| 📦 Optional extras | [Node.js LTS](https://nodejs.org/) only if you want the **MCP Inspector** (`npx @modelcontextprotocol/inspector@2.11.0`, pinned; 05.02/05.04). VS Code or Cursor to connect the notes server to an IDE (05.04) |
 | 🌐 Network | 🌐 cells reach `https://docs.langchain.com/mcp`. Offline or blocked? They print ⚠️ and the lesson continues with the **offline stand-in** (`mastery.mcp_servers.docs_standin`) |
 | ✅ Ready when | `pytest` shows no failures, `mcp ok` prints and `--help` shows the usage line |
 
