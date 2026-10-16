@@ -68,8 +68,8 @@ __all__ = [
     "split_model_string",
 ]
 
-Role = Literal["fast", "reasoning", "vision"]
-ROLES: tuple[str, ...] = ("fast", "reasoning", "vision")
+Role = Literal["fast", "reasoning", "vision", "multimodal"]
+ROLES: tuple[str, ...] = ("fast", "reasoning", "vision", "multimodal")
 
 # Which environment variable(s) hold the key for each provider prefix.
 # A provider is ready if ANY of its variables is set (Gemini accepts either name).
@@ -134,7 +134,8 @@ def model_string(role: Role | str = "fast", provider: str = "groq", *, settings:
     """Return the ``"provider:model"`` string for a role, read from configuration.
 
     Args:
-        role: ``"fast"``, ``"reasoning"`` or ``"vision"``.
+        role: ``"fast"``, ``"reasoning"``, ``"vision"`` or ``"multimodal"`` (Module 13: always
+            ``MASTERY_MODEL_MULTIMODAL``, a full ``"provider:model"`` string).
         provider: ``"groq"`` (course default, free tier) or ``"benchmark"``
             (the paid benchmark from ``MASTERY_BENCHMARK_MODEL*``; ``"fast"``
             maps to the cheap benchmark, ``"reasoning"`` to the strong one,
@@ -151,6 +152,11 @@ def model_string(role: Role | str = "fast", provider: str = "groq", *, settings:
     if role not in ROLES:
         raise ValueError(f"Unknown role {role!r}. Use one of: {', '.join(ROLES)}.")
     settings = settings or load_settings()
+    if role == "multimodal":
+        # Module 13: PDFs, audio and video. Groq has no such model, so this role is a full
+        # "provider:model" string (default Gemini, free tier) whatever ``provider`` says.
+        split_model_string(settings.model_multimodal)
+        return settings.model_multimodal
     if provider == "groq":
         model_id = {"fast": settings.model_fast, "reasoning": settings.model_reasoning, "vision": settings.model_vision}[role]
         return f"groq:{model_id}"
@@ -193,7 +199,7 @@ def get_model(
     network call happens on ``invoke``/``stream``/``batch``.
 
     Args:
-        role: ``"fast"``, ``"reasoning"`` or ``"vision"`` (ignored when ``model`` is given).
+        role: ``"fast"``, ``"reasoning"``, ``"vision"`` or ``"multimodal"`` (ignored when ``model`` is given).
         provider: ``"groq"`` or ``"benchmark"`` (see :func:`model_string`).
         model: Explicit ``"provider:model"`` string; overrides role/provider.
         settings: Settings to read model IDs from. Defaults to :func:`load_settings`.

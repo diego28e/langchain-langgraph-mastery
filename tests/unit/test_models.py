@@ -353,3 +353,11 @@ def test_fallback_models_env_wraps_role_models_only(monkeypatch: pytest.MonkeyPa
     assert not isinstance(get_model(model="groq:openai/gpt-oss-20b"), RunnableWithFallbacks)
     monkeypatch.delenv("MASTERY_FALLBACK_MODELS")
     assert not isinstance(get_model("fast", settings=Settings(model_fast="openai/gpt-oss-20b")), RunnableWithFallbacks)
+
+
+def test_multimodal_role_is_a_full_spec_whatever_the_provider() -> None:
+    settings = Settings(model_multimodal="google_genai:gemini-3.8-flash")
+    assert model_string("multimodal", settings=settings) == "google_genai:gemini-3.8-flash"
+    assert model_string("multimodal", "benchmark", settings=settings) == "google_genai:gemini-3.8-flash"
+    with pytest.raises(ValueError):
+        model_string("multimodal", settings=Settings(model_multimodal="no-provider"))

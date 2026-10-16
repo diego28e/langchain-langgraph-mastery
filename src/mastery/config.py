@@ -38,7 +38,14 @@ __all__ = [
     "DEFAULT_BENCHMARK_MODEL_STRONG",
     "DEFAULT_MODEL_FAST",
     "DEFAULT_MODEL_REASONING",
+    "DEFAULT_MODEL_MULTIMODAL",
+    "DEFAULT_MODEL_STT",
+    "DEFAULT_MODEL_TTS",
+    "DEFAULT_MODEL_TTS_GEMINI",
     "DEFAULT_MODEL_VISION",
+    "DEFAULT_TTS_PROVIDER",
+    "DEFAULT_TTS_VOICE",
+    "DEFAULT_TTS_VOICE_GEMINI",
     "KEY_HELP_URLS",
     "MissingSettingError",
     "Settings",
@@ -63,6 +70,23 @@ DEFAULT_MODEL_REASONING = "openai/gpt-oss-120b"
 # PREVIEW model (evaluation only, may be retired at short notice).
 # https://console.groq.com/docs/vision
 DEFAULT_MODEL_VISION = "qwen/qwen3.8-27b"
+# Module 13 (multimodal & voice). VERIFIED 2026-10-16:
+# - whisper-large-v3-turbo is a Groq *production* STT model (transcription only, no translation)
+#   https://console.groq.com/docs/speech-to-text
+# - Orpheus is a Groq *preview* TTS model: 200 characters per request, WAV only, English
+#   https://console.groq.com/docs/text-to-speech/orpheus
+# - Gemini 3.8 Flash-Lite TTS and Gemini 3.6 Flash (PDF, audio, video input) are free of charge
+#   on the Gemini free tier https://ai.google.dev/gemini-api/docs/pricing
+DEFAULT_MODEL_STT = "whisper-large-v3-turbo"
+DEFAULT_MODEL_TTS = "canopylabs/orpheus-v1-english"
+DEFAULT_TTS_VOICE = "troy"
+DEFAULT_MODEL_TTS_GEMINI = "gemini-3.8-flash-lite-tts"
+DEFAULT_TTS_VOICE_GEMINI = "Kore"
+# Which TTS the course uses by default: "gemini" (free tier, multilingual) or "groq" (Orpheus, preview,
+# 100 requests / 3.6K tokens a day on the free tier: https://console.groq.com/docs/rate-limits).
+DEFAULT_TTS_PROVIDER = "gemini"
+# A model that reads PDFs, audio and video, as "provider:model".
+DEFAULT_MODEL_MULTIMODAL = "google_genai:gemini-3.6-flash"
 # Paid benchmark, as "provider:model" strings (docs/paid-benchmark-openai-vs-gemini.md).
 # VERIFIED 2026-10-11: https://developers.openai.com/api/docs/models
 DEFAULT_BENCHMARK_MODEL = "openai:gpt-6-luna"
@@ -344,6 +368,13 @@ class Settings:
         model_fast: Groq model ID for quick, cheap calls (``MASTERY_MODEL_FAST``).
         model_reasoning: Groq model ID for harder tasks (``MASTERY_MODEL_REASONING``).
         model_vision: Groq model ID that accepts images (``MASTERY_MODEL_VISION``). Preview.
+        model_multimodal: ``"provider:model"`` that reads PDFs, audio and video (``MASTERY_MODEL_MULTIMODAL``).
+        model_stt: Groq speech-to-text model (``MASTERY_MODEL_STT``).
+        model_tts: Groq text-to-speech model (``MASTERY_MODEL_TTS``). Preview.
+        tts_voice: Voice for ``model_tts`` (``MASTERY_TTS_VOICE``).
+        tts_provider: ``"gemini"`` or ``"groq"`` (``MASTERY_TTS_PROVIDER``).
+        model_tts_gemini: Gemini TTS model (``MASTERY_MODEL_TTS_GEMINI``).
+        tts_voice_gemini: Voice for ``model_tts_gemini`` (``MASTERY_TTS_VOICE_GEMINI``).
         benchmark_model: Paid benchmark as ``"provider:model"`` (``MASTERY_BENCHMARK_MODEL``).
         benchmark_model_strong: Paid quality ceiling (``MASTERY_BENCHMARK_MODEL_STRONG``).
         langsmith_tracing: Whether LangSmith tracing is on (``LANGSMITH_TRACING``).
@@ -353,6 +384,13 @@ class Settings:
     model_fast: str = DEFAULT_MODEL_FAST
     model_reasoning: str = DEFAULT_MODEL_REASONING
     model_vision: str = DEFAULT_MODEL_VISION
+    model_multimodal: str = DEFAULT_MODEL_MULTIMODAL
+    model_stt: str = DEFAULT_MODEL_STT
+    model_tts: str = DEFAULT_MODEL_TTS
+    tts_voice: str = DEFAULT_TTS_VOICE
+    tts_provider: str = DEFAULT_TTS_PROVIDER
+    model_tts_gemini: str = DEFAULT_MODEL_TTS_GEMINI
+    tts_voice_gemini: str = DEFAULT_TTS_VOICE_GEMINI
     benchmark_model: str = DEFAULT_BENCHMARK_MODEL
     benchmark_model_strong: str = DEFAULT_BENCHMARK_MODEL_STRONG
     langsmith_tracing: bool = False
@@ -384,6 +422,13 @@ def load_settings(*, load_dotenv_file: bool = True) -> Settings:
         model_fast=get_setting("MASTERY_MODEL_FAST", DEFAULT_MODEL_FAST),
         model_reasoning=get_setting("MASTERY_MODEL_REASONING", DEFAULT_MODEL_REASONING),
         model_vision=get_setting("MASTERY_MODEL_VISION", DEFAULT_MODEL_VISION),
+        model_multimodal=get_setting("MASTERY_MODEL_MULTIMODAL", DEFAULT_MODEL_MULTIMODAL),
+        model_stt=get_setting("MASTERY_MODEL_STT", DEFAULT_MODEL_STT),
+        model_tts=get_setting("MASTERY_MODEL_TTS", DEFAULT_MODEL_TTS),
+        tts_voice=get_setting("MASTERY_TTS_VOICE", DEFAULT_TTS_VOICE),
+        tts_provider=get_setting("MASTERY_TTS_PROVIDER", DEFAULT_TTS_PROVIDER).lower(),
+        model_tts_gemini=get_setting("MASTERY_MODEL_TTS_GEMINI", DEFAULT_MODEL_TTS_GEMINI),
+        tts_voice_gemini=get_setting("MASTERY_TTS_VOICE_GEMINI", DEFAULT_TTS_VOICE_GEMINI),
         benchmark_model=get_setting("MASTERY_BENCHMARK_MODEL", DEFAULT_BENCHMARK_MODEL),
         benchmark_model_strong=get_setting("MASTERY_BENCHMARK_MODEL_STRONG", DEFAULT_BENCHMARK_MODEL_STRONG),
         langsmith_tracing=tracing,

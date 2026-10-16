@@ -176,3 +176,18 @@ def test_find_repo_root_raises_outside_repo(tmp_path: Path) -> None:
 def test_this_repository_is_found() -> None:
     root = find_repo_root(Path(__file__).parent)
     assert (root / "src" / "mastery" / "config.py").is_file()
+
+
+def test_module13_voice_settings_default_and_override(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    for name in ("MASTERY_MODEL_STT", "MASTERY_TTS_PROVIDER", "MASTERY_TTS_VOICE", "MASTERY_TTS_VOICE_GEMINI",
+                 "MASTERY_MODEL_MULTIMODAL"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.chdir(tmp_path)
+    settings = load_settings()
+    assert settings.model_stt == config.DEFAULT_MODEL_STT == "whisper-large-v3-turbo"
+    assert settings.tts_provider == "gemini" and settings.tts_voice == "troy"
+    assert settings.model_multimodal.startswith("google_genai:")
+    monkeypatch.setenv("MASTERY_TTS_PROVIDER", "Groq")
+    monkeypatch.setenv("MASTERY_TTS_VOICE_GEMINI", "Puck")
+    settings = load_settings()
+    assert settings.tts_provider == "groq" and settings.tts_voice_gemini == "Puck"
