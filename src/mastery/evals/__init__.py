@@ -4,7 +4,7 @@ Introduced in Module 01 (Lessons 01.03, 01.05, 01.06, 01.08 and Project 01),
 reused by every module that reports a score, and extended in Module 10
 (Testing, Evaluation and Observability).
 
-Three submodules, all pure standard library:
+The Module 01 submodules, all pure standard library:
 
 - :mod:`mastery.evals.stats`: intervals (``wilson_interval``,
   ``bootstrap_interval``), paired tests (``paired_compare``, ``mcnemar_exact``,
@@ -16,6 +16,19 @@ Three submodules, all pure standard library:
   and ``latency_summary`` (p50/p95).
 - :mod:`mastery.evals.meta`: ``run_metadata`` (prompt version, content hashes,
   git SHA, package versions) for LangSmith metadata and report headers.
+
+Module 10 adds (also standard library only):
+
+- :mod:`mastery.evals.taxonomy`: ``LabelSheet``, ``Category``, ``Taxonomy`` (error analysis).
+- :mod:`mastery.evals.datasets`: ``Dataset`` (versions, splits, coverage), ``run_experiment``.
+- :mod:`mastery.evals.gates`: CI gates on interval lower bounds, red-team suites and budgets.
+- :mod:`mastery.evals.monitoring`: sampling, judge budgets, feedback payloads, review queues, alerts.
+- :mod:`mastery.evals.prompts`: ``PromptRegistry`` (prompt commits, tags, gated promotion).
+- :mod:`mastery.evals.release_gate`: the support desk's release gate (``python -m mastery.evals.release_gate``).
+
+And two submodules you import explicitly, because they need extra packages:
+:mod:`mastery.evals.judges` (``langchain-core``, ``openevals``) and
+:mod:`mastery.evals.otel` (``opentelemetry-sdk``).
 
 Example:
     >>> from mastery.evals import paired_compare, wilson_interval
@@ -29,6 +42,15 @@ Example:
 
 from __future__ import annotations
 
+from mastery.evals.datasets import (
+    Dataset,
+    Experiment,
+    estimate_cost,
+    examples_from_categories,
+    examples_from_traces,
+    run_experiment,
+)
+from mastery.evals.gates import GateReport, GateResult, cost_gate, pass_rate_gate, redteam_gate, summary_gate
 from mastery.evals.meta import (
     DEFAULT_PACKAGES,
     content_hash,
@@ -60,6 +82,9 @@ from mastery.evals.stats import (
     summarize_repeats,
     wilson_interval,
 )
+from mastery.evals.monitoring import ReviewQueue, feedback_payload, judge_budget, rate_alert, sample_size, should_sample
+from mastery.evals.prompts import PromotionBlocked, PromptRegistry
+from mastery.evals.taxonomy import PASS, Category, LabelSheet, RankedCategory, Taxonomy
 from mastery.evals.timing import (
     LatencySummary,
     LimiterInsideTimingWarning,
@@ -77,6 +102,31 @@ from mastery.evals.timing import (
 )
 
 __all__ = [
+    "PASS",
+    "PromotionBlocked",
+    "PromptRegistry",
+    "ReviewQueue",
+    "feedback_payload",
+    "judge_budget",
+    "rate_alert",
+    "sample_size",
+    "should_sample",
+    "Category",
+    "Dataset",
+    "Experiment",
+    "GateReport",
+    "GateResult",
+    "LabelSheet",
+    "RankedCategory",
+    "Taxonomy",
+    "cost_gate",
+    "estimate_cost",
+    "examples_from_categories",
+    "examples_from_traces",
+    "pass_rate_gate",
+    "redteam_gate",
+    "run_experiment",
+    "summary_gate",
     "DEFAULT_PACKAGES",
     "NOISE_VERDICT",
     "Interval",
