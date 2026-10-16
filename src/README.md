@@ -66,7 +66,7 @@ from mastery.pricing import estimate_cost
 llm = get_model("fast", temperature=0, max_tokens=300)        # groq:<MASTERY_MODEL_FAST>
 try:
     reply = llm.invoke("Say hi in five words.")
-    print(reply.text, estimate_cost(reply.usage_metadata, "groq:openai/gpt-oss-20b"))
+    print(reply.text, estimate_cost(reply.usage_metadata, reply.response_metadata["model_name"]))
 except Exception as error:
     info = explain_model_error(error)          # kind, retryable, status_code, retry_after, hint
     print(info.kind, info.hint)

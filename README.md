@@ -57,6 +57,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 
 0. **Get the repo the right way:** clone it, keep `main` untouched, and do your work in a git-ignored `workspace/` folder, so course updates never collide with your notebooks ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)).
 1. **Verify your environment** with [setup/VERIFY_ENVIRONMENT.md](setup/VERIFY_ENVIRONMENT.md) (nothing gets installed; you only check what you have), then **create the course environment** with the [Lesson 00.02 guide](modules/00-foundations/00-02-create-course-env.md). New to environments? Read [Python environments, compared](setup/PYTHON_ENVIRONMENTS_COMPARED.md) (pip, venv, conda, uv, Poetry, and more, in plain English).
+   *No local install?* Open the repo in GitHub Codespaces or a VS Code Dev Container: `.devcontainer/` installs the same stack, pinned to the tested versions in `constraints/`. Local installs can opt into the same pins with `-c constraints/constraints-2026-10-16.txt`.
 2. Copy `.env.example` to `.env` and add the keys you need for the current module (Module 00 only needs `GROQ_API_KEY`).
 3. Read the [Course Outline](COURSE_OUTLINE.md). It lists every lesson, notebook, reading list, and project spec.
 4. Work through `modules/` in order. Each module folder has a README listing its lessons.

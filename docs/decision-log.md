@@ -117,7 +117,7 @@
 - Context: `https://docs.langchain.com/mcp` is free and keyless, but notebooks and tests must run offline and give stable results.
 - Decision: `mastery.mcp_servers.docs_standin` serves `search_docs_by_lang_chain` over `data/samples/mcp/docs-snapshot.json` (86 Python sections captured 2026-10-12) in the real server's `Title/Link/Page/Content` format. 🌐 cells try the real server and fall back with a ⚠️; Project 05 OFFLINE uses the stand-in, LIVE the real server.
 - Trade-offs: the snapshot ages; its ranking is word overlap, not the real search. The offline project reader scores 8/10 honestly (2 misses kept on purpose).
-- Revisit: refresh the snapshot (`_maintainer/tools/m05/data.py`) when docs URLs change; re-check the benchmark's `expected_page`s.
+- Revisit: refresh the snapshot (maintainer tooling) when docs URLs change; re-check the benchmark's `expected_page`s.
 
 ### D-015 · Annotations are claims: allow-lists and fail-closed policies · 2026-10-12
 - Decision: `approval_policy` pauses every tool not marked read-only (no hint → pause). For servers we don't control, pass `trusted_read_only=[...]`: only reviewed names skip approval. `tool_fingerprint` pins reviewed definitions; `poisoned_descriptions` is a tripwire, not a wall. The project gives the agent only allowed tool names (no `submit_feedback`, no `delete_note`).
@@ -229,5 +229,11 @@
 - Context: 15 conversations × 2 patterns can hit free-tier request limits, and a live model will miss a few.
 - Decision: `LIVE_LIMIT = 5` per pattern; the LIVE acceptance threshold is 80% of the conversations that ran (offline: ≥ 12/15). Set `LIVE_LIMIT = 15` for the full run.
 - Revisit: after measuring live pass rates in Module 10.
+- Superseded 2026-10-16: the first five conversations are all billing, so the default LIVE run hid routing failures. Now `LIVE_IDS` (8 conversations covering every route, pass mark 7/8), `TRIALS = 3` graded on the worst trial, and the single-agent baseline as a third arm. `LIVE_IDS = None` runs all 15.
+
+### D-038 · Opt-in version pins and a dev container · 2026-10-16
+- Context: pyproject.toml uses ranges, so two learners can get different versions, and new releases or retired Groq models can break lessons quietly.
+- Decision: keep the ranges as the source of truth. Add a dated constraints file (`constraints/`, the versions the full suite last passed with), and a dev container that installs with it.
+- Revisit: refresh the constraints file whenever the course bumps its verified date.
 
 <!-- Add your decisions below this line -->

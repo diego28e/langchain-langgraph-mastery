@@ -2,6 +2,130 @@
 
 What changed in the course, newest first. After you pull an update ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)), skim the latest entry: it says which lessons changed and whether you need to re-run anything.
 
+## 2026-10-16 · Project 06: chunk-level citations and a 72-question test set
+
+**Re-run after pulling:** Project 06 (starter and solution). If you already started it, compare your Steps 3–6 with the new README; the lessons are unchanged.
+
+- Project 06 answers now cite the exact chunk they quote (`ChunkCitedAnswer` / `ChunkCitation` with a `chunk_id`); a real sentence attributed to the wrong chunk counts as fabricated.
+- The project is scored on a new held-out test set, `data/samples/rag/project06-test-set.jsonl`: 72 questions in 6 answerable strata plus 18 unanswerable or off-topic questions that must be declined. Results include a per-stratum table. The 20-question golden set stays the lessons' development set.
+- LIVE mode runs a stratified sample of 24 questions by default (`LIVE_QUESTIONS`).
+- New helpers in `mastery.rag`: `format_context(..., with_ids=True)`, `verify_citations(..., require_chunk_id=True)`, `stratified_sample`, `score_by_stratum`, `is_right`.
+
+## 2026-10-16 · Rubrics for every project, a dev container, opt-in version pins
+
+**Re-run after pulling:** nothing is required. Setup cells changed slightly in every module (comment labels, and the warning filter only applies to older `langchain-core`), so re-run a notebook from the top if you keep it open.
+
+- Every project README now has a **Rubric (self-assessment)** table: what "meets" and what "exceeds" looks like.
+- Module 07 notebooks send traces to one LangSmith project per lesson (`m07-<lesson>`, Project 07: `m07-project-content-pipeline`), unless your `.env` sets `LANGSMITH_PROJECT`.
+- New: `.devcontainer/` (GitHub Codespaces or VS Code Dev Containers) and `constraints/constraints-2026-10-16.txt`, the versions the course last passed with. Opt in with `python -m pip install -e ".[dev]" -c constraints/constraints-2026-10-16.txt`.
+- Setup-cell comments are labelled `Setup 1–4`, so they no longer clash with the projects' `Step` headings.
+- Lesson 00.03 mentions autosave. The 00.02 guide explains that `nbstripout` cleans what you commit, not the file on disk.
+
+## 2026-10-16 · Clearer wording, corrected details and small code fixes in Modules 00–09
+
+**Re-run after pulling:** nothing is required. If you re-run, the changed code cells are in Lessons 01.04, 01.05, 01.07, 05.01, 05.03, 06.04, 06.06, 06.07, 06.09, 07.04, 07.07 and 08.06, and Projects 01, 03, 05 and 08. No new installs.
+
+- Many small text fixes: cross-references to the right module or lesson, time estimates that match the lessons, error messages quoted as they really appear, and solutions that match their exercises.
+- `mastery.pricing.get_price` also finds prices for dated model snapshots. `mastery.graphs.sql.check_sql` now wraps queries that already use `LIMIT ... OFFSET` or end in a comment, and `run_readonly_query` stops a query after 5 seconds.
+- Lesson 05.03 picks the docs search tool by name, not by its position in the server's list. Lesson 07.04's parallel checks understand answers like "Yes." and "No, it isn't." Lesson 07.07's keyword router matches whole words only.
+- Streaming cells in Module 08 use `.text`, which also works with providers that stream content blocks.
+
+## 2026-10-16 · A 🔎 Docs drill in every lesson of Modules 00–08
+
+**Re-run after pulling:** nothing; the new cells are Markdown only.
+
+- Every lesson in Modules 00–08 now ends with a short **🔎 Docs drill** (5–15 minutes) before its research checkpoint, like Modules 09 and 10: a question you answer from the official docs, the API reference or the installed source, with a collapsed **Path to the answer** that names where to look and how to confirm it.
+- The drills practise reading source (`??`, `inspect.getsource`), checking defaults in your installed version, following a docs redirect or a changelog entry, and spotting where two official sources disagree.
+
+## 2026-10-16 · Measured agentic RAG in Project 06, safer retries in Project 08, a baseline arm in Project 09
+
+**Re-run after pulling:** Projects 06, 08 and 09, and Lessons 06.05, 06.08, 08.02, 08.04 and 09.05 (no new installs). If you already started one of these starters, compare your TODOs with the new starter before you continue (your copy in `workspace/` is never touched by a pull). Project 06's Chroma collection has a new name (it now includes the splitter settings and the embedding model), so the first run re-indexes.
+
+### Project 06 · Docs Q&A Bot
+
+- New TODO 5: an agentic variant (the model decides when to search) benchmarked next to the 2-step chain, with citations checked against the chunks it saw. A long-context variant (whole corpus in the prompt) is a reference column.
+- Indexing is incremental: `mastery.rag.sync_index` adds, updates and deletes chunks per source file, and `collection_name` names the collection after the splitter and embedding settings. An edit check proves a changed file replaces its old chunks.
+- The benchmark reports input tokens, $ per 1,000 questions and 95% intervals with a paired comparison against the 2-step chain. TODOs state the goal, with hints; a rubric is in the project README. Estimated time is now 7–9 hours.
+- Lesson 06.08: corrected numbers for the hashing-embeddings fallback. Lesson 06.05 uses the shared `collection_name`.
+
+### Project 08 · Research-and-Write Agent
+
+- The web search retries only transient errors (`mastery.models.is_transient`, new) and its LIVE model has `max_retries=0`, so retries live in one layer; 400/401 errors are no longer retried.
+- Stronger approval checks: nothing is final before the approval pause, each rejection runs the writer once more with that rejection's feedback, and giving up only counts after the rejection limit. Traces go to the `m08-project-research-agent` LangSmith project by default. TODOs state the goal, with hints.
+- Lesson 08.02: why provider SDK errors need a classifier in `retry_on`. Lesson 08.04 sets its own `LANGSMITH_PROJECT`.
+
+### Project 09 · Multi-Agent Support Desk
+
+- The single-agent baseline is a third arm in the comparison, the ADR and the checks (10 checks now). The table adds $ per conversation and p50/p95 latency.
+- LIVE runs 8 conversations that cover every route (`LIVE_IDS`; the first five were all billing) `TRIALS = 3` times and grades the worst trial (pass mark 7/8). Lesson 09.05 Exercise 4 uses the same conversations.
+- The ADR is *proposed* and its recommendation is yours; the solution's is a labelled example. TODO descriptions state the goal; a pitfalls table covers the embedding-size collection error.
+
+## 2026-10-16 · Measured comparisons in Projects 00 and 01, safer memory in Project 03, grounded Project 07
+
+**Re-run after pulling:** Projects 00, 01, 03 and 07, and Lesson 01.03 (no new installs). If you already started one of these starters, compare your TODOs with the new starter before you continue (your copy in `workspace/` is never touched by a pull, see [setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)). The Project 01 answer key changed (version `2026-10-16.1`): earlier Project 01 numbers aren't comparable.
+
+### Project 00 · Groq Model Explorer
+
+- Each prompt runs 3 times (`REPEATS`) and is graded by a small programmatic grader (checked on canned answers first); the summary shows pass rate per model and task, median and worst latency, and server-side vs end-to-end tokens/second (Groq's `completion_time` and `queue_time`).
+- Calls are paced by **tokens** per minute, the free-plan limit that binds first, not by requests.
+- The decision draft only considers models that answered: a retired model that fails fast is reported as "not a candidate", never as the fastest.
+- The table check also requires `chat_model` with real True/False values; offline results are labelled as coming from the sample. TODOs state the goal, with two-level hints; the rubric's "Exceeds" column asks for work the starter doesn't already do. Estimated time is now 2.5–3.5 hours.
+
+### Project 01 · Multi-Model Comparison Lab
+
+- Answer key `2026-10-16.1`: one skills rule (cloud provider once, practices aren't skills; JP-08 is now `azure, python`), seniority bands without overlap (midpoint for ranges), and `_aliases` for skill names. The solution prompt states the same rules, and its naming examples no longer come from the scored postings.
+- New Step 6b: 95% intervals for valid rate and field accuracy and a paired comparison against the most accurate configuration; the decision draft says whether the gap is significant and, if not, applies a tie-break policy. `MASTERY_LAB_RUNS=3` repeats every posting.
+- Configuration names come from the strict flag that is actually sent (a swapped model can't keep a wrong "strict" label); the preview model uses `reasoning_format="parsed"`; each row records the settings sent and the answer-key version. A lenient skills/company score (aliases, accents) sits next to the strict one.
+- Stronger self-checks: the prompt check names any missing labelling rule and flags examples taken from the postings; the scorer check runs six cases. TODOs state the goal, with two-level hints. The batch tracing note is corrected (one trace per posting).
+- Lesson 01.03: the edge-case rule's score on the 12 tickets is flagged as optimistic, and the research checkpoint asks for new tickets.
+
+### Project 03 · Study Buddy with Memory
+
+- Threads have an owner: a user can't continue another user's thread. The leakage suite adds a positive control (the user's own memory is used), a differential test with a fresh store and an ownership test.
+- The token budget counts the tool schemas (~180 tokens), and Session 2 prints the estimate next to the real input tokens. Hints for the TODOs.
+
+### Project 07 · Content Pipeline Graph
+
+- The graph sets a tight `recursion_limit` (`content_recursion_limit` in `mastery.graphs.content`), so a bug loop fails fast.
+- "Score improves" is replaced by **grounded citations**: every `[source: …]` must be a source the research returned (with a made-up-citation control); every section needs a source; the LIVE critic is the 120b model. Server checks show ⏭️ skipped (not passed) when the server is off or fails to start.
+- The Functional API stretch has a starter TODO and puts model calls in `@task`s. Goal-style TODOs with hints; LIVE cost corrected to 35–70k tokens; module time estimate corrected.
+
+## 2026-10-16 · Stronger checks in Projects 02, 04 and 05
+
+**Re-run after pulling:** Projects 02, 04 and 05 (no new installs). If you already started one of these starters, the specs changed slightly: compare your TODOs with the new starter before you continue (your copy in `workspace/` is never touched by a pull, see [setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)).
+
+### Project 02 · Personal Finance Agent
+
+- "No arithmetic by the LLM" now checks **where** a number came from: data tools back their values, `convert_currency` and the calculator back their results only when their inputs were backed. A bare `calculator("870400")` or a COP → COP "conversion" no longer launders a number, and numbers in the answer text are checked too. A new cell shows three gaming attempts being flagged.
+- `convert_currency` takes `Literal` currencies, refuses the same currency on both sides, and no longer echoes `amount`.
+- Tolerances follow the question's unit (COP ±0.5, USD/EUR ±0.01, counts exact), matching the README. `N_RUNS` repeats the evaluation; acceptance uses the worst run.
+
+### Project 04 · Safe Email Triage
+
+- Approval is bound to content: `draft_reply` returns a draft id that is a hash of the text, and `send_email(draft_id)` sends exactly that text. A model can no longer swap in new text in the same turn as an approved send.
+- `send_email` sends at most one reply per email (atomic create), approve/reject only (no edit, so the audit log records what ran), and a per-thread tool limit (run limits restart on every resume). `recursion_limit` is derived from the agent's graph, so the graceful limit fires and a 4-step task isn't cut short.
+- The retry → fallback order from 04.02, phone numbers in the PII checks, and the Prompt Guard stretch sees redacted text only. 12 acceptance checks (was 8); the injection check is described as a regression test, not a measurement.
+
+### Project 05 · Docs Research Agent
+
+- The docs server's tools are pinned with `tool_fingerprint` and refused on change (rug pull). `tool_fingerprint` now also covers MCP annotations and, optionally, server instructions; `poisoned_descriptions` can scan instructions.
+- An egress gate blocks `web_search` once private notes were read in the thread (the "lethal trifecta", new row in 05.05's threat table).
+- Tool limits continue instead of ending, so a run still answers; a run that never answers is a scored failure, and one failing question no longer stops the benchmark. 12 acceptance checks (was 8).
+
+## 2026-10-16 · Fixes across Modules 02–09
+
+**Re-run after pulling:** the lessons listed below if you finished them (no new installs).
+
+### Fixes you'll notice
+
+- **Calculator:** `1e300 ** 2` and similar overflows now return a tool error instead of crashing the agent; fractional powers of negative numbers get their own message.
+- **Hand-written tool loop (02.02, `mastery.agents`):** a reply with only malformed tool calls no longer ends the loop silently (each malformed call gets an error answer, and the transcript shows it); unexpected exceptions inside a tool reach the model as "tool failed (ErrorType)" without their internal text.
+- **Lesson 02.04:** the alerts state uses a reducer, so two alerts in one reply both land (new cell) instead of raising `InvalidUpdateError`.
+- **Lesson 03.02:** `prune()` is not implemented by the course's checkpointers; the lesson now shows `delete_thread` / `trim_thread` for retention.
+- **Lesson 04.05 / `fence_untrusted`:** the data markers carry a content-bound tag, so text inside can't forge the end marker.
+- **Hybrid search (`mastery.rag.hybrid_search`):** a metadata `filter` now applies to the keyword leg as well as the vector leg (no other-tenant chunks through BM25). Chroma reports a clear error when a collection was built with another embedding size.
+- **Module 09:** the custom desk (09.05, Project 09 Step 9) keeps the active agent and the agents' tool results between turns; `subagent_tool(context="history")` no longer silently keeps only the last 12 messages (new `history_limit`); the FAQ's Chroma collection is named per embedding size; a 09.05 pitfall row is corrected.
+
 ## 2026-10-15 · Module 10, part 2
 
 **Re-run after pulling:** nothing new to install. Re-run Lesson 10.04 only if you want its updated closing links.
