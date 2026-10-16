@@ -29,15 +29,25 @@ Research comes from the Module 06 corpus ([`data/samples/rag/corpus/`](../../../
 
 ## Acceptance criteria (7 checks in Step 7)
 
-- **Deterministic termination:** with a critic that is *never* satisfied, the run still ends after exactly 3 revisions (the counter ends the loop, not the model, not `recursion_limit`).
-- **Same app in the notebook and in Studio:** your graph has the app's node names, and the app (started with `langgraph dev` from the notebook) returns the same scores offline.
-- **Score improves or the loop stops within 3 iterations** on all 3 test topics, and the loop actually ran at least once (offline).
-- **One research note per outline section** (Send + reducer) and a **cost/latency table** for every run.
+- **Deterministic termination:** with a critic that is *never* satisfied, the run still ends after exactly 3 revisions (the counter ends the loop, not the model, not `recursion_limit`). The graph also sets a tight `recursion_limit` (`content_recursion_limit`, Lesson 07.03), so a bug loop fails fast.
+- **Same app in the notebook and in Studio:** your graph has the app's node names, and the app (started with `langgraph dev` from the notebook) returns the same scores offline. With `RUN_SERVER = False`, or if the server doesn't start, these two checks show ⏭️ skipped and are not counted as passes.
+- **Grounded citations:** every `[source: …]` in every final post is a source the research returned (a made-up citation is caught), and the loop actually ran at least once (offline). The critic's score is the model's opinion; this check is evidence. LIVE, the critic is `gpt-oss-120b`, not the writer.
+- **One research note per outline section, each with at least one source** (Send + reducer) and a **cost/latency table** for every run (every node that ran, plus `TOTAL`: `revise` only appears when a revision was needed).
 - **Restart & Run All** passes with `GROQ_API_KEY` and without any key. Outputs cleared; `data/outputs/` never committed.
+
+## Rubric (self-assessment)
+
+| Criterion | ✅ Meets | ⭐ Exceeds |
+|---|---|---|
+| Graph design | Send + reducer research, a revise loop that ends after exactly 3 revisions | A Mermaid sketch in your notes made before the code, and how the real graph differed |
+| Grounding | Every `[source: …]` was returned by research; the made-up citation is caught | A second grounding check of your own (e.g. each section cites its own note) |
+| Notebook vs Studio | Same node names and offline scores as the app | Forks one Studio run and explains the different result |
+| Cost and latency | A cost/latency table for every run, with `TOTAL` | Compares two writer models (stretch) by score and cost per post |
+| Hygiene | Restart & Run All with and without a key; outputs cleared | Functional API version (stretch) and a decision-log entry on which you'd keep |
 
 ## Modes
 
-- **LIVE** (`GROQ_API_KEY` set): `openai/gpt-oss-20b` (`reasoning_effort="low"`) plans, writes and critiques. Roughly 6–12k tokens per topic, 20–40k for all three: free on the free tier, under $0.01 at paid prices. `LIVE_TOPICS = 1` runs one topic. The server step uses the same key from `.env`.
+- **LIVE** (`GROQ_API_KEY` set): `openai/gpt-oss-20b` (`reasoning_effort="low"`) plans and writes; `openai/gpt-oss-120b` critiques. Roughly 6–12k tokens per pipeline run, and LIVE runs it 5–6 times (first build, 3 topics, the server run, acceptance check 1): about 35–70k tokens, free on the free tier, well under $0.05 at paid prices. `LIVE_TOPICS = 1` cuts only the topic runs. The server step uses the same key from `.env`.
 - **OFFLINE DEMO** (no key): `offline_models()` scripts the planner (3 sections), the writer (fixes one issue per revision) and the critic (4 + 2 per fixed issue: intro, citations, conclusion). Reference result: scores **[4, 6, 8]**, 2 revisions on every topic, 7/7 checks. The untouched starter passes 1/7, with ❌ pointing at the TODOs.
 
 ## Run it in Studio (once, by hand)
@@ -59,4 +69,4 @@ Open the Studio link it prints, type a topic, and watch `critique` ⇄ `revise`.
 
 ## Stack
 
-Free: Groq (gpt-oss-20b), BM25 over the local corpus, `langgraph dev` + Studio (free LangSmith account). Paid alternatives: a stronger writer model, LangSmith Plus for longer trace retention, LangSmith Deployment instead of `langgraph dev` (Module 08).
+Free: Groq (gpt-oss-20b), BM25 over the local corpus, `langgraph dev` + Studio (free LangSmith account). Paid alternatives: a stronger writer model, LangSmith Plus for longer trace retention, LangSmith Deployment instead of `langgraph dev` (Module 12).
