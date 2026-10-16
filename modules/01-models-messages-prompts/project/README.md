@@ -21,7 +21,7 @@ Extract a `JobPosting` from each of the 10 synthetic postings in [`data/samples/
 | `skills` | list of lowercase canonical names | F1 between sets |
 | `salary` | `{min, max, currency, period}` or `null` | all four match (or both null) |
 
-The labelling rules are in the answer key (`_labelling_notes`). Two borderline cases are deliberate (a "Staff" title, "2 years of experience"): discuss them in your findings.
+The labelling rules are in the answer key (`_labelling_notes`, with `_aliases` for skill names and a `_version` to record with your results): seniority bands are up to 2 years junior, more than 2 up to 5 mid, more than 5 senior (a range uses its midpoint); a cloud provider is one skill, not its services; practices such as threat modeling are not skills. Two borderline cases are deliberate (a "Staff" title, "2 years of experience"): discuss them in your findings.
 
 ## Requirements
 
@@ -34,6 +34,10 @@ The labelling rules are in the answer key (`_labelling_notes`). Two borderline c
 ## Acceptance criteria
 
 - Results table + bar chart.
+- Latency times only the model call (the rate limiter waits before the clock starts; `mastery.evals.timed_invoke`).
+- The prompt check passes: every labelling rule is stated, and no example in the prompt comes from the 10 scored postings.
+- Valid rate and field accuracy are reported with 95% intervals (Step 6b), and the decision says whether the winner's gap is significant. If it isn't, it names the tie-break policy (production over preview, then faster and cheaper).
+- Each result row records the settings actually sent (model ID, effective strict flag, reasoning settings) and the answer-key version.
 - Invalid outputs are caught and counted, never crash the run (`include_raw=True`, Lesson 01.04).
 - **Kernel → Restart Kernel and Run All Cells…** passes with only `GROQ_API_KEY` (and also without any key, in OFFLINE DEMO mode).
 - Model IDs come from `.env` through `mastery.models`; nothing hard-coded.
@@ -59,7 +63,7 @@ Both are implemented in the solution behind `RUN_STRETCH = False`.
 
 ## Budget and time (LIVE mode)
 
-About 32 calls (3 configurations × 10 postings + 2 checks), ≈ 1K tokens each: ≈ 32K tokens, well inside the free tier's daily limit. The rate limiter is set to **0.13 requests/second per model** (8K tokens/min ÷ ~1K tokens per call, Lesson 01.06), so the main run takes **about 4 minutes**. If your [Groq limits](https://console.groq.com/settings/limits) are higher, raise it with `MASTERY_LAB_RPS` in `.env` (for example `MASTERY_LAB_RPS=0.5`). The stretch goals add about 20 calls.
+About 32 calls (3 configurations × 10 postings + 2 checks), ≈ 1K tokens each: ≈ 32K tokens, well inside the free tier's daily limit. `MASTERY_LAB_RUNS=3` in `.env` runs every posting three times (≈ 92 calls, ≈ 12 minutes) to show how much answers vary: recommended when your quota allows. The rate limiter is set to **0.13 requests/second per model** (8K tokens/min ÷ ~1K tokens per call, Lesson 01.06), so the main run takes **about 4 minutes**. If your [Groq limits](https://console.groq.com/settings/limits) are higher, raise it with `MASTERY_LAB_RPS` in `.env` (for example `MASTERY_LAB_RPS=0.5`). The stretch goals add about 20 calls.
 
 ## Your TODOs (starter notebook)
 
@@ -71,7 +75,7 @@ About 32 calls (3 configurations × 10 postings + 2 checks), ≈ 1K tokens each:
 | 4 | Step 6 | `score_fields()`: exact match, skills F1, salary match |
 | 5 | Step 6 | Summary table (latency, tokens, cost, per-field accuracy), bar chart, CSV in `data/outputs/` |
 
-Every check cell prints ✅ or ❌ TODO n, so you always know what's left. Then write the **Findings** cell and paste your decision-log entry.
+Every check cell prints ✅ or ❌ TODO n (naming the missing rule or the failing scorer case), so you always know what's left. Each TODO has two collapsed hints below it: where to look, then the approach. Then write the **Findings** cell and paste your decision-log entry.
 
 ## No key yet? Offline demo mode
 
@@ -82,7 +86,7 @@ Without `GROQ_API_KEY`, both notebooks still run top to bottom: each configurati
 | Criterion | ✅ Meets | ⭐ Exceeds |
 |---|---|---|
 | Schema and prompt | Strict-compatible schema accepts all 10 answers; five-block prompt with the labelling rules | Field descriptions tuned from the error analysis, with before/after numbers |
-| Comparison | ≥ 3 configurations × 10 postings; valid rate, field accuracy, latency, tokens, cost | Repeated runs (variance), or a paid benchmark row |
+| Comparison | ≥ 3 configurations × 10 postings; valid rate, field accuracy (with intervals), latency, tokens, cost; significance stated | `MASTERY_LAB_RUNS=3` and a discussion of run-to-run variance, or a paid benchmark row |
 | Robustness | Invalid outputs and API errors counted, never raised; rate-limited batches | Retries tuned from your real 429 rate; no 429s in the run |
 | Observability | Traces in `m01-comparison-lab` with config metadata | Traces used to explain a specific mistake (exact prompt + output) |
 | Findings | Findings cell + decision-log entry with evidence | Discusses the borderline labels and whether the key or the model is wrong |
@@ -90,4 +94,4 @@ Without `GROQ_API_KEY`, both notebooks still run top to bottom: each configurati
 
 ---
 
-← [Lesson 01.08](../01-08-first-traces.ipynb) · [Module 01 README](../README.md) · Module 02 →
+← [Lesson 01.08](../01-08-first-traces.ipynb) · [Module 01 README](../README.md) · [Module 02 →](../../02-tools-and-agents/README.md)
