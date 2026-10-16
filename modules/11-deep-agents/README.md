@@ -4,7 +4,7 @@
 
 **Goals:** Master **Deep Agents**, LangChain's open-source "batteries-included" agent harness for long-running, multi-step work. You first build a small harness yourself, so the abstraction is never magic. By the end you can design, build, secure, evaluate, and ship deep agents that plan, use a virtual filesystem with pluggable backends, delegate to subagents, manage their own context over long runs, load skills and long-term memory, pause for human approval, execute code safely in sandboxes, and stream progress to a UI. You also learn when **not** to use a harness.
 
-**Estimated time:** about 42–56 h (≈ 5–7 weeks at 8 h/week): 11 core lessons, 1 lesson of frontier briefings, **1 use-case lab of your choice** (of 3), and the module project. The module is planned; the estimate will be recalibrated when the notebooks are built.
+**Estimated time:** about 42–56 h (≈ 5–7 weeks at 8 h/week): 11 core lessons, 1 lesson of frontier briefings, **1 use-case lab of your choice** (of 3), and the module project.
 
 **Core vs frontier:** the **core lessons** (Lessons 11.01–11.11) teach skills that should outlast the next releases. The **frontier briefings** (Lesson 11.12) are short, dated sections on beta and fast-moving features (forked, async, and dynamic subagents, interpreters, rubric self-checks, agent protocols, Managed Deep Agents, Deep Agents Code). Expect to re-check and replace them; never build a core path on them without your own evals.
 
@@ -26,18 +26,18 @@ Change the models with `MASTERY_DEEP_MODEL` / `MASTERY_DEEP_SUBAGENT_MODEL` in y
 
 | Lesson | Title | Notebook | Status |
 |---|---|---|---|
-| 11.01 | Harness thinking: build a mini-harness, then `create_deep_agent` | `11-01-harness-and-first-deep-agent.ipynb` | 📝 Planned |
-| 11.02 | Models, harness profiles, and token budgets | `11-02-models-profiles-and-budgets.ipynb` | 📝 Planned |
-| 11.03 | The virtual filesystem and planning | `11-03-virtual-filesystem-and-planning.ipynb` | 📝 Planned |
-| 11.04 | Backends, routing, and permissions | `11-04-backends-routing-permissions.ipynb` | 📝 Planned |
-| 11.05 | Subagents and delegation (+ rebuild the Project 09 technical specialist as a deep agent) | `11-05-subagents-and-delegation.ipynb` | 📝 Planned |
-| 11.06 | Context engineering for long-running agents | `11-06-context-engineering-long-runs.ipynb` | 📝 Planned |
-| 11.07 | Skills and long-term memory | `11-07-skills-and-memory.ipynb` | 📝 Planned |
-| 11.08 | Human-in-the-loop, guardrails, and fault tolerance | `11-08-hitl-guardrails-fault-tolerance.ipynb` | 📝 Planned |
-| 11.09 | Code execution in sandboxes | `11-09-code-execution-sandboxes.ipynb` | 📝 Planned |
-| 11.10 | Streaming deep agents to a UI | `11-10-streaming-to-a-ui.ipynb` | 📝 Planned |
-| 11.11 | Evaluating and shipping deep agents | `11-11-evaluating-and-shipping-deep-agents.ipynb` | 📝 Planned |
-| 11.12 | Frontier briefings (dated): subagent modes, interpreters, rubrics, protocols, managed runtimes | `11-12-frontier-briefings.ipynb` | 📝 Planned |
+| 11.01 | Harness thinking: build a mini-harness, then `create_deep_agent` | `11-01-harness-and-first-deep-agent.ipynb` | ✅ Ready |
+| 11.02 | Models, harness profiles, and token budgets | `11-02-models-profiles-and-budgets.ipynb` | ✅ Ready |
+| 11.03 | The virtual filesystem and planning | `11-03-virtual-filesystem-and-planning.ipynb` | ✅ Ready |
+| 11.04 | Backends, routing, and permissions | `11-04-backends-routing-permissions.ipynb` | ✅ Ready |
+| 11.05 | Subagents and delegation (+ rebuild the Project 09 technical specialist as a deep agent) | `11-05-subagents-and-delegation.ipynb` | ✅ Ready |
+| 11.06 | Context engineering for long-running agents | `11-06-context-engineering-long-runs.ipynb` | ✅ Ready |
+| 11.07 | Skills and long-term memory | `11-07-skills-and-memory.ipynb` | ✅ Ready |
+| 11.08 | Human-in-the-loop, guardrails, and fault tolerance | `11-08-hitl-guardrails-fault-tolerance.ipynb` | ✅ Ready |
+| 11.09 | Code execution in sandboxes | `11-09-code-execution-sandboxes.ipynb` | ✅ Ready |
+| 11.10 | Streaming deep agents to a UI | `11-10-streaming-to-a-ui.ipynb` | ✅ Ready |
+| 11.11 | Evaluating and shipping deep agents | `11-11-evaluating-and-shipping-deep-agents.ipynb` | ✅ Ready |
+| 11.12 | Frontier briefings (dated): subagent modes, interpreters, rubrics, protocols, managed runtimes | `11-12-frontier-briefings.ipynb` | ✅ Ready |
 
 Lessons 11.01–11.11 are the core. Lesson 11.12 holds six short, independent briefings, each with a dated status line, to take right after the core lesson it extends: F1 forked subagents (after 11.05), F2 async subagents (after 11.05/11.10), F3 interpreters and dynamic subagents (after 11.09), F4 `RubricMiddleware` (after 11.11), F5 AG-UI, ACP, and A2A (after 11.10), and F6 Managed Deep Agents and a Deep Agents Code tour (after 11.11).
 
@@ -59,7 +59,7 @@ Lessons 11.01–11.11 are the core. Lesson 11.12 holds six short, independent br
 > If an agent can write to memory that other users or future runs read, a prompt injection today becomes a standing instruction tomorrow. The docs recommend organization-level memory be **read-only** ([Memory](https://docs.langchain.com/oss/python/deepagents/memory)). The course demos writable memory on synthetic data in a local `InMemoryStore`. **In production:** scope memory per user, make shared policy memory read-only, review or consolidate writes in the background, version memory files, and use a durable store (Postgres) instead of `InMemoryStore`.
 
 > ⚠️ **Production note: a local Docker container is not a hardened sandbox, and secrets never go inside one.**
-> The docs are explicit: **never put secrets inside a sandbox**, because a context-injected agent can read and exfiltrate them; keep credentials in tools that run on the host, block network access when it isn't needed, and treat everything produced inside the sandbox as untrusted ([Sandboxes: security considerations](https://docs.langchain.com/oss/python/deepagents/sandboxes)). The course's `DockerSandbox` is a free learning tool: containers share the host kernel and, by default, have network access. **In production:** use a managed sandbox provider (or hardened microVMs) with egress controls, resource limits, TTLs, and snapshots; never mount your home folder or Docker socket; and log every `execute` call. Interpreters and dynamic subagents are **beta**: keep them off critical paths until they stabilize.
+> The docs are explicit: **never put secrets inside a sandbox**, because a context-injected agent can read and exfiltrate them; keep credentials in tools that run on the host, block network access when it isn't needed, and treat everything produced inside the sandbox as untrusted ([Sandboxes: security considerations](https://docs.langchain.com/oss/python/deepagents/sandboxes)). The course's `DockerSandbox` is a free learning tool: it starts containers with `--network none`, no host mounts and no environment variables, but containers still share the host kernel. **In production:** use a managed sandbox provider (or hardened microVMs) with egress controls, resource limits, TTLs, and snapshots; never mount your home folder or Docker socket; and log every `execute` call. Interpreters and dynamic subagents are **beta**: keep them off critical paths until they stabilize.
 
 > ⚠️ **Production note: Deep Agents Code is not officially supported on Windows.**
 > The docs say Windows users can try it under WSL ([Deep Agents Code quickstart](https://docs.langchain.com/oss/deepagents/code/quickstart)). The course only *tours* `dcode` (optional, in WSL) as an example of a production deep agent; nothing in the course depends on it. Managed Deep Agents is a public-beta hosted service and is optional.
@@ -76,7 +76,9 @@ Lab files go in `labs/`.
 
 **Project 11 — Deep Research Analyst**: A production-shaped deep research agent that answers a hard question by researching the web **and** your own documents, and delivers a cited report you would actually send to someone.
 
-**Stack:** Free: Gemini free tier (`google_genai:gemini-3.6-flash`, default) with public data + Groq browser search or Tavily for web search + Chroma + SQLite checkpointer + LangSmith free tier. Option: Groq models (Developer plan recommended for full runs). Paid: OpenAI benchmark (`gpt-6-luna`; `gpt-6.1-sol` as the judge), Tavily beyond the free credits.
+**Built:** a coordinator with a `researcher` subagent (the Orbita Labs documents through BM25, then the web) and a `critic`; every brief is paused for a review policy before it is saved under `/reports/`; an evaluation on the 20 golden questions (16 answerable, 4 to decline) checks format, grounding against what the tools returned, workflow, budget and correctness, with Wilson intervals and a SHIP/HOLD report. Spec: [project/README.md](project/README.md).
+
+**Stack:** Free: runs fully offline with scripted models; LIVE on the Gemini free tier (`google_genai:gemini-3.6-flash`, default; smoke set ≈ 45–75K tokens) with optional Groq browser search or Tavily for the web. Option: Groq models (Developer plan recommended for the full 20-question run, ≈ 300–500K tokens). Paid: OpenAI benchmark (`gpt-6-luna`).
 
 Project files go in `project/`.
 
@@ -86,7 +88,7 @@ Long-running agents in notebooks: live progress panels with `display(..., displa
 
 ## `src/mastery` increment
 
-`mastery/deep/` with `factory.py` (`build_deep_agent()` with the course defaults: explicit model from settings, `CompositeBackend` layout `/workspace/` · `/memories/` · `/reports/`, default deny rules for secrets, rate limiter, call limits), `sandboxes/docker.py` (`DockerSandbox(BaseSandbox)`), `skills/` (course skills), and `evals.py` (trajectory and file-state evaluators).
+`mastery/deep/` with `factory.py` (`build_deep_agent()` with the course defaults: explicit model from settings, rate limiter, call budgets, fallbacks; `course_backend()` with `/memories/` per user and optional `/reports/`; secret deny rules and `deny_everything_else()`), `sandbox.py` (`DockerSandbox(BaseSandbox)`, `docker_available()`), and `evals.py` (trajectory, file-state, grounding and budget checks: `check_case()`).
 
 ## Research checkpoint
 
@@ -94,7 +96,9 @@ Open the [Deep Agents changelog](https://docs.langchain.com/oss/python/deepagent
 
 ## Status
 
-📝 Planned. No notebooks yet.
+✅ Ready: Lessons 11.01–11.12 and Project 11 (verified 2026-10-16 against `deepagents` 0.7.26). The three use-case labs are planned.
+
+**Free-tier budget (LIVE cells):** 11.01 ≈ 8–15K tokens, 11.02 ≈ 3–8K tokens per compared model, 11.03 ≈ 20–30K only if you enable its planning experiment, 11.04 none (offline), 11.05 ≈ 6–12K, 11.06 ≈ 10–15K, 11.07 ≈ 6–10K, 11.08 ≈ 5–8K, 11.09 ≈ 8–12K (also needs Docker), 11.10 ≈ 6–10K, 11.11 ≈ 10–20K, 11.12 none (scripted demos), Project 11 smoke ≈ 45–75K, full set ≈ 300–500K (each only if you enable its live cell). Lesson 11.09's 🐳 cells use your local Docker (optional) and spend no tokens. Every 🧪 cell runs offline for free. `mastery.deep.build_deep_agent()` rate-limits calls, caps each run, and uses `MASTERY_FALLBACK_MODELS` (see `.env.example`) when one model's quota runs out.
 
 ---
 
