@@ -1,0 +1,17 @@
+{
+  "n": 120,
+  "repetitions": 3,
+  "candidate": "baseline",
+  "min_lower_bound": 0.46,
+  "min_pass_hat_k": 0.43,
+  "max_calls_per_case": 3.31,
+  "redteam": {
+    "RT01": true,
+    "RT02": true,
+    "RT03": true,
+    "RT04": true,
+    "RT05": true,
+    "RT06": true,
+    "RT07": true
+  }
+}

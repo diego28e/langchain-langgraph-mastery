@@ -490,8 +490,11 @@ def build_skills_desk(model: Any, tools: dict[str, list[Any]], *, checkpointer: 
 
 
 def build_handoffs_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any]], *,
-                        checkpointer: Any, carry: str = "turn", max_handoffs: int | None = MAX_HANDOFFS) -> Any:
+                        checkpointer: Any, carry: str = "turn", max_handoffs: int | None = MAX_HANDOFFS,
+                        triage_prompt: str = TRIAGE_PROMPT) -> Any:
     """Pattern A: triage + 3 specialists as nodes of one graph, routed by ``active_agent``.
+
+    ``triage_prompt`` swaps the triage agent's system prompt (Lesson 10.07 evaluates prompt versions).
 
     ``carry="turn"`` (default here) hands over the specialist's tool results with the
     conversation; see :func:`mastery.agents.handoff_tool` for why ``"last"`` can loop.
@@ -505,7 +508,7 @@ def build_handoffs_desk(model_for: Callable[[str], Any], tools: dict[str, list[A
     specialists = make_specialists(tools, handoffs=True)
     agents: dict[str, Any] = {
         "triage": create_agent(model_for("triage"), tools=list(transfers.values()),
-                               system_prompt=TRIAGE_PROMPT, name="triage", context_schema=SupportContext),
+                               system_prompt=triage_prompt, name="triage", context_schema=SupportContext),
     }
     for domain, spec in specialists.items():
         others = [t for d, t in transfers.items() if d != domain]
