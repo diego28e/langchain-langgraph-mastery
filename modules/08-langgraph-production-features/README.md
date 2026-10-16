@@ -119,7 +119,7 @@ This module ends **Part 1 — Core (Modules 00–08)**. You can now:
 - set up a reproducible environment and use models, messages, prompts and structured output (Modules 00–01);
 - build tool-calling agents with `create_agent`, memory, middleware, guardrails and human approval (Modules 02–04);
 - connect MCP servers and web search, and build and evaluate RAG systems (Modules 05–06);
-- design LangGraph workflows (Module 07) and make them **production-grade**: persistent, durable, interruptible, forkable, composable, streamed and with long-term memory (Module 08).
+- design LangGraph workflows (Module 07) and give them the **production building blocks**: persistent, durable, interruptible, forkable, composable, streamed and with long-term memory (Module 08).
 
 **Before you move on:** Projects 01–08 pass their acceptance checks, `python -m pytest -q` is green, and your [`docs/research-log.md`](../../docs/research-log.md) and [`docs/decision-log.md`](../../docs/decision-log.md) have your own entries.
 
