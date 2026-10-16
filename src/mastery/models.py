@@ -275,6 +275,12 @@ def _rate_limit_errors() -> tuple[type[BaseException], ...]:
             found.append(__import__(module).RateLimitError)
         except (ImportError, AttributeError):
             pass
+    try:   # the standard type integration packages raise (langchain-core >= 1.6)
+        from langchain_core.exceptions import ModelRateLimitError
+
+        found.append(ModelRateLimitError)
+    except ImportError:
+        pass
     return tuple(found)
 
 
