@@ -1,0 +1,108 @@
+{
+  "_about": "Synthetic documents for Module 13 (not real companies). Fields each document really contains.",
+  "invoice-digital.pdf": {
+    "vendor": "Nimbus Data Centers S.A.S.",
+    "invoice_number": "INV-2026-0412",
+    "date": "2026-09-30",
+    "due_date": "2026-10-30",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Rack space, 2 units (September)",
+        "quantity": 2,
+        "unit_price": 310.0,
+        "amount": 620.0
+      },
+      {
+        "description": "Bandwidth overage, 1.8 TB",
+        "quantity": 1.8,
+        "unit_price": 45.0,
+        "amount": 81.0
+      },
+      {
+        "description": "Remote hands, 3 hours",
+        "quantity": 3,
+        "unit_price": 55.0,
+        "amount": 165.0
+      },
+      {
+        "description": "Cross-connect fee",
+        "quantity": 1,
+        "unit_price": 140.0,
+        "amount": 140.0
+      }
+    ],
+    "subtotal": 1006.0,
+    "tax": 191.14,
+    "total": 1197.14
+  },
+  "invoice-scanned.pdf": {
+    "vendor": "Nimbus Data Centers S.A.S.",
+    "invoice_number": "INV-2026-0412",
+    "date": "2026-09-30",
+    "due_date": "2026-10-30",
+    "currency": "USD",
+    "line_items": [
+      {
+        "description": "Rack space, 2 units (September)",
+        "quantity": 2,
+        "unit_price": 310.0,
+        "amount": 620.0
+      },
+      {
+        "description": "Bandwidth overage, 1.8 TB",
+        "quantity": 1.8,
+        "unit_price": 45.0,
+        "amount": 81.0
+      },
+      {
+        "description": "Remote hands, 3 hours",
+        "quantity": 3,
+        "unit_price": 55.0,
+        "amount": 165.0
+      },
+      {
+        "description": "Cross-connect fee",
+        "quantity": 1,
+        "unit_price": 140.0,
+        "amount": 140.0
+      }
+    ],
+    "subtotal": 1006.0,
+    "tax": 191.14,
+    "total": 1197.14
+  },
+  "receipt-photo.jpg": {
+    "merchant": "Carulla Express",
+    "date": "2026-07-03",
+    "currency": "COP",
+    "total": 47600,
+    "payment_method": "credit_card",
+    "items": [
+      {
+        "description": "Leche entera 1L",
+        "amount": 4900
+      },
+      {
+        "description": "Pan tajado",
+        "amount": 6200
+      },
+      {
+        "description": "Huevos x12",
+        "amount": 14800
+      },
+      {
+        "description": "Queso campesino",
+        "amount": 12300
+      },
+      {
+        "description": "Bananos x6",
+        "amount": 3900
+      },
+      {
+        "description": "Café molido 250g",
+        "amount": 5500
+      }
+    ]
+  }
+}
