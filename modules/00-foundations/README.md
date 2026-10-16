@@ -5,7 +5,7 @@
 
 **Goals:** Explain what an AI engineer does in 2026. Confirm that your machine is ready and create the course environment. Use Jupyter properly. Keep secrets safe. Make your first Groq call through LangChain. Learn to find, read, and verify official docs. Choose providers with evidence.
 
-**Estimated time:** 1–1.5 weeks (about 8–11 hours of lessons plus 2–3 hours for the project).
+**Estimated time:** 1–1.5 weeks (about 8–11 hours of lessons plus 2.5–3.5 hours for the project).
 
 ## Before you start this module
 
