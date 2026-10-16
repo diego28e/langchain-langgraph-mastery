@@ -151,13 +151,15 @@ def _result(snapshot: Any) -> dict[str, Any]:
 
 
 def run_until_pause(graph: Any, inputs: Any, config: dict, *, printer: Callable[[str], Any] | None = print,
-                    subgraphs: bool = False) -> dict[str, Any]:
+                    subgraphs: bool = False, context: Any = None) -> dict[str, Any]:
     """Stream ``inputs`` (or a ``Command``) until the run ends or pauses.
 
     Prints one line per node update (``printer=None`` for silence). Returns
-    ``{"values": <state>, "interrupts": [Interrupt, ...], "done": bool}``.
+    ``{"values": <state>, "interrupts": [Interrupt, ...], "done": bool}``. ``context`` is the
+    graph's runtime context (Module 09: who is signed in), passed on every call, resumes included.
     """
-    for part in graph.stream(inputs, config, stream_mode="updates", subgraphs=subgraphs, version="v2"):
+    extra = {"context": context} if context is not None else {}
+    for part in graph.stream(inputs, config, stream_mode="updates", subgraphs=subgraphs, version="v2", **extra):
         _report(part, printer)
     return _result(graph.get_state(_thread_only(config)))
 
@@ -172,16 +174,20 @@ async def arun_until_pause(graph: Any, inputs: Any, config: dict, *, printer: Ca
 
 
 def resume(graph: Any, config: dict, value: Any, *, interrupt_id: str | None = None,
-           printer: Callable[[str], Any] | None = print) -> dict[str, Any]:
+           printer: Callable[[str], Any] | None = print, context: Any = None) -> dict[str, Any]:
     """Resume a paused thread. With several pending interrupts pass ``interrupt_id`` or a ``{id: value}`` dict."""
     payload = {interrupt_id: value} if interrupt_id else value
-    return run_until_pause(graph, Command(resume=payload), config, printer=printer)
+    return run_until_pause(graph, Command(resume=payload), config, printer=printer, context=context)
 
 
 def drive(graph: Any, inputs: Any, config: dict, reviewer: Callable[[Any], Any], *, max_pauses: int = 10,
-          printer: Callable[[str], Any] | None = None) -> dict[str, Any]:
-    """Run to completion, answering each pause with ``reviewer(interrupt.value)``. Returns the last result."""
-    result = run_until_pause(graph, inputs, config, printer=printer)
+          printer: Callable[[str], Any] | None = None, context: Any = None) -> dict[str, Any]:
+    """Run to completion, answering each pause with ``reviewer(interrupt.value)``. Returns the last result.
+
+    ``result["pauses"]`` counts resume ROUNDS: two interrupts raised in parallel are one pause.
+    Count ``reviewer`` calls if you need the number of approvals (Module 09 ``run_conversation`` does).
+    """
+    result = run_until_pause(graph, inputs, config, printer=printer, context=context)
     pauses = 0
     while result["interrupts"]:
         pauses += 1
@@ -189,7 +195,7 @@ def drive(graph: Any, inputs: Any, config: dict, reviewer: Callable[[Any], Any],
             raise RuntimeError(f"still paused after {max_pauses} answers; check the reviewer")
         answers = {i.id: reviewer(i.value) for i in result["interrupts"]}
         value = next(iter(answers.values())) if len(answers) == 1 else answers
-        result = run_until_pause(graph, Command(resume=value), config, printer=printer)
+        result = run_until_pause(graph, Command(resume=value), config, printer=printer, context=context)
     result["pauses"] = pauses
     return result
 

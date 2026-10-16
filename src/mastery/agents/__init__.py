@@ -19,6 +19,7 @@ from mastery.agents.loop import (
 )
 from mastery.agents.metrics import UsageMeter
 from mastery.agents.specialists import (
+    ESCALATION_MESSAGE,
     HandoffState,
     Specialist,
     StepState,
@@ -29,9 +30,11 @@ from mastery.agents.specialists import (
     step_tool,
     subagent_tool,
     task_tool,
+    transfers_this_turn,
 )
 
 __all__ = [
+    "ESCALATION_MESSAGE",
     "HandoffState",
     "LoopLimitError",
     "Specialist",
@@ -50,4 +53,5 @@ __all__ = [
     "step_tool",
     "subagent_tool",
     "task_tool",
+    "transfers_this_turn",
 ]

@@ -36,6 +36,7 @@ from langgraph.types import Command
 from pydantic import Field, create_model
 
 __all__ = [
+    "ESCALATION_MESSAGE",
     "HandoffState",
     "Specialist",
     "StepState",
@@ -45,6 +46,7 @@ __all__ = [
     "step_tool",
     "subagent_tool",
     "task_tool",
+    "transfers_this_turn",
 ]
 
 
@@ -59,9 +61,15 @@ class Specialist:
     tools: tuple[Any, ...] = field(default_factory=tuple)
 
     def build(self, model: Any, *, extra_tools: Sequence[Any] = (), middleware: Sequence[Any] = (),
-              state_schema: Any = None, checkpointer: Any = None) -> Any:
-        """``create_agent`` with this recipe. Leave ``checkpointer`` None for subagents."""
+              state_schema: Any = None, checkpointer: Any = None, context_schema: Any = None) -> Any:
+        """``create_agent`` with this recipe. Leave ``checkpointer`` None for subagents.
+
+        ``context_schema`` declares the runtime context (e.g. who is signed in) the agent's
+        tools read through ``ToolRuntime.context``; pass the same one the caller invokes with.
+        """
         kwargs: dict[str, Any] = {}
+        if context_schema is not None:
+            kwargs["context_schema"] = context_schema
         if state_schema is not None:
             kwargs["state_schema"] = state_schema
         if checkpointer is not None:
@@ -102,7 +110,7 @@ def subagent_tool(agent: Any, *, name: str, description: str,
     ``output="last"`` returns the final message; ``"all"`` a transcript of the subagent's run.
     """
 
-    def run(query: str, runtime: ToolRuntime) -> str:
+    def run(query: str, runtime: ToolRuntime[Any]) -> str:
         content = query
         if context == "history":
             history = [m for m in runtime.state.get("messages", [])
@@ -185,7 +193,7 @@ def handoff_tool(target: str, *, description: str | None = None, name: str | Non
     """
     tool_name = name or f"transfer_to_{target}"
 
-    def run(runtime: ToolRuntime) -> Command | ToolMessage:
+    def run(runtime: ToolRuntime[Any]) -> Command | ToolMessage:
         messages = list(runtime.state["messages"])
         last_ai = next(m for m in reversed(messages) if isinstance(m, AIMessage))
         if parallel_siblings(last_ai, runtime.tool_call_id):
@@ -214,22 +222,48 @@ def _route_after(state: dict) -> str:
     return state.get("active_agent") or END
 
 
+ESCALATION_MESSAGE = ("I'm passing this conversation to a human support agent, who will reply here shortly. "
+                      "Sorry for the wait.")
+
+
+def transfers_this_turn(messages: list) -> int:
+    """How many ``transfer_to_*`` handoffs happened since the latest user message."""
+    start = max((i for i, m in enumerate(messages) if isinstance(m, HumanMessage)), default=-1)
+    return sum(1 for m in messages[start + 1:]
+               if isinstance(m, ToolMessage) and (m.name or "").startswith("transfer_to_")
+               and str(m.content).startswith("Transferred to"))
+
+
 def handoff_graph(agents: dict[str, Any], *, entry: str, checkpointer: Any = None,
-                  state_schema: Any = HandoffState) -> Any:
+                  state_schema: Any = HandoffState, context_schema: Any = None,
+                  max_handoffs: int | None = None, on_escalate: Callable[[dict], None] | None = None) -> Any:
     """Compile a graph with one node per agent, routed by ``active_agent``.
 
     A new user turn starts at the agent that was active last (``entry`` the first time),
     an agent's turn ends the graph when it answers without tool calls, and a handoff tool
     jumps between nodes. Give the checkpointer HERE (outermost graph), not to the agents.
+
+    ``max_handoffs`` is a loop guard: when one user turn has more transfers than that (two
+    agents passing the customer back and forth), the graph stops at an ``escalate`` node that
+    answers with :data:`ESCALATION_MESSAGE` instead of burning calls until ``recursion_limit``.
+    ``on_escalate(state)`` is called once when that happens (log it, page a human).
     """
     names = list(agents)
 
     def make_node(agent: Any) -> Callable[[dict], dict]:
         def node(state: dict) -> dict:
+            # The guard runs where the handoff lands: a transfer's Command(goto=...) already picked
+            # this node, so the check happens here instead of in a separate (parallel) branch.
+            if max_handoffs is not None and transfers_this_turn(state["messages"]) > max_handoffs:
+                if on_escalate is not None:
+                    on_escalate(state)
+                # An AIMessage after the transfer ToolMessage keeps the history valid; the next turn
+                # starts at ``entry`` again.
+                return {"messages": [AIMessage(content=ESCALATION_MESSAGE, name="escalation")], "active_agent": entry}
             return agent.invoke(state)
         return node
 
-    builder = StateGraph(state_schema)
+    builder = StateGraph(state_schema, context_schema=context_schema) if context_schema else StateGraph(state_schema)
     for agent_name, agent in agents.items():
         builder.add_node(agent_name, make_node(agent))
     builder.add_conditional_edges(START, lambda s: s.get("active_agent") or entry, names)
@@ -249,7 +283,7 @@ def step_tool(step: str, *, description: str | None = None, name: str | None = N
     """A tool that switches ``current_step``; the next model call gets that step's prompt/tools."""
     tool_name = name or f"transfer_to_{step}"
 
-    def run(runtime: ToolRuntime) -> Command | ToolMessage:
+    def run(runtime: ToolRuntime[Any]) -> Command | ToolMessage:
         # Two transfers in one model reply would both write current_step in the same step
         # (InvalidUpdateError): refuse when another transfer is a sibling of this call.
         last_ai = next(m for m in reversed(runtime.state["messages"]) if isinstance(m, AIMessage))

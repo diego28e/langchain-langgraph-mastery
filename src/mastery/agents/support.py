@@ -26,13 +26,14 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Annotated, Any
 
-from langchain.tools import tool
+from langchain.tools import ToolRuntime, tool
 from langchain_core.documents import Document
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage, ToolMessage
 from langgraph.graph import MessagesState
 from langgraph.types import Send, interrupt
 
 from mastery.agents.specialists import (
+    ESCALATION_MESSAGE,
     Specialist,
     StepState,
     handoff_graph,
@@ -48,8 +49,11 @@ from mastery.testing import ScriptedChatModel
 __all__ = [
     "DOMAINS",
     "DOMAIN_TOOLS",
+    "MAX_HANDOFFS",
     "REFUND_THRESHOLD",
+    "SIDE_EFFECT_TOOLS",
     "OfflineSupportModel",
+    "SupportContext",
     "SupportDesk",
     "build_custom_desk",
     "build_handoffs_desk",
@@ -73,11 +77,14 @@ __all__ = [
     "parse_refund",
     "run_conversation",
     "score",
+    "signed_in_customer",
     "split_by_intent",
     "support_dir",
 ]
 
 REFUND_THRESHOLD = 50.0
+# Handoffs: more transfers than this in ONE user turn is a ping-pong, so the desk escalates to a human.
+MAX_HANDOFFS = 4
 DOMAINS = ("billing", "technical", "account")
 DOMAIN_TOOLS = {
     "billing": ("lookup_invoices", "issue_refund"),
@@ -103,6 +110,27 @@ def support_dir() -> Path:
     return find_repo_root() / "data" / "samples" / "support-desk"
 
 
+# --------------------------------------------------------------------------- identity
+@dataclass(frozen=True)
+class SupportContext:
+    """Who is signed in, passed at invoke time: ``app.invoke(..., context=SupportContext("C-1001"))``.
+
+    The customer ID comes from your login system, never from the chat: anyone can TYPE
+    "I'm C-1002". When ``customer_id`` is set, every customer-scoped tool acts on that customer
+    only and refuses any other ID the model passes. ``None`` (the default, used by the offline
+    test set) means "no login": tools trust the ID in the conversation, as in a demo.
+    """
+
+    customer_id: str | None = None
+
+
+def signed_in_customer(runtime: Any) -> str | None:
+    """The signed-in customer ID from a ``ToolRuntime`` / ``Runtime`` (None if there is no login)."""
+    context = getattr(runtime, "context", None)
+    cid = getattr(context, "customer_id", None)
+    return cid.strip().upper() if isinstance(cid, str) and cid.strip() else None
+
+
 # --------------------------------------------------------------------------- backend
 @dataclass
 class SupportDesk:
@@ -112,6 +140,7 @@ class SupportDesk:
     services: dict[str, str] = field(default_factory=dict)
     refunds: list[dict] = field(default_factory=list)
     events: list[dict] = field(default_factory=list)
+    denials: list[dict] = field(default_factory=list)
     _seed: dict = field(default_factory=dict, repr=False)
 
     @classmethod
@@ -128,6 +157,7 @@ class SupportDesk:
         self.services = data.get("services", {})
         self.refunds = []
         self.events = []
+        self.denials = []
 
     def log(self, tool_name: str, **args: Any) -> None:
         self.events.append({"tool": tool_name, "domain": _TOOL_DOMAIN.get(tool_name, "?"), "args": args})
@@ -225,9 +255,20 @@ def make_support_tools(desk: SupportDesk, search: Callable[[str], list[Document]
     def customer(customer_id: str) -> dict | None:
         return desk.customers.get(customer_id.strip().upper())
 
+    def refused(tool_name: str, customer_id: str, runtime: Any) -> str | None:
+        """A refusal message if a signed-in customer asks the tool to act on ANOTHER customer."""
+        signed_in = signed_in_customer(runtime)
+        if signed_in is None or customer_id.strip().upper() == signed_in:
+            return None
+        desk.denials.append({"tool": tool_name, "asked_for": customer_id, "signed_in": signed_in})
+        return (f"Not allowed: you are signed in as {signed_in}, so I can only act on {signed_in}'s account, "
+                f"not {customer_id}.")
+
     @tool
-    def lookup_invoices(customer_id: str) -> str:
+    def lookup_invoices(customer_id: str, runtime: ToolRuntime[SupportContext]) -> str:
         """List a customer's invoices (id, date, amount). customer_id looks like C-1001."""
+        if (refusal := refused("lookup_invoices", customer_id, runtime)) is not None:
+            return refusal
         desk.log("lookup_invoices", customer_id=customer_id)
         c = customer(customer_id)
         if c is None:
@@ -237,8 +278,11 @@ def make_support_tools(desk: SupportDesk, search: Callable[[str], list[Document]
         return f"Invoices for {customer_id} ({c['plan']} plan): " + "; ".join(rows)
 
     @tool
-    def issue_refund(customer_id: str, invoice_id: str, amount: float, reason: str = "") -> str:
+    def issue_refund(customer_id: str, invoice_id: str, amount: float, runtime: ToolRuntime[SupportContext], reason: str = "") -> str:
         """Refund part or all of an invoice. Refunds above the approval threshold pause for a billing manager."""
+        # Identity first, before any interrupt: a manager is never asked about someone else's invoice.
+        if (refusal := refused("issue_refund", customer_id, runtime)) is not None:
+            return refusal
         # Log AFTER any interrupt: on resume this whole function runs again from the top,
         # so a side effect placed before interrupt() would happen twice (Lesson 08.03).
         result, refunded = _refund(customer_id, invoice_id, float(amount), reason)
@@ -291,8 +335,10 @@ def make_support_tools(desk: SupportDesk, search: Callable[[str], list[Document]
         return "Service status: " + "; ".join(f"{k}: {v}" for k, v in desk.services.items())
 
     @tool
-    def send_password_reset(customer_id: str) -> str:
+    def send_password_reset(customer_id: str, runtime: ToolRuntime[SupportContext]) -> str:
         """Email the customer a password reset link."""
+        if (refusal := refused("send_password_reset", customer_id, runtime)) is not None:
+            return refusal
         desk.log("send_password_reset", customer_id=customer_id)
         c = customer(customer_id)
         if c is None:
@@ -300,8 +346,10 @@ def make_support_tools(desk: SupportDesk, search: Callable[[str], list[Document]
         return f"Sent a password reset link to {c['email']}; it is valid for 60 minutes."
 
     @tool
-    def unlock_account(customer_id: str) -> str:
+    def unlock_account(customer_id: str, runtime: ToolRuntime[SupportContext]) -> str:
         """Unlock a customer account that was locked after failed sign-ins."""
+        if (refusal := refused("unlock_account", customer_id, runtime)) is not None:
+            return refusal
         desk.log("unlock_account", customer_id=customer_id)
         c = customer(customer_id)
         if c is None:
@@ -311,8 +359,10 @@ def make_support_tools(desk: SupportDesk, search: Callable[[str], list[Document]
         return f"Account {customer_id} is unlocked." if was else f"Account {customer_id} was not locked."
 
     @tool
-    def update_email(customer_id: str, new_email: str) -> str:
+    def update_email(customer_id: str, new_email: str, runtime: ToolRuntime[SupportContext]) -> str:
         """Start a login email change; the customer must click the confirmation link."""
+        if (refusal := refused("update_email", customer_id, runtime)) is not None:
+            return refusal
         desk.log("update_email", customer_id=customer_id, new_email=new_email)
         if customer(customer_id) is None:
             return f"No customer {customer_id}."
@@ -385,7 +435,7 @@ def build_single_agent_baseline(model: Any, tools: dict[str, list[Any]], *, chec
     from langchain.agents import create_agent
 
     return create_agent(model, tools=[t for d in DOMAINS for t in tools[d]], system_prompt=GENERALIST_PROMPT,
-                        name="support_agent", checkpointer=checkpointer)
+                        name="support_agent", checkpointer=checkpointer, context_schema=SupportContext)
 
 
 def make_skills() -> dict[str, dict[str, str]]:
@@ -432,19 +482,21 @@ def build_skills_desk(model: Any, tools: dict[str, list[Any]], *, checkpointer: 
     if inline:
         prompt = GENERALIST_PROMPT + "\n\n" + "\n\n".join(s["content"] for s in skills.values())
         return create_agent(model, tools=all_tools, system_prompt=prompt, name="support_agent",
-                            checkpointer=checkpointer)
+                            checkpointer=checkpointer, context_schema=SupportContext)
     listing = "\n".join(f"- {name}: {s['description']}" for name, s in skills.items())
     return create_agent(model, tools=[load_skill_tool(skills), *all_tools],
                         system_prompt=SKILLS_PROMPT.format(listing=listing), name="support_agent",
-                        checkpointer=checkpointer)
+                        checkpointer=checkpointer, context_schema=SupportContext)
 
 
 def build_handoffs_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any]], *,
-                        checkpointer: Any, carry: str = "turn") -> Any:
+                        checkpointer: Any, carry: str = "turn", max_handoffs: int | None = MAX_HANDOFFS) -> Any:
     """Pattern A: triage + 3 specialists as nodes of one graph, routed by ``active_agent``.
 
     ``carry="turn"`` (default here) hands over the specialist's tool results with the
     conversation; see :func:`mastery.agents.handoff_tool` for why ``"last"`` can loop.
+    ``max_handoffs`` (default :data:`MAX_HANDOFFS`) escalates a ping-pong to a human instead
+    of looping until ``recursion_limit``; ``None`` turns the guard off (Lesson 09.03 does, to show the bug).
     """
     from langchain.agents import create_agent
 
@@ -453,12 +505,13 @@ def build_handoffs_desk(model_for: Callable[[str], Any], tools: dict[str, list[A
     specialists = make_specialists(tools, handoffs=True)
     agents: dict[str, Any] = {
         "triage": create_agent(model_for("triage"), tools=list(transfers.values()),
-                               system_prompt=TRIAGE_PROMPT, name="triage"),
+                               system_prompt=TRIAGE_PROMPT, name="triage", context_schema=SupportContext),
     }
     for domain, spec in specialists.items():
         others = [t for d, t in transfers.items() if d != domain]
-        agents[domain] = spec.build(model_for(domain), extra_tools=others)
-    return handoff_graph(agents, entry="triage", checkpointer=checkpointer)
+        agents[domain] = spec.build(model_for(domain), extra_tools=others, context_schema=SupportContext)
+    return handoff_graph(agents, entry="triage", checkpointer=checkpointer, context_schema=SupportContext,
+                         max_handoffs=max_handoffs)
 
 
 def build_single_agent_desk(model: Any, tools: dict[str, list[Any]], *, checkpointer: Any) -> Any:
@@ -474,7 +527,8 @@ def build_single_agent_desk(model: Any, tools: dict[str, list[Any]], *, checkpoi
                          "tools": [*spec.tools, *(t for d, t in transfers.items() if d != domain)]}
     all_tools = [*transfers.values(), *(t for d in DOMAINS for t in tools[d])]
     return create_agent(model, tools=all_tools, middleware=[step_middleware(steps, default="triage")],
-                        state_schema=StepState, checkpointer=checkpointer, name="support_desk")
+                        state_schema=StepState, checkpointer=checkpointer, name="support_desk",
+                        context_schema=SupportContext)
 
 
 def build_subagents_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any]], *,
@@ -487,7 +541,8 @@ def build_subagents_desk(model_for: Callable[[str], Any], tools: dict[str, list[
     from langchain.agents import create_agent
 
     specialists = make_specialists(tools)
-    built = {d: spec.build(model_for(d)) for d, spec in specialists.items()}   # no checkpointer
+    built = {d: spec.build(model_for(d), context_schema=SupportContext)            # no checkpointer
+             for d, spec in specialists.items()}
     if dispatch == "task":
         subtools = [task_tool({d: (built[d], DESCRIPTIONS[d]) for d in DOMAINS})]
     else:
@@ -495,7 +550,7 @@ def build_subagents_desk(model_for: Callable[[str], Any], tools: dict[str, list[
                                   context=context)  # type: ignore[arg-type]
                     for d in DOMAINS]
     return create_agent(model_for("coordinator"), tools=subtools, system_prompt=COORDINATOR_PROMPT,
-                        name="coordinator", checkpointer=checkpointer)
+                        name="coordinator", checkpointer=checkpointer, context_schema=SupportContext)
 
 
 def _collect(left: list | None, right: list | None) -> list:
@@ -510,13 +565,20 @@ class RouterState(MessagesState):
 
     routes: list[str]
     results: Annotated[list, _collect]
+    escalate: bool
 
 
 def build_router_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any]], *, checkpointer: Any = None,
-                      classify: Callable[[str], list[str]] | None = None) -> Any:
+                      classify: Callable[[str], Any] | None = None, min_confidence: float | None = None) -> Any:
     """Router pattern: classify the latest message, fan out with ``Send`` to the matching
     specialists in parallel, then join their answers. ``classify`` defaults to
     :func:`detect_intents` (keyword rules, zero model calls); pass an LLM classifier for LIVE.
+
+    ``classify`` returns the domains, or ``(domains, confidence)``. With ``min_confidence``, a
+    routed message whose confidence is below it goes to nobody: the desk answers with
+    :data:`~mastery.agents.ESCALATION_MESSAGE` (a human takes over) instead of guessing. A plain
+    list counts as confidence 1.0. A model's self-reported confidence is NOT calibrated: check
+    it on labelled examples before you pick the threshold (Module 10).
 
     Stateless per turn: specialists see only the routed query (plus the customer ID), and the
     join is deterministic code, so model calls = one per routed specialist (+ its tool loop).
@@ -524,11 +586,15 @@ def build_router_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any
     from langgraph.graph import END, START, StateGraph
 
     classify = classify or detect_intents
-    built = {d: spec.build(model_for(d)) for d, spec in make_specialists(tools).items()}
+    built = {d: spec.build(model_for(d), context_schema=SupportContext) for d, spec in make_specialists(tools).items()}
 
     def route(state: RouterState) -> dict:
         text, _ = _turn(state["messages"])
-        return {"routes": [d for d in classify(text) if d in built], "results": None}
+        decision = classify(text)
+        domains, confidence = decision if isinstance(decision, tuple) else (decision, 1.0)
+        routes = [d for d in domains if d in built]
+        escalate = bool(routes) and min_confidence is not None and confidence < min_confidence
+        return {"routes": [] if escalate else routes, "results": None, "escalate": escalate}
 
     def fan_out(state: RouterState) -> list[Send] | str:
         text, _ = _turn(state["messages"])
@@ -543,6 +609,8 @@ def build_router_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any
         return node
 
     def join(state: RouterState) -> dict:
+        if state.get("escalate"):
+            return {"messages": [AIMessage(content=ESCALATION_MESSAGE, name="router")]}
         if not state.get("results"):
             text = "Happy to help! Is this about billing, a technical problem, or your account?"
         else:
@@ -550,7 +618,7 @@ def build_router_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any
             text = " ".join(r["answer"] for r in sorted(state["results"], key=lambda r: order.get(r["domain"], 9)))
         return {"messages": [AIMessage(content=text, name="router")]}
 
-    builder = StateGraph(RouterState)
+    builder = StateGraph(RouterState, context_schema=SupportContext)
     builder.add_node("route", route)
     for domain in built:
         builder.add_node(domain, make_node(domain))
@@ -590,12 +658,25 @@ def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = 
     and the model is used once, to write the customer reply (``writer`` = any chat model).
     """
     from langgraph.graph import END, START, StateGraph
+    from langgraph.runtime import Runtime
 
-    def parse(state: RefundState) -> dict:
-        return {"request": parse_refund(state["messages"]), "problem": "", "approved_by": "", "result": ""}
+    def parse(state: RefundState, runtime: Runtime[SupportContext]) -> dict:
+        request = parse_refund(state["messages"])
+        signed_in = signed_in_customer(runtime)
+        problem = ""
+        if signed_in is not None:
+            # The login decides whose invoice this is; a different ID typed in the chat is refused.
+            if request["customer_id"] not in (None, signed_in):
+                problem = f"you are signed in as {signed_in}, not {request['customer_id']}"
+                desk.denials.append({"tool": "refund_workflow", "asked_for": request["customer_id"],
+                                     "signed_in": signed_in})
+            request = {**request, "customer_id": signed_in}
+        return {"request": request, "problem": problem, "approved_by": "", "result": ""}
 
     def validate(state: RefundState) -> dict:
         r = state["request"]
+        if state.get("problem"):
+            return {"problem": state["problem"]}
         if not (r["customer_id"] and r["invoice_id"] and r["amount"]):
             missing = [k for k in ("customer_id", "invoice_id", "amount") if not r[k]]
             return {"problem": "missing " + ", ".join(missing)}
@@ -658,7 +739,7 @@ def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = 
     def after_approve(state: RefundState) -> str:
         return "reply" if state["problem"] else "issue"
 
-    builder = StateGraph(RefundState)
+    builder = StateGraph(RefundState, context_schema=SupportContext)
     for name, fn in (("parse", parse), ("validate", validate), ("approve", approve), ("issue", issue),
                      ("reply", reply)):
         builder.add_node(name, fn)
@@ -692,7 +773,7 @@ def build_custom_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any
         text, _ = _turn(state["messages"])
         return "refunds" if is_refund_request(text) else "agents"
 
-    builder = StateGraph(MessagesState)
+    builder = StateGraph(MessagesState, context_schema=SupportContext)
     builder.add_node("refunds", refunds)
     builder.add_node("agents", agents_node)
     builder.add_conditional_edges(START, pick, ["refunds", "agents"])
@@ -929,38 +1010,81 @@ def conversation_reviewer(conversation: dict) -> Callable[[Any], Any]:
 
 def run_conversation(app: Any, conversation: dict, desk: SupportDesk, *, reviewer: Callable[[Any], Any] | None = None,
                      callbacks: Iterable[Any] = (), thread_id: str | None = None,
-                     recursion_limit: int = 40) -> dict[str, Any]:
+                     recursion_limit: int = 40, context: SupportContext | None = None) -> dict[str, Any]:
     """Play every user turn of ``conversation`` on one thread; answer pauses with ``reviewer``.
 
     ``recursion_limit`` caps graph steps per turn, so two agents that keep handing off to
     each other fail fast with ``GraphRecursionError`` instead of burning tokens.
+    ``context`` is the signed-in customer (default: the conversation's ``signed_in`` field, if any).
+
+    ``interrupts`` counts approvals asked (one per ``reviewer`` call), so two refunds approved
+    in ONE pause count 2, as in a sequential pattern; ``pauses`` counts resume rounds.
     """
     from mastery.graphs.hitl import drive
 
     desk.reset()
-    reviewer = reviewer or conversation_reviewer(conversation)
+    base = reviewer or conversation_reviewer(conversation)
+    asked: list[Any] = []
+
+    def counting_reviewer(payload: Any) -> Any:
+        asked.append(payload)
+        return base(payload)
+
+    if context is None and conversation.get("signed_in"):
+        context = SupportContext(conversation["signed_in"])
     config = {"configurable": {"thread_id": thread_id or f"{conversation['id']}-{uuid.uuid4().hex[:6]}"},
               "callbacks": list(callbacks), "recursion_limit": recursion_limit}
-    answers, pauses = [], 0
+    answers, pauses, escalated = [], 0, False
     for turn in conversation["turns"]:
-        result = drive(app, {"messages": [{"role": "user", "content": turn}]}, config, reviewer, printer=None)
+        result = drive(app, {"messages": [{"role": "user", "content": turn}]}, config, counting_reviewer,
+                       printer=None, context=context)
         pauses += result["pauses"]
         last = result["values"]["messages"][-1]
         answers.append(last.text if hasattr(last, "text") else str(last))
+        escalated = escalated or answers[-1] == ESCALATION_MESSAGE
     return {"id": conversation["id"], "answers": answers, "answer": answers[-1], "tools": desk.tools_called(),
-            "route": desk.route(), "interrupts": pauses, "refunds": list(desk.refunds)}
+            "route": desk.route(), "interrupts": len(asked), "pauses": pauses, "refunds": list(desk.refunds),
+            "events": list(desk.events), "denials": list(desk.denials), "escalated": escalated}
+
+
+SIDE_EFFECT_TOOLS = ("issue_refund", "unlock_account", "update_email", "send_password_reset")
+
+
+def _refund_key(r: dict) -> tuple[str, str, float]:
+    """Normalized (customer, invoice, amount): a LIVE model may send ``"49"`` or ``49.0`` or ``"inv-1003"``."""
+    return (str(r.get("customer_id", "")).strip().upper(), str(r.get("invoice_id", "")).strip().upper(),
+            round(float(r.get("amount", 0)), 2))
 
 
 def score(conversation: dict, outcome: dict, *, threshold: float = REFUND_THRESHOLD) -> dict[str, Any]:
-    """Resolution checks for one conversation. ``passed`` is True only if every check holds."""
+    """Resolution checks for one conversation. ``passed`` is True only if every check holds.
+
+    It checks OUTCOMES, not just that something happened:
+
+    - ``tools``: every expected tool ran; ``no_extra_side_effects``: no side-effect tool
+      (refund, unlock, email change, password reset) ran unless expected (or listed in
+      ``expect["allow"]``); ``once``: each side-effect tool ran at most once.
+    - ``refunds``: when ``expect["refunds"]`` is given, the refunds actually made match it exactly
+      (customer, invoice, amount): refunding $1 instead of $19, or another customer's invoice, fails.
+    - ``route``: the specialists that did work (compared as a set: parallel work logs in any order).
+    - ``interrupts``: approvals asked; ``answer``: required phrases; ``refund_policy``: every refund
+      over ``threshold`` was approved by a billing manager.
+    """
     expect = conversation["expect"]
     answer = outcome["answer"].lower()
+    tools = outcome["tools"]
+    allowed = set(expect.get("tools", [])) | set(expect.get("allow", []))
     checks = {
-        "tools": all(t in outcome["tools"] for t in expect.get("tools", [])),
+        "tools": all(t in tools for t in expect.get("tools", [])),
+        "no_extra_side_effects": all(t in allowed for t in tools if t in SIDE_EFFECT_TOOLS),
+        "once": all(tools.count(t) <= 1 for t in SIDE_EFFECT_TOOLS),
+        "refunds": ("refunds" not in expect
+                    or sorted(map(_refund_key, outcome["refunds"])) == sorted(map(_refund_key, expect["refunds"]))),
+        "route": "route" not in expect or "route" not in outcome or set(outcome["route"]) == set(expect["route"]),
         "interrupts": outcome["interrupts"] == expect.get("interrupts", 0),
         "answer": all(s.lower() in answer for s in expect.get("contains", [])),
         "refund_policy": all(r["approved_by"] == "billing manager"
-                             for r in outcome["refunds"] if r["amount"] > threshold),
+                             for r in outcome["refunds"] if float(r["amount"]) > threshold),
     }
     return {"id": conversation["id"], "passed": all(checks.values()), **checks}
 
@@ -988,7 +1112,8 @@ def evaluate(app: Any, conversations: list[dict], desk: SupportDesk, *, meter: A
                 raise
             outcome = {"id": conv["id"], "answers": [], "answer": f"⚠️ {type(exc).__name__}: {str(exc)[:160]}",
                        "tools": desk.tools_called(), "route": desk.route(), "interrupts": -1,
-                       "refunds": list(desk.refunds), "error": type(exc).__name__}
+                       "refunds": list(desk.refunds), "events": list(desk.events), "denials": list(desk.denials),
+                       "escalated": False, "error": type(exc).__name__}
         rows.append({**score(conv, outcome), "outcome": outcome})
     report = {"passed": sum(r["passed"] for r in rows), "total": len(rows), "rows": rows}
     if meter is not None:
