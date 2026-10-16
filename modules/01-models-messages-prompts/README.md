@@ -5,7 +5,7 @@
 
 **Goals:** Master the model layer that everything else stands on: chat model interfaces, messages and content blocks, multimodal input, structured output, streaming and batching, token and cost awareness. Understand Runnables and LCEL well enough to read older code and the internals. See your first traces.
 
-**Estimated time:** 1.5–2 weeks (about 13–16 hours of lessons plus 4–6 hours for the project).
+**Estimated time:** 1.5–2 weeks (about 12–16 hours of lessons plus 4–6 hours for the project).
 
 ## Before you start this module
 
@@ -95,7 +95,6 @@ Magics and rich display, each taught where it is first useful:
 | [`src/mastery/pricing.py`](../../src/mastery/pricing.py) | Dated price table (`PRICES`), `estimate_cost(usage, model)`, `cost_report()` for `get_usage_metadata_callback` | [`tests/unit/test_pricing.py`](../../tests/unit/test_pricing.py) |
 | [`src/mastery/display.py`](../../src/mastery/display.py) | `message_summary()`, `render_message_html()` (escaped, testable), `show_message()` for Jupyter | [`tests/unit/test_display.py`](../../tests/unit/test_display.py) |
 | [`src/mastery/config.py`](../../src/mastery/config.py) | Extended: `model_vision`, `benchmark_model`, `benchmark_model_strong` settings | [`tests/unit/test_config.py`](../../tests/unit/test_config.py) |
-| [`tests/unit/test_notebook_structure.py`](../../tests/unit/test_notebook_structure.py) | Every Module 01+ lesson has the template sections; every live model call is guarded by a key flag | – |
 
 ## Research checkpoint
 
