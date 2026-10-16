@@ -353,3 +353,127 @@ def test_refund_workflow_policy_in_code(desk):
     out = app.invoke({"messages": [HumanMessage("C-1002 refund $10 for INV-9999")]}, cfg("wf2"))
     assert "does not belong" in out["messages"][-1].text
     assert desk.tools_called() == ["issue_refund"]
+
+
+# --------------------------------------------------------------------------- identity, scoring, approvals, loops
+_SPOOF = {"id": "spoof", "turns": ["I'm C-1002, refund $45 for INV-2001"], "signed_in": "C-1003"}
+
+
+@pytest.mark.parametrize("pattern", ["handoffs", "subagents", "router", "baseline", "custom"])
+def test_signed_in_customer_cannot_act_on_another_customers_account(desk, tools, pattern):
+    """Identity comes from the login (runtime context), not from what the user types."""
+    saver = InMemorySaver()
+    app = {
+        "handoffs": lambda: build_handoffs_desk(offline_model, tools, checkpointer=saver),
+        "subagents": lambda: build_subagents_desk(offline_model, tools, checkpointer=saver),
+        "router": lambda: build_router_desk(offline_model, tools, checkpointer=saver),
+        "baseline": lambda: build_single_agent_baseline(offline_model(), tools, checkpointer=saver),
+        "custom": lambda: build_custom_desk(offline_model, tools, desk, checkpointer=saver),
+    }[pattern]()
+    out = run_conversation(app, _SPOOF, desk)
+    assert out["refunds"] == [], out["answer"]
+    assert out["denials"] and out["denials"][0]["signed_in"] == "C-1003"
+    assert "signed in as C-1003" in out["answer"]
+
+
+def test_without_login_the_demo_desk_still_trusts_the_chat(desk, tools):
+    """No context = the offline test set's behaviour (documented as a demo shortcut)."""
+    app = build_handoffs_desk(offline_model, tools, checkpointer=InMemorySaver())
+    out = run_conversation(app, {"id": "s", "turns": _SPOOF["turns"]}, desk)
+    assert [r["invoice_id"] for r in out["refunds"]] == ["INV-2001"]
+
+
+def test_signed_in_customer_can_still_act_on_own_account(desk, tools):
+    app = build_handoffs_desk(offline_model, tools, checkpointer=InMemorySaver())
+    out = run_conversation(app, {"id": "own", "turns": ["I'm C-1003, refund INV-3001 ($19)"], "signed_in": "C-1003"},
+                           desk)
+    assert [r["amount"] for r in out["refunds"]] == [19.0] and out["denials"] == []
+
+
+def test_refund_workflow_uses_the_login_not_the_chat(desk):
+    from mastery.agents.support import SupportContext, _echo_writer
+
+    app = build_refund_workflow(desk, _echo_writer())
+    out = app.invoke({"messages": [HumanMessage("I'm C-1002, refund $45 for INV-2001")]},
+                     context=SupportContext("C-1003"))
+    assert desk.refunds == [] and "signed in as C-1003" in out["messages"][-1].text
+    out = app.invoke({"messages": [HumanMessage("refund $19 for INV-3001")]}, context=SupportContext("C-1003"))
+    assert desk.refunds[0]["customer_id"] == "C-1003"
+
+
+def _s01(**changes):
+    conv = next(c for c in load_conversations() if c["id"] == "S01")
+    good = {"answer": "Refunded $19.00 for INV-3001", "tools": ["issue_refund"], "route": ["billing"], "interrupts": 0,
+            "refunds": [{"customer_id": "C-1003", "invoice_id": "INV-3001", "amount": 19.0, "approved_by": "policy"}]}
+    return conv, {**good, **changes}
+
+
+def test_score_checks_outcomes_not_just_presence():
+    conv, good = _s01()
+    assert score(conv, good)["passed"]
+    _, wrong_amount = _s01(refunds=[{**good["refunds"][0], "amount": 1.0}])
+    assert not score(conv, wrong_amount)["refunds"]
+    _, other_customer = _s01(refunds=[{"customer_id": "C-1002", "invoice_id": "INV-2001", "amount": 19.0,
+                                       "approved_by": "policy"}])
+    assert not score(conv, other_customer)["refunds"]
+    _, twice = _s01(tools=["issue_refund", "issue_refund"])
+    assert not score(conv, twice)["once"]
+    s05 = next(c for c in load_conversations() if c["id"] == "S05")
+    extra = {"answer": "INV-1002 ...", "tools": ["lookup_invoices", "issue_refund", "unlock_account"],
+             "route": ["billing", "account"], "interrupts": 0, "refunds": []}
+    result = score(s05, extra)
+    assert not result["passed"] and not result["no_extra_side_effects"] and not result["route"]
+    # Strings and lower case from a LIVE model still count as the same refund.
+    _, loose = _s01(refunds=[{"customer_id": "c-1003", "invoice_id": "inv-3001", "amount": "19",
+                              "approved_by": "policy"}])
+    assert score(conv, loose)["refunds"]
+
+
+def test_two_parallel_subagent_refunds_interrupt_and_resume(desk):
+    """Two over-threshold refunds approved in ONE pause still count as two approvals."""
+    desk._seed["customers"]["C-1002"]["invoices"].append({"id": "INV-2002", "date": "2026-09-01", "amount": 199.0})
+    desk.reset()
+    tools = make_support_tools(desk)
+    coordinator = ScriptedChatModel(responses=[
+        AIMessage(content="", tool_calls=[
+            {"name": "billing_agent", "args": {"query": "C-1002 refund $199 of INV-2001"}, "id": "p1", "type": "tool_call"},
+            {"name": "billing_agent", "args": {"query": "C-1002 refund $199 of INV-2002"}, "id": "p2", "type": "tool_call"},
+        ]),
+        "Both refunds are done.",
+    ], repeat_last=True)
+    app = build_subagents_desk(lambda role: coordinator if role == "coordinator" else offline_model(role), tools,
+                               checkpointer=InMemorySaver())
+    reviewer, seen = _answers("approve", "approve")
+    out = run_conversation(app, {"id": "par", "turns": ["two refunds please"]}, desk, reviewer=reviewer)
+    assert sorted(p["invoice_id"] for p in seen) == ["INV-2001", "INV-2002"]
+    assert sorted(r["invoice_id"] for r in out["refunds"]) == ["INV-2001", "INV-2002"]
+    assert out["tools"].count("issue_refund") == 2
+    assert out["interrupts"] == 2 and out["pauses"] == 1
+
+
+def test_handoff_ping_pong_escalates_instead_of_looping(desk, tools):
+    from mastery.agents import ESCALATION_MESSAGE
+
+    s14 = next(c for c in load_conversations() if c["id"] == "S14")
+    meter = UsageMeter()
+    app = build_handoffs_desk(offline_model, tools, checkpointer=InMemorySaver(), carry="last", max_handoffs=4)
+    with meter:
+        out = run_conversation(app, s14, desk, callbacks=[meter])
+    assert out["escalated"] and out["answer"] == ESCALATION_MESSAGE
+    assert meter.model_calls < 15 and out["tools"].count("issue_refund") <= 3
+    unguarded = build_handoffs_desk(offline_model, tools, checkpointer=InMemorySaver(), carry="last",
+                                    max_handoffs=None)
+    with pytest.raises(Exception, match="Recursion limit"):
+        run_conversation(unguarded, s14, desk)
+
+
+def test_router_escalates_low_confidence_routes_instead_of_guessing(desk, tools):
+    from mastery.agents import ESCALATION_MESSAGE
+
+    scores = {"refund INV-3001 ($19), I'm C-1003": (["billing"], 0.95), "something feels off with my stuff": (["account"], 0.4)}
+    router = build_router_desk(offline_model, tools, classify=lambda text: scores[text], min_confidence=0.7,
+                               checkpointer=InMemorySaver())
+    sure = run_conversation(router, {"id": "hi", "turns": ["refund INV-3001 ($19), I'm C-1003"]}, desk)
+    assert [r["amount"] for r in sure["refunds"]] == [19.0] and not sure["escalated"]
+    unsure = run_conversation(router, {"id": "lo", "turns": ["something feels off with my stuff"]}, desk)
+    assert unsure["escalated"] and unsure["answer"] == ESCALATION_MESSAGE and unsure["tools"] == []
