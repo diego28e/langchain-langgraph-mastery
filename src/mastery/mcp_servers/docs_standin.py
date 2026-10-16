@@ -19,7 +19,9 @@ from fastmcp import FastMCP
 
 __all__ = ["SNAPSHOT", "build_server", "load_snapshot", "search_snapshot"]
 
-SNAPSHOT = Path(__file__).resolve().parents[3] / "data" / "samples" / "mcp" / "docs-snapshot.json"
+from mastery.config import package_repo_root
+
+SNAPSHOT = package_repo_root() / "data" / "samples" / "mcp" / "docs-snapshot.json"
 _WORD = re.compile(r"[a-z0-9_]+")
 _STOP = {"a", "an", "and", "the", "to", "of", "in", "how", "do", "i", "is", "with", "for", "my", "can", "what",
          "which", "that", "from", "on", "it", "an", "be", "python", "langchain"}

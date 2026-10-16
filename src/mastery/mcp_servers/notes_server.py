@@ -45,7 +45,9 @@ __all__ = ["DEFAULT_NOTES_DIR", "READ_SCOPE", "WRITE_SCOPE", "build_server", "ma
 
 READ_SCOPE = "notes:read"
 WRITE_SCOPE = "notes:write"
-REPO_ROOT = Path(__file__).resolve().parents[3]
+from mastery.config import package_repo_root
+
+REPO_ROOT = package_repo_root()
 DEFAULT_NOTES_DIR = REPO_ROOT / "data" / "outputs" / "m05" / "notes"
 OUTLINE = REPO_ROOT / "COURSE_OUTLINE.md"
 

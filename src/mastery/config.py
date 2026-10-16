@@ -32,6 +32,8 @@ from dotenv import find_dotenv, load_dotenv
 from mastery.doctor import require_valid_ssl_env
 
 __all__ = [
+    "REPO_ROOT_ENV",
+    "package_repo_root",
     "DEFAULT_BENCHMARK_MODEL",
     "DEFAULT_BENCHMARK_MODEL_STRONG",
     "DEFAULT_MODEL_FAST",
@@ -86,6 +88,14 @@ _PLACEHOLDER_VALUES = {"changeme", "change-me", "...", "todo"}
 # Files that only exist at the root of this repository.
 _REPO_MARKERS = ("pyproject.toml", "COURSE_OUTLINE.md")
 
+# Optional override: point it at your clone when you start Jupyter or a script from
+# somewhere else (for example an IDE that opens kernels in your home folder).
+REPO_ROOT_ENV = "LC_MASTERY_ROOT"
+
+
+def _is_repo_root(folder: Path) -> bool:
+    return all((folder / marker).is_file() for marker in _REPO_MARKERS)
+
 
 class MissingSettingError(RuntimeError):
     """Raised when required environment variables are missing or empty.
@@ -128,6 +138,10 @@ def find_repo_root(start: str | Path | None = None) -> Path:
     ``modules/00-foundations``), but ``.env``, ``data/`` and ``src/`` live at
     the repo root. This function finds that root no matter where you start.
 
+    If the ``LC_MASTERY_ROOT`` environment variable is set (and ``start`` is
+    not given), that folder wins: use it when you launch from outside the clone.
+    No machine-specific path is ever hardcoded.
+
     Args:
         start: Folder to start from. Defaults to the current working directory.
 
@@ -136,16 +150,40 @@ def find_repo_root(start: str | Path | None = None) -> Path:
         ``pyproject.toml`` and ``COURSE_OUTLINE.md``.
 
     Raises:
-        FileNotFoundError: If no such folder exists above ``start``.
+        FileNotFoundError: If no such folder exists above ``start``, or
+            ``LC_MASTERY_ROOT`` points to a folder that is not the course repo.
     """
+    override = os.environ.get(REPO_ROOT_ENV, "").strip()
+    if start is None and override:
+        root = Path(override).expanduser().resolve()
+        if not _is_repo_root(root):
+            raise FileNotFoundError(
+                f"{REPO_ROOT_ENV}={override} is not the course repository "
+                "(no pyproject.toml + COURSE_OUTLINE.md there). Fix or unset it."
+            )
+        return root
     here = Path(start or Path.cwd()).resolve()
     for folder in (here, *here.parents):
-        if all((folder / marker).is_file() for marker in _REPO_MARKERS):
+        if _is_repo_root(folder):
             return folder
     raise FileNotFoundError(
         f"Could not find the course repository root above {here}. "
         "Start Jupyter from inside your clone of langchain-langgraph-mastery."
     )
+
+
+def package_repo_root() -> Path:
+    """Repo root for code that ships inside ``mastery`` (MCP servers, sample data).
+
+    With the editable install from this clone (``pip install -e ".[dev]"``) the
+    package sits in ``<repo>/src/mastery``, so the root is two folders up. If the
+    package was installed some other way, fall back to :func:`find_repo_root`
+    (``LC_MASTERY_ROOT`` or the current folder's parents).
+    """
+    guess = Path(__file__).resolve().parents[2]
+    if os.environ.get(REPO_ROOT_ENV, "").strip():
+        return find_repo_root()
+    return guess if _is_repo_root(guess) else find_repo_root()
 
 
 def load_env(dotenv_path: str | Path | None = None, *, override: bool = False) -> Path | None:
