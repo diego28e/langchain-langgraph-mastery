@@ -4,7 +4,7 @@
 
 **Goals:** Use middleware, the defining feature of `create_agent`, to add reliability, safety, and human oversight without rewriting the agent loop. Understand prompt injection and tool security.
 
-**Estimated time:** 1.5–2 weeks (about 12–15 hours of lessons plus 5–7 hours for the project).
+**Estimated time:** 1.5–2 weeks (about 13.5–16.5 hours of lessons plus 5–7 hours for the project).
 
 ## Before you start this module
 
