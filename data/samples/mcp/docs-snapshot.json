@@ -1,5 +1,5 @@
 {
- "_note": "Search results captured from https://docs.langchain.com/mcp (short excerpts, LangChain docs are MIT-licensed). Offline stand-in data; refresh with _maintainer/tools/m05/data.py.",
+ "_note": "Search results captured from https://docs.langchain.com/mcp (short excerpts, LangChain docs are MIT-licensed). Offline stand-in data, refreshed by the course maintainers; compare it with the live server (Lesson 05.03) to see what changed.",
  "captured": "2026-10-12",
  "pages": [
   {

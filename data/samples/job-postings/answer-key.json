@@ -1,6 +1,7 @@
 {
   "_about": "Hand-labelled answers for Project 01 (Multi-Model Comparison Lab). All postings are synthetic: companies and people are fictional. Skills are lowercase canonical names. salary is null when the posting gives no numbers.",
   "_labelled": "2026-10-11",
+  "_version": "2026-10-16.1",
   "answers": {
     "JP-01": {"title": "Senior Data Engineer", "company": "Northwind Analytics", "seniority": "senior", "work_mode": "remote",
               "skills": ["python", "sql", "apache spark", "airflow", "aws"],
@@ -24,7 +25,7 @@
               "skills": ["power bi", "excel", "sql"],
               "salary": null},
     "JP-08": {"title": "Staff Security Engineer", "company": "Ironclad Health", "seniority": "lead", "work_mode": "remote",
-              "skills": ["threat modeling", "azure", "incident response", "python"],
+              "skills": ["azure", "python"],
               "salary": {"min": 110000, "max": 130000, "currency": "EUR", "period": "year"}},
     "JP-09": {"title": "AI Engineer (LLM applications)", "company": "Quantica Labs", "seniority": "mid", "work_mode": "onsite",
               "skills": ["langchain", "langgraph", "python", "fastapi"],
@@ -34,8 +35,11 @@
               "salary": null}
   },
   "_labelling_notes": {
-    "seniority": "intern | junior (0-2 yrs) | mid (2-5 yrs) | senior (5+ yrs, individual contributor) | lead (manages people OR staff/principal level) | unknown. JP-07 says 2 years, labelled junior; JP-08 'Staff' is labelled lead by this rule. Borderline cases are deliberate: discuss them in your decision log.",
+    "seniority": "intern | junior (up to 2 years) | mid (more than 2, up to 5 years) | senior (more than 5 years, individual contributor) | lead (manages people OR staff/principal level) | unknown. A range uses its midpoint (2-4 years -> 3 -> mid). JP-07 says 2 years, labelled junior; JP-08 'Staff' is labelled lead by this rule. Borderline cases are deliberate: discuss them in your decision log.",
+    "skills": "Languages, frameworks, libraries, tools, platforms and cloud providers, as lowercase canonical names (see _aliases). A cloud provider is listed once (aws, gcp, azure); its individual services are not. Practices (threat modeling, incident response, RAG, evals) and soft skills are not skills here.",
     "work_mode": "remote | hybrid | onsite | unknown.",
     "salary": "Numbers as written (no currency conversion). A single number gives min = max."
-  }
+  },
+  "_aliases": {"spark": "apache spark", "apache airflow": "airflow", "postgres": "postgresql", "node": "node.js",
+               "nodejs": "node.js", "golang": "go", "k8s": "kubernetes", "powerbi": "power bi"}
 }
