@@ -46,6 +46,16 @@ The notebook ends with 9 checks. All fail on the untouched starter (0/9), and no
 
 Everything runs **offline** (the rule-based `offline_model` desk and scripted judges), so Restart & Run All always completes at $0. With `GROQ_API_KEY`, Step 8 re-measures 10 cases × 3 runs on `gpt-oss-20b` for both desks (≈ 150–200 calls; spread it over time on the free tier) and prints the mean and the worst run.
 
+## Rubric (self-assessment)
+
+| Criterion | ✅ Meets | ⭐ Exceeds |
+|---|---|---|
+| Labels | Reviewer-checked labels, without reading the answer key | A short note on the traces you labelled differently from the reviewer, and why |
+| Prioritization | Top two failure categories recomputed from your labels and severities | A sensitivity check: does the top two change if one severity changes? |
+| Judge | Confusion counts recomputed on judge-test | The `dropped_request` judge tightened on judge-dev and re-measured once (stretch) |
+| Fix and gate | The fix holds on the held-out suite; the report carries measured pass^3 and a matching decision | A new baseline recorded after approval, with the PR's eval-gate run linked |
+| Hygiene | All 9 checks pass; Restart & Run All in both modes; outputs cleared | Your report says what the gate cannot detect at this sample size |
+
 ## Stretch
 
 - Make the `dropped_request` judge trustworthy: read its false positives on judge-dev, tighten the definition, re-measure once on judge-test.
