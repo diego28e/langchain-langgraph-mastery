@@ -1,0 +1,34 @@
+# Render Blueprint for the public demo (Lesson 12.09). Blueprint spec verified 2026-10-16:
+# https://render.com/docs/blueprint-spec. Render reads render.yaml from the repo root: copy this file
+# there (or point "Blueprint path" at apps/m12_service/render.yaml when you create the Blueprint).
+#
+# The service runs the image CI pushed to GHCR (immutable, tagged with the commit). CI deploys a new
+# tag through the deploy hook; rolling back = deploying the previous tag (or "Rollback" in the dashboard).
+services:
+  - type: web
+    name: orbita-support-desk
+    runtime: image
+    image:
+      url: ghcr.io/YOUR_GITHUB_USER/mastery-m12-service:latest   # CI replaces the tag on every deploy
+    plan: free                         # spins down after 15 min idle; ~1 min to wake
+    region: oregon
+    healthCheckPath: /ready
+    envVars:
+      - key: PORT
+        value: "8000"                  # the image's uvicorn port (Render's default is 10000)
+      - key: MASTERY_SERVICE_PUBLIC
+        value: "true"                  # refuse to start with demo keys or short secrets
+      - key: MASTERY_SERVICE_MODE
+        value: live
+      - key: MASTERY_SERVICE_MAX_CONCURRENT
+        value: "2"
+      - key: MASTERY_SERVICE_BUDGET_GLOBAL_DAY_USD
+        value: "0.20"                  # the global daily cost cap
+      - key: MASTERY_SERVICE_BUDGET_PER_USER_DAY_USD
+        value: "0.02"
+      - key: MASTERY_SERVICE_API_KEYS  # key=user:role,... (24+ characters each); set in the dashboard
+        sync: false
+      - key: MASTERY_SERVICE_DATABASE_URL   # Neon free Postgres: postgresql://...?sslmode=require
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false

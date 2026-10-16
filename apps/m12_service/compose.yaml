@@ -1,0 +1,63 @@
+# The support desk and its Postgres database (Lesson 12.06). From the repository root:
+#   docker compose -f apps/m12_service/compose.yaml up --build -d
+#   RELEASE=1.4.0 docker compose -f apps/m12_service/compose.yaml up -d --no-build   (run an already-built tag)
+#   docker compose -f apps/m12_service/compose.yaml logs -f api
+#   docker compose -f apps/m12_service/compose.yaml down          (add -v to delete the database too)
+# Metrics and alerts (Lesson 12.07): add --profile obs to `up` and open http://localhost:9090
+# DEMO mode by default: no key, no cost. LIVE: MASTERY_SERVICE_MODE=live and GROQ_API_KEY in .env.
+name: m12-service
+
+services:
+  api:
+    build:
+      context: ../..
+      dockerfile: apps/m12_service/Dockerfile
+    image: mastery-m12-service:${RELEASE:-dev}   # one tag per release: rolling back = starting the previous tag
+    ports:
+      - "127.0.0.1:8000:8000"          # this machine only; a proxy or platform publishes it (Lesson 12.09)
+    env_file:
+      - path: ../../.env               # your keys and MASTERY_SERVICE_* settings, if the file exists
+        required: false
+    environment:
+      MASTERY_SERVICE_DATABASE_URL: postgresql://agent:${POSTGRES_PASSWORD:-agent}@db:5432/agent
+      MASTERY_SERVICE_RELEASE: ${RELEASE:-dev}
+      MASTERY_SERVICE_DEMO_FAIL_RATE: ${DEMO_FAIL_RATE:-0}   # incident drills only (Lesson 12.07); ignored in LIVE
+    depends_on:
+      db:
+        condition: service_healthy     # wait until Postgres accepts connections, not just "started"
+        restart: true
+    read_only: true                    # the app writes nothing to disk; Postgres holds the state
+    tmpfs:
+      - /tmp
+    stop_grace_period: 30s             # > uvicorn's 10 s + the 10 s run drain, before SIGKILL
+    restart: unless-stopped
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: agent
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-agent}
+      POSTGRES_DB: agent
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+
+  prometheus:                          # only with --profile obs
+    image: prom/prometheus:v3.15.0
+    profiles: [obs]
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - ./ops/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./ops/alerts.yml:/etc/prometheus/alerts.yml:ro
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

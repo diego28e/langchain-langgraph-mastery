@@ -1,0 +1,50 @@
+# Alerts for the support desk, derived from the SLOs in Lesson 12.01 (RUNBOOK.md says what to do).
+# Validate: promtool check rules apps/m12_service/ops/alerts.yml
+groups:
+  - name: agent-slos
+    rules:
+      - alert: AgentDown
+        expr: up{job="agent"} == 0
+        for: 1m
+        labels: {severity: page}
+        annotations:
+          summary: "The agent API is not answering /metrics"
+          runbook: "RUNBOOK.md#agentdown"
+
+      # Availability SLO 99%: page when the error budget burns 14.4x too fast over both 1 h and 5 m
+      # (2% of a 30-day budget in one hour; the short window makes the alert stop soon after a fix).
+      - alert: AgentErrorBudgetFastBurn
+        expr: |
+          (
+            sum(rate(agent_runs_total{status=~"error|timeout"}[1h])) / sum(rate(agent_runs_total[1h])) > (14.4 * 0.01)
+          ) and (
+            sum(rate(agent_runs_total{status=~"error|timeout"}[5m])) / sum(rate(agent_runs_total[5m])) > (14.4 * 0.01)
+          )
+        labels: {severity: page}
+        annotations:
+          summary: "Runs are failing: {{ $value | humanizePercentage }} errors over 5 m"
+          runbook: "RUNBOOK.md#agenterrorbudgetfastburn"
+
+      # TTFT SLO: 99% of runs start streaming within 3 s.
+      - alert: AgentSlowFirstToken
+        expr: histogram_quantile(0.99, sum by (le) (rate(agent_run_ttft_seconds_bucket[10m]))) > 3
+        for: 10m
+        labels: {severity: ticket}
+        annotations:
+          summary: "p99 time to first token is {{ $value | humanizeDuration }} (SLO: 3 s)"
+          runbook: "RUNBOOK.md#agentslowfirsttoken"
+
+      - alert: AgentQueueBacklog
+        expr: agent_runs_queued > 10
+        for: 5m
+        labels: {severity: ticket}
+        annotations:
+          summary: "{{ $value }} runs waiting for a slot"
+          runbook: "RUNBOOK.md#agentqueuebacklog"
+
+      - alert: AgentSpendHigh
+        expr: increase(agent_cost_usd_total[1h]) > 0.25
+        labels: {severity: ticket}
+        annotations:
+          summary: "Model spend of ${{ $value | printf \"%.2f\" }} in the last hour"
+          runbook: "RUNBOOK.md#agentspendhigh"

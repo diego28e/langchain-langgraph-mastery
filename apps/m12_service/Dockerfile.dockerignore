@@ -1,0 +1,11 @@
+# Allowlist: send the builder only what the image needs (no .env, no notebooks, no outputs).
+*
+!pyproject.toml
+!COURSE_OUTLINE.md
+!constraints/
+!src/
+!data/samples/support-desk/
+!apps/m12_service/
+**/__pycache__
+**/*.py[cod]
+**/.env
