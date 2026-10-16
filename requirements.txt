@@ -56,6 +56,9 @@ deepagents>=0.7.23,<0.8
 # deepagents already depends on it (>=4.4.0,<5); listed explicitly because the
 # course imports it directly. Verified on PyPI 2026-10-11: 4.4.1 (2026-10-10).
 langchain-google-genai>=4.4.1,<5
+# Google GenAI SDK: Module 13 calls Gemini TTS directly (Interactions API, needs >= 2.25.0; LangChain's
+# integration documents only the older TTS models). Verified on PyPI 2026-10-16: 2.31.0.
+google-genai>=2.25.0,<3
 # Interpreters + dynamic subagents (Lesson 11.09, beta). Installed in that lesson.
 # langchain-quickjs>=0.3.8,<0.4
 # Managed sandbox providers (optional, Lesson 11.09). Pick one if you try it.

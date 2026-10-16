@@ -1,0 +1,426 @@
+{
+  "_about": "Synthetic voicemails to Orbita Cloud support (fictional people and companies). 'script' is the ground truth; 'simulated_whisper' is a SIMULATED response for offline runs, not a model's output.",
+  "hint_terms": [
+    "Orbita Cloud",
+    "Nimbus Pro",
+    "Andes Logistics",
+    "C-1002",
+    "C-2042",
+    "C-3107"
+  ],
+  "voicemails": [
+    {
+      "id": "vm-01",
+      "language": "en",
+      "voice": "Kore",
+      "style": "slightly stressed, speaking quickly",
+      "script": "Hi, this is Laura Gómez from Andes Logistics, customer number C-1002. Since this morning our Nimbus Pro dashboard shows error 503 every time we export invoices. Please call me back at 300 555 0142. Thanks.",
+      "ticket": {
+        "customer_id": "C-1002",
+        "intent": "outage",
+        "urgency": "high",
+        "callback_number": "300 555 0142"
+      },
+      "simulated_whisper": {
+        "text": " Hi, this is Laura Gomez from Andes Logistics, customer number C1002. Since this morning our Nimbus bro dashboard shows error 503 every time we export invoices. Please call me back at 300-555-0142. Thanks.",
+        "language": "English",
+        "duration": 13.99,
+        "segments": [
+          {
+            "id": 0,
+            "start": 0.0,
+            "end": 4.23,
+            "text": " Hi, this is Laura Gomez from Andes Logistics, customer number C1002.",
+            "avg_logprob": -0.21,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 1,
+            "start": 4.53,
+            "end": 10.3,
+            "text": " Since this morning our Nimbus bro dashboard shows error 503 every time we export invoices.",
+            "avg_logprob": -0.24,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 2,
+            "start": 10.6,
+            "end": 12.91,
+            "text": " Please call me back at 300-555-0142.",
+            "avg_logprob": -0.27,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 3,
+            "start": 13.21,
+            "end": 13.59,
+            "text": " Thanks.",
+            "avg_logprob": -0.21,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          }
+        ],
+        "with_prompt": {
+          "text": " Hi, this is Laura Gomez from Andes Logistics, customer number C-1002. Since this morning our Nimbus Pro dashboard shows error 503 every time we export invoices. Please call me back at 300-555-0142. Thanks.",
+          "language": "English",
+          "duration": 13.99,
+          "segments": [
+            {
+              "id": 0,
+              "start": 0.0,
+              "end": 4.23,
+              "text": " Hi, this is Laura Gomez from Andes Logistics, customer number C-1002.",
+              "avg_logprob": -0.21,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 1,
+              "start": 4.53,
+              "end": 10.3,
+              "text": " Since this morning our Nimbus Pro dashboard shows error 503 every time we export invoices.",
+              "avg_logprob": -0.24,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 2,
+              "start": 10.6,
+              "end": 12.91,
+              "text": " Please call me back at 300-555-0142.",
+              "avg_logprob": -0.27,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 3,
+              "start": 13.21,
+              "end": 13.59,
+              "text": " Thanks.",
+              "avg_logprob": -0.21,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "vm-02",
+      "language": "en",
+      "voice": "Puck",
+      "style": "calm and polite",
+      "script": "Hello, Daniel Price here, account C-2042. I was charged twice for my September invoice, number 88412, forty nine dollars each time. I'd like one of the charges refunded, please. You can reach me by email.",
+      "ticket": {
+        "customer_id": "C-2042",
+        "intent": "billing",
+        "urgency": "normal",
+        "callback_number": null
+      },
+      "simulated_whisper": {
+        "text": " Hello, Daniel Price here, account C2042. I was charged twice for my September invoice, number 88412, $49 each time. I'd like one of the charges refunded, please. You can reach me by email.",
+        "language": "English",
+        "duration": 14.0,
+        "segments": [
+          {
+            "id": 0,
+            "start": 0.0,
+            "end": 2.31,
+            "text": " Hello, Daniel Price here, account C2042.",
+            "avg_logprob": -0.21,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 1,
+            "start": 2.61,
+            "end": 7.61,
+            "text": " I was charged twice for my September invoice, number 88412, $49 each time.",
+            "avg_logprob": -0.24,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 2,
+            "start": 7.91,
+            "end": 10.99,
+            "text": " I'd like one of the charges refunded, please.",
+            "avg_logprob": -0.27,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 3,
+            "start": 11.29,
+            "end": 13.6,
+            "text": " You can reach me by email.",
+            "avg_logprob": -0.21,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          }
+        ],
+        "with_prompt": {
+          "text": " Hello, Daniel Price here, account C-2042. I was charged twice for my September invoice, number 88412, $49 each time. I'd like one of the charges refunded, please. You can reach me by email.",
+          "language": "English",
+          "duration": 14.0,
+          "segments": [
+            {
+              "id": 0,
+              "start": 0.0,
+              "end": 2.31,
+              "text": " Hello, Daniel Price here, account C-2042.",
+              "avg_logprob": -0.21,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 1,
+              "start": 2.61,
+              "end": 7.61,
+              "text": " I was charged twice for my September invoice, number 88412, $49 each time.",
+              "avg_logprob": -0.24,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 2,
+              "start": 7.91,
+              "end": 10.99,
+              "text": " I'd like one of the charges refunded, please.",
+              "avg_logprob": -0.27,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 3,
+              "start": 11.29,
+              "end": 13.6,
+              "text": " You can reach me by email.",
+              "avg_logprob": -0.21,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "vm-03",
+      "language": "es",
+      "voice": "Kore",
+      "style": "friendly",
+      "script": "Hola, habla Camila Rojas, cliente C-3107. Quiero cambiar mi plan de Orbita Cloud a Nimbus Pro a partir de noviembre. Por favor confírmenme el nuevo precio por correo. Gracias.",
+      "translation": "Hello, this is Camila Rojas, customer C-3107. I want to change my Orbita Cloud plan to Nimbus Pro starting in November. Please confirm the new price by email. Thank you.",
+      "ticket": {
+        "customer_id": "C-3107",
+        "intent": "plan_change",
+        "urgency": "normal",
+        "callback_number": null
+      },
+      "simulated_whisper": {
+        "text": " Hola, habla Camila Rojas, cliente C 3107. Quiero cambiar mi plan de Órbita Clown a Nimbus Pro a partir de noviembre. Por favor confírmenme el nuevo precio por correo. Gracias.",
+        "language": "Spanish",
+        "duration": 12.83,
+        "segments": [
+          {
+            "id": 0,
+            "start": 0.0,
+            "end": 2.69,
+            "text": " Hola, habla Camila Rojas, cliente C 3107.",
+            "avg_logprob": -0.21,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 1,
+            "start": 2.99,
+            "end": 8.37,
+            "text": " Quiero cambiar mi plan de Órbita Clown a Nimbus Pro a partir de noviembre.",
+            "avg_logprob": -0.24,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 2,
+            "start": 8.67,
+            "end": 11.75,
+            "text": " Por favor confírmenme el nuevo precio por correo.",
+            "avg_logprob": -0.27,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 3,
+            "start": 12.05,
+            "end": 12.43,
+            "text": " Gracias.",
+            "avg_logprob": -0.21,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          }
+        ],
+        "with_prompt": {
+          "text": " Hola, habla Camila Rojas, cliente C-3107. Quiero cambiar mi plan de Orbita Cloud a Nimbus Pro a partir de noviembre. Por favor confírmenme el nuevo precio por correo. Gracias.",
+          "language": "Spanish",
+          "duration": 12.450000000000001,
+          "segments": [
+            {
+              "id": 0,
+              "start": 0.0,
+              "end": 2.31,
+              "text": " Hola, habla Camila Rojas, cliente C-3107.",
+              "avg_logprob": -0.21,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 1,
+              "start": 2.61,
+              "end": 7.99,
+              "text": " Quiero cambiar mi plan de Orbita Cloud a Nimbus Pro a partir de noviembre.",
+              "avg_logprob": -0.24,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 2,
+              "start": 8.29,
+              "end": 11.37,
+              "text": " Por favor confírmenme el nuevo precio por correo.",
+              "avg_logprob": -0.27,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 3,
+              "start": 11.67,
+              "end": 12.05,
+              "text": " Gracias.",
+              "avg_logprob": -0.21,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "vm-04",
+      "language": "en",
+      "voice": "Fenrir",
+      "style": "urgent and frustrated",
+      "script": "Yeah hi, it's urgent. Our whole team is locked out of Orbita since the password reset last night. Customer C-1002 again. Call me as soon as you can.",
+      "ticket": {
+        "customer_id": "C-1002",
+        "intent": "access",
+        "urgency": "high",
+        "callback_number": null
+      },
+      "simulated_whisper": {
+        "text": " Yeah, hi, it's urgent. Our whole team is locked out of Orbit, uh, since the password reset last night. Customer C1002 again. Call me as soon as you can.",
+        "language": "English",
+        "duration": 12.450000000000001,
+        "segments": [
+          {
+            "id": 0,
+            "start": 0.0,
+            "end": 1.54,
+            "text": " Yeah, hi, it's urgent.",
+            "avg_logprob": -0.21,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 1,
+            "start": 1.84,
+            "end": 7.61,
+            "text": " Our whole team is locked out of Orbit, uh, since the password reset last night.",
+            "avg_logprob": -0.24,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 2,
+            "start": 7.91,
+            "end": 9.06,
+            "text": " Customer C1002 again.",
+            "avg_logprob": -0.27,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          },
+          {
+            "id": 3,
+            "start": 9.36,
+            "end": 12.05,
+            "text": " Call me as soon as you can.",
+            "avg_logprob": -0.21,
+            "no_speech_prob": 0.01,
+            "compression_ratio": 1.3
+          }
+        ],
+        "with_prompt": {
+          "text": " Yeah, hi, it's urgent. Our whole team is locked out of Orbita since the password reset last night. Customer C-1002 again. Call me as soon as you can.",
+          "language": "English",
+          "duration": 12.06,
+          "segments": [
+            {
+              "id": 0,
+              "start": 0.0,
+              "end": 1.54,
+              "text": " Yeah, hi, it's urgent.",
+              "avg_logprob": -0.21,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 1,
+              "start": 1.84,
+              "end": 7.22,
+              "text": " Our whole team is locked out of Orbita since the password reset last night.",
+              "avg_logprob": -0.24,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 2,
+              "start": 7.52,
+              "end": 8.67,
+              "text": " Customer C-1002 again.",
+              "avg_logprob": -0.27,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            },
+            {
+              "id": 3,
+              "start": 8.97,
+              "end": 11.66,
+              "text": " Call me as soon as you can.",
+              "avg_logprob": -0.21,
+              "no_speech_prob": 0.01,
+              "compression_ratio": 1.3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "simulated_noise_only": {
+    "text": " Thank you for watching.",
+    "language": "English",
+    "duration": 12.0,
+    "segments": [
+      {
+        "id": 0,
+        "start": 0.0,
+        "end": 2.0,
+        "text": " Thank you for watching.",
+        "avg_logprob": -1.32,
+        "no_speech_prob": 0.87,
+        "compression_ratio": 0.9
+      }
+    ]
+  }
+}
