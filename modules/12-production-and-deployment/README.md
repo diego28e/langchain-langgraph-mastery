@@ -10,15 +10,15 @@
 
 | Lesson | Title | Notebook | Status |
 |---|---|---|---|
-| 12.01 | Production readiness: checklist, SLOs, and budgets | `12-01-production-checklist.ipynb` | 📝 Planned |
-| 12.02 | Resilience, rate limits, cost and caching | `12-02-resilience-cost-caching.ipynb` | 📝 Planned |
-| 12.03 | Async agents and concurrency | `12-03-async-and-concurrency.ipynb` | 📝 Planned |
-| 12.04 | A FastAPI service for long-running agents: runs, resumable streams, cancellation | `12-04-fastapi-service.ipynb` | 📝 Planned |
-| 12.05 | Persistence, auth, and multi-user data | `12-05-persistence-and-auth.ipynb` | 📝 Planned |
-| 12.06 | Docker and Docker Compose | `12-06-docker-and-compose.ipynb` | 📝 Planned |
-| 12.07 | Observability and operations: OpenTelemetry, SLOs, and incidents | `12-07-observability-and-operations.ipynb` | 📝 Planned |
-| 12.08 | (Optional reference) LangSmith Deployment and Agent Server | `12-08-optional-langsmith-deployment.ipynb` | 📝 Planned |
-| 12.09 | Ship it: UI, CI/CD, safe releases, and a public deployment | `12-09-ship-it.ipynb` | 📝 Planned |
+| 12.01 | Production readiness: checklist, SLOs, and budgets | `12-01-production-checklist.ipynb` | ✅ Ready |
+| 12.02 | Resilience, rate limits, cost and caching | `12-02-resilience-cost-caching.ipynb` | ✅ Ready |
+| 12.03 | Async agents and concurrency | `12-03-async-and-concurrency.ipynb` | ✅ Ready |
+| 12.04 | A FastAPI service for long-running agents: runs, resumable streams, cancellation | `12-04-fastapi-service.ipynb` | ✅ Ready |
+| 12.05 | Persistence, auth, and multi-user data | `12-05-persistence-and-auth.ipynb` | ✅ Ready |
+| 12.06 | Docker and Docker Compose | `12-06-docker-and-compose.ipynb` | ✅ Ready |
+| 12.07 | Observability and operations: logs, metrics, traces, SLOs and incidents | `12-07-observability-and-operations.ipynb` | ✅ Ready |
+| 12.08 | (Optional reference) LangSmith Deployment and Agent Server | `12-08-optional-langsmith-deployment.ipynb` | ✅ Ready |
+| 12.09 | Ship it: UI, CI/CD, safe releases, and a public deployment | `12-09-ship-it.ipynb` | ✅ Ready |
 
 ## Production notes
 
@@ -29,7 +29,11 @@
 
 **Project 12 — Self-Hosted Agent Service, Live on a Public URL**: Deploy one capstone-candidate agent (ideally your Project 10 or Project 11 agent) as a real, self-hosted service that anyone can run from a fresh clone, and that is live on a public URL.
 
-Project files go in `project/`.
+| Project | Notebook | Status |
+|---|---|---|
+| [Project 12](project/README.md) | `project/12-project-production-agent-service.ipynb` (starter) · `project/solutions/…-solution.ipynb` | ✅ Ready |
+
+The notebook is the release review (8 acceptance checks, offline, $0); the deliverable is the deployed service with its URL in your README.
 
 ## Jupyter skill
 
@@ -37,7 +41,7 @@ From notebook to module/service (`nbconvert --to script`, refactoring).
 
 ## `src/mastery` increment
 
-`mastery/service/` (FastAPI app factory, settings via `pydantic-settings`, auth dependency, SSE helpers).
+`mastery/service/`: SLOs, error budgets and burn rates (`slo.py`), latency and cost budgets with a spend ledger (`budgets.py`), failure injection for resilience tests (`resilience.py`). Background runs with a concurrency limit, bounded queue, idempotency, cancel and timeouts (`runs.py`); the FastAPI app factory with API-key auth, ownership checks and native SSE with `Last-Event-ID` resume (`app.py`); settings via `pydantic-settings` (`settings.py`); the support desk wiring (`desk.py`); an SSE client (`client.py`) and an async load test (`loadtest.py`). Durable state on SQLite or Postgres (`store.py`) and JWT verification (`auth.py`). Readiness, graceful shutdown with a run drain, JSON logs with request ids, Prometheus metrics and trace metadata (`observability.py`). Install with the `[service]` extra (part of `[dev]`). The container image, Compose stack, Prometheus alerts and runbook are in `apps/m12_service/`.
 
 ## Research checkpoint
 
@@ -45,7 +49,9 @@ Re-check the [FastAPI release notes](https://fastapi.tiangolo.com/release-notes/
 
 ## Status
 
-📝 Planned. No notebooks yet.
+✅ Module 12 complete: Lessons 12.01–12.09 and Project 12 (verified 2026-10-16). The service app lives in [`apps/m12_service/`](../../apps/m12_service/); the Agent Server version (12.08) in [`apps/m12_agent_server/`](../../apps/m12_agent_server/).
+
+**Free-tier budget (LIVE cells):** 12.01 ≈ 1–2K tokens (TTFT probe), 12.02 ≈ 2–3K tokens (prompt-cache probe), 12.03 ≈ 1K tokens (concurrent calls), 12.04 ≈ 4–6K tokens (one LIVE run through the service), 12.05 none (its 🐳 cells use a local Postgres in Docker, optional), 12.06 none (🐳 build and Compose stack in DEMO mode), 12.07 none (🌐 one LangSmith trace of a DEMO run; 🐳 Prometheus drill), 12.08 none (a local `langgraph dev` with the offline desk), 12.09 none offline (optional 💸 one LIVE run on your public deployment, ≈ 4–6K tokens of its quota), Project 12 none offline (the deployed service spends only what its daily cap allows). Every 🧪 cell runs offline for free; simulated traffic is labelled as such.
 
 ---
 
