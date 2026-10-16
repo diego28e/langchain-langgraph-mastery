@@ -33,6 +33,8 @@ Facts used here (VERIFIED 2026-10-11):
 
 from __future__ import annotations
 
+import os
+import re
 import warnings
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -54,6 +56,13 @@ __all__ = [
     "PreviewModelWarning",
     "describe_model",
     "explain_model_error",
+    "friendly_model_error",
+    "install_notebook_error_hints",
+    "is_tool_use_failed",
+    "parse_try_again_in",
+    "safe_print",
+    "is_transient",
+    "structured_model",
     "get_model",
     "model_string",
     "split_model_string",
@@ -195,6 +204,9 @@ def get_model(
         max_tokens: Output token cap. ``None`` keeps the integration default.
         timeout: Seconds before a request is abandoned. 60 avoids hanging cells.
         max_retries: Automatic retries for 429/5xx/network errors (not 401/404).
+            The SDK waits as long as a 429's ``retry-after`` says (up to 60 s), so per-minute limits
+            recover on their own. With the default (2), the ``MASTERY_MAX_RETRIES`` environment
+            variable can raise it for a whole run (the live-check runner sets 6).
         rate_limiter: Optional limiter shared across models (Lesson 01.06).
         check_key: Check that the provider's API key is set before building.
         **kwargs: Passed through to ``init_chat_model`` (e.g. ``reasoning_effort="low"``).
@@ -226,6 +238,15 @@ def get_model(
             stacklevel=2,
         )
 
+    if max_tokens is None and os.environ.get("MASTERY_MAX_TOKENS", "").strip().isdigit():
+        # e.g. an org whose output-tokens-per-minute (OTPM) limit is below the model's default output budget.
+        max_tokens = int(os.environ["MASTERY_MAX_TOKENS"])
+    if max_retries == 2 and os.environ.get("MASTERY_MAX_RETRIES", "").strip().isdigit():
+        max_retries = int(os.environ["MASTERY_MAX_RETRIES"])
+    # Groq's Qwen 3.8 returns its reasoning inline ("raw") by default, and Groq requires "parsed" or "hidden"
+    # with tool calling or JSON mode. VERIFIED 2026-10-16: https://console.groq.com/docs/reasoning
+    if provider_name == "groq" and model_id.startswith("qwen/") and "reasoning_format" not in kwargs:
+        kwargs["reasoning_format"] = "parsed"
     # Only send parameters the caller actually set, so provider defaults apply otherwise.
     params: dict[str, Any] = {
         "temperature": temperature,
@@ -237,13 +258,81 @@ def get_model(
     params = {name: value for name, value in params.items() if value is not None}
     params.update(kwargs)
     try:
-        return init_chat_model(spec, **params)
+        primary = init_chat_model(spec, **params)
+        return _with_env_fallbacks(primary, params, explicit=model is not None)
     except ImportError as error:
         package = PROVIDER_PACKAGES.get(provider_name, f"the package for provider '{provider_name}'")
         raise ImportError(
             f"Could not create {spec!r}: {package} is not installed in this kernel. "
             f'In a notebook run:  %pip install "{package}"  then restart the kernel.'
         ) from error
+
+
+def _rate_limit_errors() -> tuple[type[BaseException], ...]:
+    found: list[type[BaseException]] = []
+    for module in ("groq", "openai"):
+        try:
+            found.append(__import__(module).RateLimitError)
+        except (ImportError, AttributeError):
+            pass
+    return tuple(found)
+
+
+def _fallback_class() -> Any:
+    from langchain_core.runnables import RunnableWithFallbacks
+
+    class ModelWithFallbacks(RunnableWithFallbacks):
+        """RunnableWithFallbacks that also answers plain attributes (``.model_name``...) from the primary model."""
+
+        def __getattr__(self, name: str) -> Any:
+            try:
+                return super().__getattr__(name)
+            except AttributeError:
+                if name.startswith("_") or name in ("runnable", "fallbacks"):
+                    raise
+                return getattr(self.runnable, name)
+
+    return ModelWithFallbacks
+
+
+def __getattr__(name: str) -> Any:  # lazy module attribute: keeps `import mastery.models` light
+    if name == "_ModelWithFallbacks":
+        cls = _fallback_class()
+        globals()[name] = cls
+        return cls
+    raise AttributeError(name)
+
+
+def _with_env_fallbacks(primary: Any, params: dict[str, Any], *, explicit: bool) -> Any:
+    """Opt-in: ``MASTERY_FALLBACK_MODELS="groq:openai/gpt-oss-120b,groq:qwen/qwen3.8-27b"`` in ``.env``.
+
+    On a rate-limit error (429, e.g. the free tier's daily quota) the call is retried on the next model in the
+    list. Each Groq model has its OWN quota (https://console.groq.com/docs/rate-limits), so rotating models keeps
+    a lesson going. Only role-based models get fallbacks (an explicit ``model=`` is a deliberate choice), and
+    models whose provider key is missing are skipped. The result is a ``RunnableWithFallbacks``: ``invoke``,
+    ``bind_tools``, ``with_structured_output`` and ``create_agent`` work, and plain attributes such as
+    ``.model_name`` come from the primary model.
+    """
+    raw = os.environ.get("MASTERY_FALLBACK_MODELS", "").strip()
+    errors = _rate_limit_errors()
+    if explicit or not raw or not errors:
+        return primary
+    from langchain.chat_models import init_chat_model
+
+    backups = []
+    for spec in (s.strip() for s in raw.split(",") if s.strip()):
+        provider_name, model_id = split_model_string(spec if ":" in spec else f"groq:{spec}")
+        if not any(is_set(name) for name in PROVIDER_KEY_ENV.get(provider_name, ())):
+            continue
+        extra = dict(params)
+        if provider_name == "groq" and model_id.startswith("qwen/"):
+            extra.setdefault("reasoning_format", "parsed")
+        if not (provider_name == "groq" and model_id.startswith(("openai/gpt-oss", "qwen/"))):
+            extra.pop("reasoning_effort", None)       # a Groq-only parameter other providers reject
+        backups.append(init_chat_model(f"{provider_name}:{model_id}", **extra))
+    if not backups:
+        return primary
+    return __getattr__("_ModelWithFallbacks")(runnable=primary, fallbacks=backups, exceptions_to_handle=errors)
 
 
 @dataclass(frozen=True)
@@ -253,10 +342,10 @@ class ModelErrorInfo:
     Attributes:
         kind: One of ``auth``, ``permission``, ``not_found``, ``invalid_request``,
             ``context_overflow``, ``rate_limit``, ``timeout``, ``connection``,
-            ``server``, ``unknown``.
+            ``server``, ``daily_limit``, ``output_limit``, ``unknown``.
         retryable: Whether retrying the same request can succeed.
         status_code: HTTP status, when the error carries one.
-        retry_after: Seconds to wait, from the ``retry-after`` header (429 only).
+        retry_after: Seconds to wait (429 only): the ``retry-after`` header, else Groq's "try again in" text.
         hint: What to do next, in one sentence.
     """
 
@@ -272,8 +361,16 @@ _HINTS: dict[str, str] = {
     "permission": "The key works but lacks permission for this model or organization.",
     "not_found": "Unknown or retired model ID: check the live model list and the provider's deprecations page.",
     "invalid_request": "The provider rejected the request (parameters, schema or model). Read the message.",
-    "context_overflow": "The input is longer than the model's context window: shorten or summarize it.",
+    "context_overflow": ("The request is too large: longer than the model's context window, or (Groq HTTP 413) more "
+                         "tokens in one request than your tokens-per-minute limit. Shorten or summarize it, or use "
+                         "a model or tier with higher limits."),
     "rate_limit": "Rate limit hit: wait retry_after seconds, slow down, or send fewer tokens.",
+    "output_limit": ("The request asks for more OUTPUT tokens than your organization's output-tokens-per-minute "
+                     "(OTPM) limit allows. A configuration issue, not a bug: set max_tokens below the limit "
+                     "(MASTERY_MAX_TOKENS in .env), or use a model without that limit."),
+    "daily_limit": ("The DAILY quota for this model is used up (tokens or requests per day): retrying today won't "
+                    "help. Wait until it resets, or switch model, e.g. MASTERY_MODEL_FAST=qwen/qwen3.8-27b in .env "
+                    "(each model has its own daily allowance), or upgrade the plan."),
     "timeout": "The request timed out: retry, raise `timeout`, or ask for a shorter answer.",
     "connection": "Network problem: check your connection, VPN or proxy.",
     "server": "Provider-side error: retry with backoff; check the provider's status page.",
@@ -282,16 +379,29 @@ _HINTS: dict[str, str] = {
 _RETRYABLE = {"rate_limit", "timeout", "connection", "server"}
 
 
+_TRY_AGAIN = re.compile(r"try again in\s+((?:\d+(?:\.\d+)?(?:h|ms|m|s))+)", re.I)
+_DAILY = re.compile(r"\((TPD|RPD)\)|per day", re.I)
+
+
+def parse_try_again_in(message: str) -> float | None:
+    """Seconds from Groq's 429 text, e.g. "Please try again in 1m23.5s" -> 83.5 (None if absent)."""
+    m = _TRY_AGAIN.search(message or "")
+    if not m:
+        return None
+    units = {"h": 3600.0, "m": 60.0, "s": 1.0, "ms": 0.001}
+    return sum(float(n) * units[u] for n, u in re.findall(r"(\d+(?:\.\d+)?)(ms|h|m|s)", m.group(1)))
+
+
 def _retry_after(error: BaseException) -> float | None:
-    """Read the ``retry-after`` header from an SDK error's HTTP response, if any."""
+    """Seconds to wait: the ``retry-after`` header of an SDK error's HTTP response, else "try again in" text."""
     response = getattr(error, "response", None)
     headers: Mapping[str, str] | None = getattr(response, "headers", None)
-    if not headers:
-        return None
     try:
-        return float(headers.get("retry-after", ""))
+        if headers and headers.get("retry-after") is not None:
+            return float(headers.get("retry-after", ""))
     except ValueError:
-        return None
+        pass
+    return parse_try_again_in(str(error))
 
 
 def _kind_from_status(status: int, message: str) -> str:
@@ -305,10 +415,13 @@ def _kind_from_status(status: int, message: str) -> str:
         return "not_found"
     if status == 408:
         return "timeout"
+    if status == 413 and ("otpm" in lowered or "output tokens per minute" in lowered):
+        return "output_limit"
     if status == 413 or "context length" in lowered or "context_length" in lowered:
         return "context_overflow"
     if status == 429:
-        return "rate_limit"
+        # Groq: "... on tokens per day (TPD): Limit 200000, Used 199914 ..." -> a daily quota, not a per-minute one.
+        return "daily_limit" if _DAILY.search(message) else "rate_limit"
     # Groq flex tier: 498 "capacity_exceeded" means "retry later with jittered backoff".
     # VERIFIED 2026-10-11: https://console.groq.com/docs/flex-processing
     if status >= 500 or status == 498:
@@ -362,6 +475,8 @@ def explain_model_error(error: BaseException) -> ModelErrorInfo:
     # Step 2: SDK errors with an HTTP status code (groq, openai, ...).
     if kind == "unknown" and status is not None:
         kind = _kind_from_status(status, message)
+    if kind == "rate_limit" and _DAILY.search(message):
+        kind = "daily_limit"
     # Step 3: Errors without a status code, recognized by class name.
     if kind == "unknown":
         if "Timeout" in name or isinstance(error, TimeoutError):
@@ -373,9 +488,137 @@ def explain_model_error(error: BaseException) -> ModelErrorInfo:
         kind=kind,
         retryable=kind in _RETRYABLE,
         status_code=status,
-        retry_after=_retry_after(error) if kind == "rate_limit" else None,
+        retry_after=_retry_after(error) if kind in ("rate_limit", "daily_limit") else None,
         hint=_HINTS[kind],
     )
+
+
+def is_transient(error: BaseException) -> bool:
+    """True for errors worth retrying: timeouts, connection errors, 429 rate limits and 5xx server errors.
+
+    A ``retry_on`` predicate for LangGraph's ``RetryPolicy`` and LangChain's ``ModelRetryMiddleware``.
+    Provider SDK errors (``groq.APIConnectionError``, ``groq.BadRequestError``...) are not subclasses of
+    the built-in ``ConnectionError``/``TimeoutError``, so a tuple of built-in types never matches them,
+    while the default ``retry_on`` retries them all, 400 and 401 included. This classifies them through
+    :func:`explain_model_error`. LangGraph's ``NodeTimeoutError`` (a node ran past its ``TimeoutPolicy``)
+    counts as a timeout.
+
+    Retry in ONE layer: if a graph node retries with this, build its model with ``max_retries=0``,
+    or every graph attempt makes up to three SDK attempts.
+    """
+    if type(error).__name__ == "NodeTimeoutError":
+        return True
+    return explain_model_error(error).retryable
+
+
+def _wait_text(seconds: float | None) -> str:
+    if not seconds:
+        return ""
+    minutes, secs = divmod(int(round(seconds)), 60)
+    hours, minutes = divmod(minutes, 60)
+    return " (Groq says: try again in " + (f"{hours}h {minutes}m" if hours else f"{minutes}m {secs}s" if minutes else f"{secs}s") + ")"
+
+
+def friendly_model_error(error: BaseException) -> str | None:
+    """A short, student-friendly explanation for a rate-limit error (429), or None for any other error.
+
+    ``load_env()`` installs it in Jupyter, so a 429 in a notebook prints this instead of a long traceback.
+    """
+    info = explain_model_error(error)
+    if info.kind not in ("rate_limit", "daily_limit"):
+        return None
+    used = re.search(r"Limit (\d+), Used (\d+)", str(error))
+    usage = f" Used {int(used.group(2)):,} of {int(used.group(1)):,}." if used else ""
+    if info.kind == "daily_limit":
+        return ("⏸️ Groq's free-tier DAILY limit for this model is used up." + usage + _wait_text(info.retry_after)
+                + "\n   Nothing is wrong with your code. Options: wait for the reset, or use another model's daily "
+                  "allowance: put MASTERY_MODEL_FAST=qwen/qwen3.8-27b (or openai/gpt-oss-120b) in .env and restart "
+                  "the kernel, or run the notebook OFFLINE (remove GROQ_API_KEY) to check your code for free.")
+    return ("⏸️ Groq's per-minute rate limit (tokens or requests per minute) was hit, even after automatic retries."
+            + usage + _wait_text(info.retry_after)
+            + "\n   Nothing is wrong with your code. Wait a minute and re-run this cell, or run fewer questions at once.")
+
+
+def safe_print(text: str, stream: Any = None) -> None:
+    """print() that never crashes on a console that can't show emoji (Windows cp1252 when output is redirected)."""
+    import sys
+
+    stream = stream or sys.stdout
+    try:
+        print(text, file=stream)
+    except UnicodeEncodeError:
+        encoding = getattr(stream, "encoding", None) or "ascii"
+        print(text.encode(encoding, errors="replace").decode(encoding, errors="replace"), file=stream)
+
+
+def install_notebook_error_hints() -> bool:
+    """In IPython/Jupyter, print :func:`friendly_model_error` above the traceback of a 429 (idempotent).
+
+    The cell still fails (so "Run All" stops and test runners see the error); the student first sees
+    what happened and what to do. Returns True when installed. Outside IPython it does nothing.
+    """
+    try:
+        from IPython import get_ipython
+    except ImportError:
+        return False
+    shell = get_ipython()
+    if shell is None:
+        return False
+    if getattr(shell, "_mastery_error_hints", False):
+        return True
+
+    def handler(self, etype, value, tb, tb_offset=None):
+        message = None
+        error = value
+        while error is not None and message is None:   # the 429 may be wrapped (graph node, tool, ...)
+            message = friendly_model_error(error)
+            error = error.__cause__ or error.__context__
+        if message:
+            safe_print(message)
+        return self.showtraceback((etype, value, tb), tb_offset=tb_offset)
+
+    shell.set_custom_exc((Exception,), handler)
+    shell._mastery_error_hints = True
+    return True
+
+
+def is_tool_use_failed(error: BaseException) -> bool:
+    """True for Groq's ``400 tool_use_failed``: the model's tool call (or "answer" tool) came out malformed.
+
+    The request itself was fine, so ONE retry usually succeeds. Use it as (part of) a ``retry_on``
+    predicate, e.g. ``ModelRetryMiddleware(retry_on=lambda e: is_transient(e) or is_tool_use_failed(e))``.
+    VERIFIED 2026-10-16 on a live run: ``Error code: 400 - {... 'code': 'tool_use_failed', 'failed_generation': ...}``.
+    """
+    return getattr(error, "status_code", None) == 400 and "tool_use_failed" in str(error)
+
+
+# Groq models whose JSON-schema mode supports strict=True (constrained decoding: the reply always matches).
+# VERIFIED 2026-10-16: https://console.groq.com/docs/structured-outputs ("Models with Strict Mode").
+STRICT_SCHEMA_MODELS = ("openai/gpt-oss-20b", "openai/gpt-oss-120b", "qwen/qwen3.8-27b")
+
+
+def structured_model(model: Any, schema: Any, *, include_raw: bool = False) -> Any:
+    """``model.with_structured_output(schema)`` with the most reliable method the model supports.
+
+    For Groq's gpt-oss and Qwen 3.8 models this is ``method="json_schema", strict=True``: Groq constrains decoding to
+    the schema, so the reply cannot be malformed. The default ``function_calling`` can fail on these
+    models with ``Unknown tool type: 'functions.<Schema>'`` or ``400 tool_use_failed`` (the model
+    answered in prose). If the strict request is refused (e.g. a schema feature strict mode does not
+    support), it falls back to ``function_calling``. Other models get the plain default.
+    Do NOT use it on a model bound to tools: Groq does not combine structured outputs with tool use.
+    """
+    from langchain_core.runnables import RunnableWithFallbacks
+
+    if isinstance(model, RunnableWithFallbacks):            # MASTERY_FALLBACK_MODELS: each model its best method
+        return RunnableWithFallbacks(runnable=structured_model(model.runnable, schema, include_raw=include_raw),
+                                     fallbacks=[structured_model(f, schema, include_raw=include_raw) for f in model.fallbacks],
+                                     exceptions_to_handle=model.exceptions_to_handle)
+    name = str(getattr(model, "model_name", "") or getattr(model, "model", ""))
+    if name not in STRICT_SCHEMA_MODELS:
+        return model.with_structured_output(schema, include_raw=include_raw)
+    strict = model.with_structured_output(schema, method="json_schema", strict=True, include_raw=include_raw)
+    return strict.with_fallbacks([model.with_structured_output(schema, method="function_calling",
+                                                               include_raw=include_raw)])
 
 
 def describe_model(model: Any) -> dict[str, Any]:

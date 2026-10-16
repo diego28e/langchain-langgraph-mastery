@@ -203,3 +203,153 @@ def test_langchain_standard_exceptions_are_recognized() -> None:
 )
 def test_errors_without_status_code(error: Exception, kind: str) -> None:
     assert explain_model_error(error).kind == kind
+
+
+def test_is_transient_classifies_provider_errors() -> None:
+    import httpx
+    from langgraph.errors import NodeTimeoutError
+
+    groq = pytest.importorskip("groq")
+    from mastery.models import is_transient
+
+    request = httpx.Request("POST", "https://api.groq.com/openai/v1/chat/completions")
+
+    def status_error(cls, code):
+        return cls("x", response=httpx.Response(code, request=request), body=None)
+
+    assert not is_transient(status_error(groq.BadRequestError, 400))
+    assert not is_transient(status_error(groq.AuthenticationError, 401))
+    assert is_transient(status_error(groq.RateLimitError, 429))
+    assert is_transient(status_error(groq.InternalServerError, 503))
+    assert is_transient(groq.APIConnectionError(request=request))
+    assert is_transient(groq.APITimeoutError(request=request))
+    assert is_transient(ConnectionError("reset")) and is_transient(TimeoutError("slow"))
+    assert is_transient(NodeTimeoutError("search_web", 0.3, kind="run", run_timeout=0.3))
+    assert not is_transient(ValueError("bug")) and not is_transient(KeyError("k"))
+
+
+def test_is_tool_use_failed_only_matches_groq_tool_use_failed() -> None:
+    import httpx
+
+    groq = pytest.importorskip("groq")
+    from mastery.models import is_tool_use_failed
+
+    request = httpx.Request("POST", "https://api.groq.com/openai/v1/chat/completions")
+    body = {"error": {"message": "Tool choice is required, but model did not call a tool", "code": "tool_use_failed"}}
+    failed = groq.BadRequestError(f"Error code: 400 - {body}", response=httpx.Response(400, request=request), body=body)
+    other = groq.BadRequestError("Error code: 400 - bad schema", response=httpx.Response(400, request=request), body=None)
+    assert is_tool_use_failed(failed)
+    assert not is_tool_use_failed(other) and not is_tool_use_failed(ValueError("tool_use_failed"))
+
+
+def test_structured_model_uses_strict_json_schema_on_gpt_oss() -> None:
+    from langchain_core.runnables import RunnableWithFallbacks
+    from pydantic import BaseModel
+
+    from mastery.models import structured_model
+
+    class Grade(BaseModel):
+        relevant: bool
+
+    bound = structured_model(get_model(model="groq:openai/gpt-oss-20b", check_key=False, api_key=FAKE_GROQ_KEY), Grade)
+    assert isinstance(bound, RunnableWithFallbacks)
+    response_format = bound.runnable.first.kwargs["response_format"]
+    assert response_format["type"] == "json_schema" and response_format["json_schema"]["strict"] is True
+    fallback_tools = bound.fallbacks[0].first.kwargs["tools"]
+    assert fallback_tools[0]["function"]["name"] == "Grade"
+    # Models without strict mode keep the integration's default method (no fallback layer).
+    other = structured_model(get_model(model="groq:llama-3.1-8b-instant", check_key=False, api_key=FAKE_GROQ_KEY), Grade)
+    assert not isinstance(other, RunnableWithFallbacks)
+
+
+def _groq_429(message: str, headers: dict | None = None):
+    import httpx
+
+    groq = pytest.importorskip("groq")
+    request = httpx.Request("POST", "https://api.groq.com/openai/v1/chat/completions")
+    return groq.RateLimitError(message, response=httpx.Response(429, request=request, headers=headers or {}), body=None)
+
+
+TPD_429 = ("Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` in organization "
+           "`org_x` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 199914, Requested 1043. "
+           "Please try again in 6m19.872s.', 'type': 'tokens', 'code': 'rate_limit_exceeded'}}")
+TPM_429 = ("Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-20b` ... on tokens per "
+           "minute (TPM): Limit 8000, Used 7200, Requested 1500. Please try again in 5.25s.', 'code': 'rate_limit_exceeded'}}")
+
+
+def test_parse_try_again_in() -> None:
+    from mastery.models import parse_try_again_in
+
+    assert parse_try_again_in("Please try again in 6m19.872s.") == pytest.approx(379.872)
+    assert parse_try_again_in("try again in 1h2m3s") == pytest.approx(3723)
+    assert parse_try_again_in("try again in 250ms") == pytest.approx(0.25)
+    assert parse_try_again_in("no hint here") is None
+
+
+def test_daily_limit_429_is_not_transient_but_minute_limit_is() -> None:
+    from mastery.models import friendly_model_error, is_transient
+
+    daily, minute = _groq_429(TPD_429), _groq_429(TPM_429, {"retry-after": "6"})
+    assert explain_model_error(daily).kind == "daily_limit" and not is_transient(daily)
+    assert explain_model_error(daily).retry_after == pytest.approx(379.872)
+    assert explain_model_error(minute).kind == "rate_limit" and is_transient(minute)
+    assert explain_model_error(minute).retry_after == 6.0
+    assert "DAILY" in friendly_model_error(daily) and "199,914 of 200,000" in friendly_model_error(daily)
+    assert "per-minute" in friendly_model_error(minute)
+    assert friendly_model_error(ValueError("bug")) is None
+
+
+def test_qwen_gets_parsed_reasoning_and_env_raises_retries(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("MASTERY_MAX_RETRIES", "6")
+    with pytest.warns(PreviewModelWarning):
+        llm = get_model(model="groq:qwen/qwen3.8-27b", check_key=False, api_key=FAKE_GROQ_KEY)
+    assert llm.reasoning_format == "parsed" and llm.max_retries == 6
+    assert get_model(model="groq:openai/gpt-oss-20b", check_key=False, api_key=FAKE_GROQ_KEY, max_retries=1).max_retries == 1
+
+
+def test_safe_print_survives_a_cp1252_stream() -> None:
+    import io
+
+    from mastery.models import safe_print
+
+    raw = io.BytesIO()
+    stream = io.TextIOWrapper(raw, encoding="cp1252")
+    safe_print("⏸️ limit → 💸 ok", stream=stream)
+    stream.flush()
+    assert raw.getvalue().decode("cp1252").strip().endswith("ok")
+
+
+def test_otpm_413_is_an_output_limit() -> None:
+    import httpx
+
+    groq = pytest.importorskip("groq")
+    request = httpx.Request("POST", "https://api.groq.com/openai/v1/chat/completions")
+    message = ("Error code: 413 - Request too large for model `qwen/qwen3.8-27b` ... on output tokens per minute "
+               "(OTPM): Limit 1000, Requested 1319")
+    error = groq.APIStatusError(message, response=httpx.Response(413, request=request), body=None)
+    assert explain_model_error(error).kind == "output_limit"
+
+
+from pydantic import BaseModel as BaseModelForTest  # noqa: E402
+
+
+def test_fallback_models_env_wraps_role_models_only(monkeypatch: pytest.MonkeyPatch) -> None:
+    from langchain_core.runnables import RunnableWithFallbacks
+
+    monkeypatch.setenv("GROQ_API_KEY", FAKE_GROQ_KEY)
+    monkeypatch.setenv("MASTERY_FALLBACK_MODELS", "groq:openai/gpt-oss-120b, openai/gpt-oss-20b")
+    llm = get_model("fast", settings=Settings(model_fast="openai/gpt-oss-20b"), reasoning_effort="low")
+    assert isinstance(llm, RunnableWithFallbacks) and len(llm.fallbacks) == 2
+    assert [f.model_name for f in llm.fallbacks] == ["openai/gpt-oss-120b", "openai/gpt-oss-20b"]
+    assert llm.model_name == "openai/gpt-oss-20b"                      # plain attributes: from the primary
+    from mastery.models import structured_model
+
+    class Grade(BaseModelForTest):
+        relevant: bool
+
+    bound = structured_model(llm, Grade)
+    assert isinstance(bound, RunnableWithFallbacks) and len(bound.fallbacks) == 2
+    assert type(llm.bind_tools([])).__name__.endswith("Fallbacks")
+    assert not isinstance(get_model(model="groq:openai/gpt-oss-20b"), RunnableWithFallbacks)
+    monkeypatch.delenv("MASTERY_FALLBACK_MODELS")
+    assert not isinstance(get_model("fast", settings=Settings(model_fast="openai/gpt-oss-20b")), RunnableWithFallbacks)

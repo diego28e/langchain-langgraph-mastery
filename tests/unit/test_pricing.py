@@ -17,6 +17,8 @@ def test_every_price_is_dated_and_sourced() -> None:
 def test_bare_model_id_matches_when_unique() -> None:
     assert get_price("openai/gpt-oss-20b") is PRICES["groq:openai/gpt-oss-20b"]
     assert get_price("gpt-6-luna") is PRICES["openai:gpt-6-luna"]
+    assert get_price("gpt-6-luna-2026-08-07") is PRICES["openai:gpt-6-luna"]   # dated snapshot -> alias
+    assert get_price("not-a-model-2026-08-07") is None
     assert get_price("does-not-exist") is None
 
 

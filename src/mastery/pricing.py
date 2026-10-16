@@ -19,6 +19,7 @@ Limits of this estimate (read before trusting it):
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -70,7 +71,8 @@ def get_price(model: str) -> ModelPrice | None:
 
     A bare ID (what providers report in ``response_metadata["model_name"]``,
     e.g. ``"openai/gpt-oss-20b"``) matches when exactly one table entry ends
-    with it, so ambiguous names return ``None`` instead of a wrong price.
+    with it, so ambiguous names return ``None`` instead of a wrong price. A dated
+    snapshot name (``"gpt-6-luna-2026-08-07"``) falls back to its alias.
 
     Args:
         model: ``"groq:openai/gpt-oss-20b"`` or ``"openai/gpt-oss-20b"``.
@@ -81,6 +83,8 @@ def get_price(model: str) -> ModelPrice | None:
     if model in PRICES:
         return PRICES[model]
     matches = [price for key, price in PRICES.items() if key.split(":", 1)[1] == model]
+    if not matches and re.search(r"-\d{4}-\d{2}-\d{2}$", model):
+        return get_price(model[:-11])      # dated snapshot ("gpt-6-luna-2026-08-07") -> its alias's price
     return matches[0] if len(matches) == 1 else None
 
 

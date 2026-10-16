@@ -203,7 +203,16 @@ def load_env(dotenv_path: str | Path | None = None, *, override: bool = False) -
         The path of the file that was loaded, or ``None`` if no file was found.
         A missing file is not an error: in CI or production the variables come
         from the real environment instead.
+
+    In Jupyter it also installs a friendly message for Groq rate-limit errors (429), see
+    :func:`mastery.models.install_notebook_error_hints`.
     """
+    try:  # Never let the hint machinery break loading .env.
+        from mastery.models import install_notebook_error_hints
+
+        install_notebook_error_hints()
+    except Exception:  # noqa: BLE001
+        pass
     if dotenv_path is None:
         # WHY usecwd=True: without it, python-dotenv starts searching from the
         # folder of the *calling .py file* (here: src/mastery/), which is wrong
@@ -279,8 +288,9 @@ def mask_secret(value: str | None, visible: int = 4) -> str:
     """
     if not value:
         return "<not set>"
-    # WHY the cap: even "helpful" prefixes leak entropy. Four characters is
-    # the usual provider prefix (gsk_, sk-p, ...), never part of the secret body.
+    # WHY the cap: even "helpful" prefixes leak entropy. Four characters covers
+    # the usual provider prefix (gsk_, sk-p, ...); for shorter prefixes (hf_) one
+    # character of the secret body shows, which is still safe to print.
     visible = max(0, min(visible, 4))
     if len(value) <= visible * 2:
         return f"*** ({len(value)} chars)"
