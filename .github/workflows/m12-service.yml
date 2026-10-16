@@ -1,0 +1,119 @@
+# The m12_service pipeline (Lesson 12.09): lint -> tests -> image tagged with the commit -> smoke test
+# -> (main only) push to GHCR -> deploy to Render through its deploy hook.
+# The eval gate (eval-gate.yml) runs on the same pull requests; mark both checks "required" in
+# Settings > Branches so a red gate blocks the merge. Actions versions verified 2026-10-16.
+name: m12 service
+
+on:
+  pull_request:
+    paths:
+      - "src/mastery/service/**"
+      - "src/mastery/agents/**"
+      - "apps/m12_service/**"
+      - "tests/unit/test_service_*.py"
+      - "constraints/**"
+      - "pyproject.toml"
+      - ".github/workflows/m12-service.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/mastery/service/**"
+      - "src/mastery/agents/**"
+      - "apps/m12_service/**"
+      - "tests/unit/test_service_*.py"
+      - "constraints/**"
+      - "pyproject.toml"
+      - ".github/workflows/m12-service.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: m12-service-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Lint and service tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"          # the image's Python
+          cache: pip
+      - name: Install (same lock as the image)
+        run: python -m pip install -c constraints/constraints-2026-10-16.txt -e ".[dev,service]" "ruff==0.17.1"
+      - name: Lint (syntax errors and pyflakes; the course's minimal gate)
+        run: ruff check --select E9,F src/mastery/service apps/m12_service tests/unit/test_service_*.py
+      - name: Service tests (auth, tenant isolation, runs, store, operations)
+        run: python -m pytest -q tests/unit/test_service_app.py tests/unit/test_service_runs.py tests/unit/test_service_store.py tests/unit/test_service_ops.py tests/unit/test_service_slo.py tests/unit/test_service_release.py
+
+  image:
+    name: Build, smoke test, push
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write                  # push to GHCR with the workflow's own token
+    steps:
+      - uses: actions/checkout@v7
+      - name: Image name (GHCR needs lower case)
+        id: img
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/mastery-m12-service" >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@v4
+      - name: Build (tagged with the commit; immutable)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: apps/m12_service/Dockerfile
+          load: true
+          tags: ${{ steps.img.outputs.name }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Smoke test the image (DEMO mode, no secrets)
+        run: |
+          docker run -d --name smoke -p 8000:8000 -e MASTERY_SERVICE_RELEASE=${{ github.sha }} ${{ steps.img.outputs.name }}:${{ github.sha }}
+          for i in $(seq 1 30); do curl -fs localhost:8000/ready && break; sleep 2; done
+          curl -fs localhost:8000/version | grep -q '"${{ github.sha }}"'
+          thread=$(curl -fs -X POST -H "Authorization: Bearer demo-customer" localhost:8000/threads | python -c "import sys,json; print(json.load(sys.stdin)['thread_id'])")
+          curl -fs -X POST -H "Authorization: Bearer demo-customer" -H "Content-Type: application/json" \
+            -d '{"message": "How do I rotate an API key?"}' localhost:8000/threads/$thread/runs
+          curl -fs localhost:8000/ui/ | grep -q "Orbita Cloud support"
+      - name: Logs on failure
+        if: failure()
+        run: docker logs smoke
+      - name: Push to GHCR (main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker push ${{ steps.img.outputs.name }}:${{ github.sha }}
+
+  deploy:
+    name: Deploy to Render
+    needs: image
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production            # optional: add required reviewers to this environment
+    steps:
+      - name: Trigger the deploy hook with this commit's image
+        env:
+          HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          OWNER: ${{ github.repository_owner }}
+          PUBLIC_URL: ${{ vars.M12_PUBLIC_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then echo "No RENDER_DEPLOY_HOOK_URL secret: skipping the deploy."; exit 0; fi
+          IMAGE="ghcr.io/${OWNER,,}/mastery-m12-service"
+          img=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1], safe=''))" "${IMAGE}:${GITHUB_SHA}")
+          curl -fsS -X POST "${HOOK}&imgURL=${img}" > /dev/null
+          if [ -n "$PUBLIC_URL" ]; then
+            for i in $(seq 1 40); do
+              curl -fs "$PUBLIC_URL/version" | grep -q "\"${GITHUB_SHA}\"" && { echo "live: ${GITHUB_SHA}"; exit 0; }
+              sleep 15
+            done
+            echo "the new release did not go live within 10 minutes"; exit 1
+          fi
