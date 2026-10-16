@@ -88,7 +88,7 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 | # | Módulo | Estado |
 |---|---|---|
 | 09 | [Sistemas multiagente](modules/09-multi-agent-systems/) | ✅ Construido |
-| 10 | [Pruebas, evaluación y observabilidad](modules/10-testing-evaluation-observability/) | 📝 Planificado |
+| 10 | [Pruebas, evaluación y observabilidad](modules/10-testing-evaluation-observability/) | ✅ Construido |
 | 11 | [Deep Agents](modules/11-deep-agents/) | 📝 Planificado |
 | 12 | [Producción y despliegue (FastAPI + Docker, autoalojado)](modules/12-production-and-deployment/) | 📝 Planificado |
 | 13 | [Multimodalidad y voz (electivo)](modules/13-multimodal-and-voice/) | 📝 Planificado |

@@ -786,17 +786,17 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 **`src/mastery` increment:** `mastery/evals/` grows from the `stats` module of Module 01: `taxonomy.py` (open-coding label sheets, category counts, frequency × severity), `datasets.py` (builders from traces and failure categories, dev/test splits, version tags), `judges.py` (binary judge factory with few-shot examples, TPR/TNR check against your labels, corrected pass rates), and `gates.py` (CI thresholds on confidence bounds, red-team regressions, cost budgets) + `tests/unit/`, `tests/integration/`.
 **Research checkpoint:** Check [Usage and billing](https://docs.langchain.com/langsmith/usage-and-billing) for current free-tier trace limits and retention, and log how many eval runs per week you can afford. Then check the status of the [OTel GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai) and log whether the attribute names you used changed.
 
-### Project 10 — Error-Analysis Story: Eval Suite + CI Gate for a Previous Agent
-**Goal:** Turn one earlier project (06, 07, 08, or 09) into an evaluated, regression-tested system, and tell it as an **error-analysis story**: what failed, how often, what you changed, how you know it worked, and what now stops it from coming back.
+### Project 10 — Pre-release Gate and Error-Analysis Report for the Support Desk
+**Goal:** The Project 09 support desk is in production and support leads say it "feels flaky". Do what an eval engineer does before the next release, and tell it as an **error-analysis story** with numbers: what failed, how often, what you changed, how you know it worked, and what now stops it from coming back.
 - **Requirements**
-  1. **Error analysis:** run the system on ≥ 100 realistic inputs (including Module 04 adversarial inputs and questions it should decline), read every trace, and commit the label sheet and `taxonomy.md` (5–10 categories with definitions, examples, counts, severity, and the frequency × severity ranking).
-  2. **Dataset:** ≥ 60 versioned LangSmith examples built from traces and failure categories, plus reviewed synthetic examples, split into dev and a held-out test split you never tune on.
-  3. **Evaluators:** ≥ 1 deterministic evaluator (schema or citation validity); a binary LLM judge for each of your top two failure categories, with examples in its prompt and its TPR/TNR measured on ≥ 30 examples you labelled yourself; a trajectory evaluator if the system is an agent.
-  4. **Fix the top two failure categories.** Compare before vs after on the held-out split with ≥ 3 repetitions: per-category failure rates with 95% confidence intervals, a paired comparison, and pass^k for agent tasks (all via `mastery.evals.stats`).
-  5. **Tests:** unit tests with fake models run in < 30 s with no API keys; integration tests marked and skipped by default.
-  6. **CI:** GitHub Actions runs lint + unit tests on every push, and the eval gate (Lesson 10.08: confidence-bound thresholds, red-team suite, cost budget) on pull requests or manual dispatch.
-- **Acceptance criteria:** The report reads as a story with numbers ("failure X was 18% [CI] of traces; after change Y it is 4% [CI] on the held-out split"), and says "no detectable difference" wherever the intervals say so. Every judge's TPR and TNR is reported (aim for ≥ 0.8 each, or explain why it is still useful). CI is green, and a deliberately broken commit (for example, the old prompt) is blocked by the gate. LangSmith links for every experiment.
-- **Stretch:** An online evaluator + annotation queue on a deployed version (after Module 12). Compare your taxonomy with an Insights report (paid plans). Export the same traces to a second backend through OpenTelemetry. Backtest a new agent version on last week's traces.
+  1. **Error analysis:** label ≥ 100 production traces (category + note), agreeing ≥ 90% with an independent reviewer.
+  2. **Taxonomy:** every label defined (definition, example, not this, severity, action) and ranked by frequency × severity; name the top two.
+  3. **Judges:** TPR and TNR of the two LLM judges on labels they never saw, and a trust decision for each.
+  4. **Fix the top two failure categories:** each cut by ≥ 50% on the frozen release suite **and** on a held-out suite, a paired comparison that favours the fix, pass^3, and no new failure.
+  5. **Gate:** the fixed desk passes this release's bar (pass-rate lower bound, pass^3, red team, cost); a known-bad build (no auth context) is blocked. The same gate runs in GitHub Actions (`eval-gate.yml`, Lesson 10.08).
+  6. **Report:** a Markdown release report generated from the measured numbers, with a SHIP/BLOCK decision.
+- **Acceptance criteria:** 9 automated checks in the notebook, all failing on the starter and none passable with shortcuts (labels compared with an independent reviewer, rankings and judge numbers recomputed, the fix measured on a held-out suite, report numbers matched to the run). The report says "no detectable difference" wherever the intervals say so.
+- **Stretch:** re-measure on `gpt-oss-20b` (mean and worst of 3 runs); an online evaluator + annotation queue on a deployed version (after Module 12); export the traces to a second backend through OpenTelemetry.
 - **Stack:** Free: Groq + LangSmith free tier + GitHub Actions. Paid: a stronger judge model (always a different model from the one being judged when you can).
 
 ---

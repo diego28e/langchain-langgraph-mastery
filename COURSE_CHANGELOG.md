@@ -2,6 +2,31 @@
 
 What changed in the course, newest first. After you pull an update ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)), skim the latest entry: it says which lessons changed and whether you need to re-run anything.
 
+## 2026-10-15 · Module 10, part 2
+
+**Re-run after pulling:** nothing new to install. Re-run Lesson 10.04 only if you want its updated closing links.
+
+### New
+
+- **Lessons 10.05–10.08 are built:** agent evals (trajectory match modes, side-effect checks, a trajectory judge, multi-turn simulation, pass@k vs pass^k), production monitoring (sampling, judge budgets, corrected rates, alerts on interval bounds, feedback, annotation queues, trace retention), prompt management (versions, tags, gated promotion; LangSmith Prompt Hub cells optional) and testing strategy and CI gates (test pyramid, lower-bound gates, a release baseline, the `release_gate` CLI).
+- **Project 10 · Pre-release Gate for the Support Desk:** label 200 traces, validate two judges, fix the top two failures, prove it with paired numbers, gate the release (a known-bad build must be blocked) and write the release report. 9 acceptance checks; collapsed hints.
+- **CI:** new `.github/workflows/eval-gate.yml` runs the Module 10 tests and the release gate on pull requests that touch the desk or the evals.
+- **`mastery`:** `mastery.evals` gains `monitoring`, `prompts` and `release_gate`; `mastery.agents.release_suite` holds the frozen release suite and red team; `build_handoffs_desk` accepts a `triage_prompt`.
+
+### Fixes you'll notice
+
+- The trace labeller now accepts a correct refund of "my last invoice".
+
+## 2026-10-15 · Module 10, part 1
+
+**Re-run after pulling:** `python -m pip install -e ".[dev]"` (new `evals` extra: `langsmith[otel]`, OpenTelemetry SDK and OTLP exporter; openevals and agentevals move into it).
+
+### New
+
+- **Module 10 Lessons 10.01–10.04 are built:** error analysis (open and axial coding of 60 support-desk traces, a failure taxonomy ranked by frequency × severity, saturation), observability (`@traceable` with version metadata and threads, masking secrets, OpenTelemetry spans with GenAI attribute names, the LangSmith OTLP settings), datasets and experiments (three sources of examples, dedupe, leak-checked splits, content versions, repetitions, paired comparisons, minimum detectable difference, cost budgets) and evaluators and judges (code first, one binary judge per category, TPR/TNR on held-out labels, corrected failure rates, calibration, cost-based thresholds with an abstain band, pairwise comparisons in both orders). Every lesson runs offline; LangSmith and Groq cells are optional.
+- **`mastery.evals`** gains `taxonomy`, `datasets`, `judges`, `gates` and `otel`; **`mastery.agents.support_traces`** generates the deterministic trace sets the lessons share.
+- Lessons 10.05–10.08 and Project 10 follow in the next update.
+
 ## 2026-10-15 · Module 09 update
 
 **Re-run after pulling:** Module 09 notebooks and Project 09 (the shared `mastery.agents` code changed; no new installs).

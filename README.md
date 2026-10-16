@@ -86,7 +86,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | # | Module | Status |
 |---|---|---|
 | 09 | [Multi-Agent Systems](modules/09-multi-agent-systems/) | ✅ Built |
-| 10 | [Testing, Evaluation & Observability](modules/10-testing-evaluation-observability/) | 📝 Planned |
+| 10 | [Testing, Evaluation & Observability](modules/10-testing-evaluation-observability/) | ✅ Built |
 | 11 | [Deep Agents](modules/11-deep-agents/) | 📝 Planned |
 | 12 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/12-production-and-deployment/) | 📝 Planned |
 | 13 | [Multimodal & Voice (elective)](modules/13-multimodal-and-voice/) | 📝 Planned |
