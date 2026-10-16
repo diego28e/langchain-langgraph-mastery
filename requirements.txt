@@ -41,6 +41,11 @@ langchain-huggingface>=1.2.3,<2
 # --- Testing & evaluation (Module 10) ---------------------------------------
 openevals>=0.2.0,<1
 agentevals>=0.0.9,<1
+# OpenTelemetry (Lesson 10.02): LangSmith's otel extra + the SDK and OTLP exporters.
+# VERIFIED 2026-10-15: opentelemetry-sdk / -exporter-otlp 1.45.1 on PyPI; floors = versions the notebooks ran with.
+langsmith[otel]>=0.14.7,<1
+opentelemetry-sdk>=1.42.1,<2
+opentelemetry-exporter-otlp>=1.42.1,<2
 
 # --- Deep Agents (Module 11). PRE-1.0: read the changelog before upgrading. --
 # https://docs.langchain.com/oss/python/deepagents/changelog-py

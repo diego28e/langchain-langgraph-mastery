@@ -85,6 +85,15 @@ rag = [
 notebooks = [
     "jupytext>=1.19.6,<2",
 ]
+# Testing, evaluation & observability (Module 10): judges (openevals), trajectory evals (agentevals)
+# and OpenTelemetry tracing. VERIFIED 2026-10-15: openevals 0.2.0, agentevals 0.0.9, opentelemetry 1.45.1 on PyPI.
+evals = [
+    "langsmith[otel]>=0.14.7,<1",
+    "openevals>=0.2.0,<1",
+    "agentevals>=0.0.9,<1",
+    "opentelemetry-sdk>=1.42.1,<2",
+    "opentelemetry-exporter-otlp>=1.42.1,<2",
+]
 # Developer tools: `python -m pip install -e ".[dev]"`
 # Includes the llm extra so every unit test runs (offline, with fake models).
 dev = [
@@ -107,6 +116,8 @@ dev = [
     "mastery[rag]",
     # Module 09: Jupytext (pairing notebooks with .py scripts, Lesson 09.01's Jupyter skill).
     "mastery[notebooks]",
+    # Module 10: openevals, agentevals and OpenTelemetry, so every eval and tracing test runs offline.
+    "mastery[evals]",
 ]
 
 # CI and notebook QA: what `python -m pytest -m notebooks` needs to run every notebook headless
