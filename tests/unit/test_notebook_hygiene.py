@@ -61,3 +61,47 @@ def test_notebook_contains_no_real_secrets(path: Path) -> None:
     for pattern in SECRET_PATTERNS:
         for match in pattern.finditer(text):
             assert "FAKE" in match.group(0).upper(), f"Possible real secret in {path.name}: {match.group(0)[:8]}…"
+
+
+_HELP_LINE = re.compile(r"^\s*[\w.]+\?\??\s*$")
+_ALLOWED = {"display", "get_ipython", "__file__"}
+
+
+def _bound_and_loaded(source: str) -> tuple[set[str], set[str]]:
+    import ast
+
+    lines = [ln for ln in source.splitlines() if not ln.lstrip().startswith(("%", "!")) and not _HELP_LINE.match(ln)]
+    tree = compile("\n".join(lines), "<cell>", "exec", ast.PyCF_ONLY_AST | ast.PyCF_ALLOW_TOP_LEVEL_AWAIT)
+    bound, loaded = set(), set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            (loaded if isinstance(node.ctx, ast.Load) else bound).add(node.id)
+        elif isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            bound.add(node.name)
+        elif isinstance(node, ast.arg):
+            bound.add(node.arg)
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            bound.update((a.asname or a.name).split(".")[0] for a in node.names)
+        elif isinstance(node, ast.ExceptHandler) and node.name:
+            bound.add(node.name)
+        elif isinstance(node, (ast.MatchAs, ast.MatchStar)) and node.name:
+            bound.add(node.name)
+        elif isinstance(node, (ast.Global, ast.Nonlocal)):
+            bound.update(node.names)
+    return bound, loaded
+
+
+@pytest.mark.parametrize("path", NOTEBOOKS, ids=_ids(NOTEBOOKS))
+def test_notebook_has_no_undefined_names(path: Path) -> None:
+    """Every name a code cell reads is defined in that cell or an earlier one (Run All would hit a NameError)."""
+    import builtins
+
+    known = set(dir(builtins)) | _ALLOWED
+    problems = []
+    for index, cell in enumerate(json.loads(path.read_text(encoding="utf-8"))["cells"]):
+        if cell["cell_type"] != "code":
+            continue
+        bound, loaded = _bound_and_loaded("".join(cell["source"]))
+        known |= bound
+        problems += [f"cell {index}: {name}" for name in sorted(loaded - known)]
+    assert not problems, problems
