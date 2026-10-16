@@ -38,7 +38,7 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 | Parte | Módulos | Qué vas a poder hacer al final | Tiempo estimado |
 |---|---|---|---|
 | **Parte 1 — Core** | 00–08 | Diseñar, construir y depurar agentes, sistemas RAG y flujos de LangGraph con memoria, guardrails, herramientas MCP y aprobación humana | unas 150–195 h (lecciones ~107–136 h + proyectos ~41–58 h) |
-| **Parte 2 — Pro** | 09–14 | Construir sistemas multiagente, demostrar su calidad con evaluaciones, construir **deep agents** de larga duración y operar agentes como un servicio propio en producción (más dos electivos opcionales: voz/multimodal, y modelos locales/*fine-tuning*) | unas 125–160 h para el núcleo (09–12) + 31–41 h para los electivos (13–14) + 25–40 h por proyecto final (los Módulos 10–14 están planificados, así que sus horas son aproximadas) |
+| **Parte 2 — Pro** | 09–14 | Construir sistemas multiagente, demostrar su calidad con evaluaciones, construir **deep agents** de larga duración y operar agentes como un servicio propio en producción (más dos electivos opcionales: voz/multimodal, y modelos locales/*fine-tuning*) | unas 125–160 h para el núcleo (09–12) + 31–41 h para los electivos (13–14) + 25–40 h por proyecto final (el Módulo 14 está planificado, así que sus horas son aproximadas) |
 
 **Planifica tu tiempo.** Las horas salen de la estimación de cada notebook. La Parte 1 a 6 h/semana toma unas 25–32 semanas; a 8 h/semana, 19–24 semanas; a 10 h/semana, 15–20 semanas. Si ya tienes experiencia, avanzarás más rápido por el Módulo 00.
 
@@ -89,9 +89,9 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 |---|---|---|
 | 09 | [Sistemas multiagente](modules/09-multi-agent-systems/) | ✅ Construido |
 | 10 | [Pruebas, evaluación y observabilidad](modules/10-testing-evaluation-observability/) | ✅ Construido |
-| 11 | [Deep Agents](modules/11-deep-agents/) | 📝 Planificado |
-| 12 | [Producción y despliegue (FastAPI + Docker, autoalojado)](modules/12-production-and-deployment/) | 📝 Planificado |
-| 13 | [Multimodalidad y voz (electivo)](modules/13-multimodal-and-voice/) | 📝 Planificado |
+| 11 | [Deep Agents](modules/11-deep-agents/) | ✅ Construido |
+| 12 | [Producción y despliegue (FastAPI + Docker, autoalojado)](modules/12-production-and-deployment/) | ✅ Construido |
+| 13 | [Multimodalidad y voz (electivo)](modules/13-multimodal-and-voice/) | ✅ Construido |
 | 14 | [Modelos locales y fine-tuning (electivo)](modules/14-local-models-and-fine-tuning/) | 📝 Planificado |
 | — | [Proyectos finales (capstones)](capstones/) | 📝 Planificado |
 

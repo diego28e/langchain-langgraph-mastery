@@ -36,7 +36,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | Part | Modules | What you can do at the end | Est. time |
 |---|---|---|---|
 | **Part 1 — Core** | 00–08 | Design, build, and debug agents, RAG systems, and LangGraph workflows with memory, guardrails, MCP tools, and human approval | about 150–195 h (lessons ~107–136 h + projects ~41–58 h) |
-| **Part 2 — Pro** | 09–14 | Build multi-agent systems, prove quality with evals, build long-running **deep agents**, and run agents as a self-hosted production service (plus two optional electives: voice/multimodal, and local models/fine-tuning) | about 125–160 h for the core (09–12) + 31–41 h for the electives (13–14) + 25–40 h per capstone (Modules 10–14 are planned, so their hours are rough) |
+| **Part 2 — Pro** | 09–14 | Build multi-agent systems, prove quality with evals, build long-running **deep agents**, and run agents as a self-hosted production service (plus two optional electives: voice/multimodal, and local models/fine-tuning) | about 125–160 h for the core (09–12) + 31–41 h for the electives (13–14) + 25–40 h per capstone (Module 14 is planned, so its hours are rough) |
 
 **Plan your time.** The hours come from each notebook's own estimate. Part 1 at 6 h/week takes about 25–32 weeks; at 8 h/week, 19–24 weeks; at 10 h/week, 15–20 weeks. Experienced developers move faster through Module 00.
 
@@ -88,9 +88,9 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 |---|---|---|
 | 09 | [Multi-Agent Systems](modules/09-multi-agent-systems/) | ✅ Built |
 | 10 | [Testing, Evaluation & Observability](modules/10-testing-evaluation-observability/) | ✅ Built |
-| 11 | [Deep Agents](modules/11-deep-agents/) | 📝 Planned |
-| 12 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/12-production-and-deployment/) | 📝 Planned |
-| 13 | [Multimodal & Voice (elective)](modules/13-multimodal-and-voice/) | 📝 Planned |
+| 11 | [Deep Agents](modules/11-deep-agents/) | ✅ Built |
+| 12 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/12-production-and-deployment/) | ✅ Built |
+| 13 | [Multimodal & Voice (elective)](modules/13-multimodal-and-voice/) | ✅ Built |
 | 14 | [Local Models & Fine-Tuning (elective)](modules/14-local-models-and-fine-tuning/) | 📝 Planned |
 | — | [Capstones](capstones/) | 📝 Planned |
 
