@@ -61,7 +61,10 @@ def safe_eval(expression: str) -> float | int:
         tree = ast.parse(text, mode="eval")
     except SyntaxError as exc:
         raise CalculatorError(f"Not a valid arithmetic expression: {expression!r}") from exc
-    result = _eval(tree.body)
+    try:
+        result = _eval(tree.body)
+    except OverflowError as exc:   # float ** float can overflow before the range check sees it
+        raise CalculatorError(f"Result outside the safe range (|x| <= {MAX_MAGNITUDE:g}).") from exc
     if isinstance(result, float) and (math.isnan(result) or math.isinf(result)):
         raise CalculatorError("Result is not a finite number.")
     return result
@@ -75,12 +78,14 @@ def _eval(node: ast.AST) -> float | int:
     if isinstance(node, ast.BinOp) and type(node.op) in _BINARY:
         left, right = _eval(node.left), _eval(node.right)
         if isinstance(node.op, ast.Pow) and abs(right) > MAX_EXPONENT:
-            raise CalculatorError(f"Exponent larger than {MAX_EXPONENT}.")
+            raise CalculatorError(f"Exponent outside -{MAX_EXPONENT}..{MAX_EXPONENT}.")
         try:
             value = _BINARY[type(node.op)](left, right)
         except ZeroDivisionError as exc:
             raise CalculatorError("Division by zero.") from exc
-        if isinstance(value, complex) or abs(value) > MAX_MAGNITUDE:
+        if isinstance(value, complex):
+            raise CalculatorError("Fractional power of a negative number (complex result).")
+        if abs(value) > MAX_MAGNITUDE:
             raise CalculatorError(f"Result outside the safe range (|x| <= {MAX_MAGNITUDE:g}).")
         return value
     raise CalculatorError(

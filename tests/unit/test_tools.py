@@ -35,7 +35,8 @@ def test_safe_eval_rejects_anything_but_arithmetic(expression: str) -> None:
         safe_eval(expression)
 
 
-@pytest.mark.parametrize("expression", ["", "1/0", "10 ** 1000", "9" * 300, "1e300 * 1e10"])
+@pytest.mark.parametrize("expression", ["", "1/0", "10 ** 1000", "9" * 300, "1e300 * 1e10",
+                                        "1e300 ** 2", "1e200 ** 1.6", "(-8) ** 0.5"])
 def test_safe_eval_rejects_bad_or_huge_input(expression: str) -> None:
     with pytest.raises(CalculatorError):
         safe_eval(expression)
@@ -46,6 +47,12 @@ def test_calculator_tool_returns_text_and_reports_errors_as_tool_messages() -> N
     message = calculator.invoke({"name": "calculator", "args": {"expression": "os.system('x')"}, "id": "c1",
                                  "type": "tool_call"})
     assert message.status == "error" and "Only numbers" in message.content
+
+
+def test_calculator_overflow_is_a_tool_error_not_a_crash() -> None:
+    message = calculator.invoke({"name": "calculator", "args": {"expression": "1e300 ** 2"}, "id": "c2",
+                                 "type": "tool_call"})
+    assert message.status == "error" and "safe range" in message.content
 
 
 def test_calculator_schema_describes_the_argument_for_the_model() -> None:

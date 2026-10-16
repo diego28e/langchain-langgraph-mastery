@@ -158,30 +158,53 @@ def check_sources(sources: Iterable[str], seen: Iterable[str]) -> tuple[list[str
 
 
 # --- security --------------------------------------------------------------------
-def tool_fingerprint(tools: Iterable[Any]) -> str:
-    """A SHA-256 over every tool's name, description and argument schema.
+def _annotations(tool: Any) -> dict[str, Any]:
+    """The MCP annotations (read-only, destructive, ... hints) the adapter stored on a tool.
+
+    Only the annotations: ``_meta`` is library-specific (FastMCP adds its own keys), so hashing it
+    would change the fingerprint on a library upgrade without any change on the server.
+    """
+    mcp = ((getattr(tool, "metadata", None) or {}).get("mcp") or {}).get("tool") or {}
+    return {k: v for k, v in sorted((mcp.get("annotations") or {}).items()) if v is not None}
+
+
+def tool_fingerprint(tools: Iterable[Any], *, instructions: str | None = None) -> str:
+    """A SHA-256 over every tool's name, description, argument schema and MCP annotations.
 
     Save it when you review a server; compare it on every connect. A change means the server
-    changed what your agent will see (a "rug pull"), so review again before trusting it.
+    changed what your agent will see or how your policy treats it (a "rug pull", or a
+    ``readOnlyHint`` flip that would move a tool from "ask" to "auto"), so review again before
+    trusting it. Pass the server's ``instructions`` to cover them too. A library upgrade can also
+    change the hash (for example a different argument-schema rendering): treat that as "review
+    again", which fails closed.
     """
     rows = sorted(
-        (t.name, t.description or "", json.dumps(getattr(t, "args", {}) or {}, sort_keys=True, default=str))
+        (t.name, t.description or "", json.dumps(getattr(t, "args", {}) or {}, sort_keys=True, default=str),
+         json.dumps(_annotations(t), sort_keys=True, default=str))
         for t in tools
     )
-    return hashlib.sha256(json.dumps(rows).encode("utf-8")).hexdigest()
+    payload = {"tools": rows, "instructions": instructions} if instructions is not None else rows
+    return hashlib.sha256(json.dumps(payload).encode("utf-8")).hexdigest()
 
 
-def poisoned_descriptions(tools: Iterable[Any]) -> dict[str, list[str]]:
+def _poison_signals(text: str) -> list[str]:
+    signals = injection_signals(text)
+    if re.search(r"<\s*(important|system|secret)\s*>|do not (tell|mention|show) the user", text, re.I):
+        signals.append("hidden_instruction")
+    return signals
+
+
+def poisoned_descriptions(tools: Iterable[Any], *, instructions: str | None = None) -> dict[str, list[str]]:
     """``{tool_name: signals}`` for tool descriptions (and argument descriptions) that contain
-    injection-style instructions (Lesson 04.05 patterns). Empty dict = nothing found."""
+    injection-style instructions (Lesson 04.05 patterns). Pass the server's ``instructions`` to
+    scan them too (reported under ``"__instructions__"``). Empty dict = nothing found."""
     flagged = {}
     for tool in tools:
-        text = (tool.description or "") + " " + json.dumps(getattr(tool, "args", {}) or {}, default=str)
-        signals = injection_signals(text)
-        if re.search(r"<\s*(important|system|secret)\s*>|do not (tell|mention|show) the user", text, re.I):
-            signals.append("hidden_instruction")
+        signals = _poison_signals((tool.description or "") + " " + json.dumps(getattr(tool, "args", {}) or {}, default=str))
         if signals:
             flagged[tool.name] = signals
+    if instructions and (signals := _poison_signals(instructions)):
+        flagged["__instructions__"] = signals
     return flagged
 
 

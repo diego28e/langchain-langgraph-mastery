@@ -54,6 +54,7 @@ def groq_search_sources(message: Any) -> list[dict[str, str]]:
 
     Reads ``search_results.results`` and ``browser_results`` (fields of the Groq API's
     executed-tool object), then any URL in ``output``. Unique by URL, in order.
+    Pass the final (non-streamed) message: streamed chunks may not carry ``executed_tools``.
     """
     found: dict[str, str] = {}
     for executed in (getattr(message, "additional_kwargs", None) or {}).get("executed_tools") or []:
@@ -67,7 +68,7 @@ def groq_search_sources(message: Any) -> list[dict[str, str]]:
 
 
 def make_tavily(max_results: int = 5, **kwargs: Any) -> Any:
-    """``TavilySearch`` with the course defaults. Honors ``TAVILY_BASE_URL`` (the course's local mock)."""
+    """``TavilySearch`` with the course defaults. Honors ``TAVILY_BASE_URL`` (e.g. a local test server)."""
     from langchain_tavily import TavilySearch
 
     if os.environ.get("TAVILY_BASE_URL"):
