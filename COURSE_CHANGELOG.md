@@ -2,6 +2,21 @@
 
 What changed in the course, newest first. After you pull an update ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)), skim the latest entry: it says which lessons changed and whether you need to re-run anything.
 
+## 2026-10-15 · Module 09 update
+
+**Re-run after pulling:** Module 09 notebooks and Project 09 (the shared `mastery.agents` code changed; no new installs).
+
+### Fixes you'll notice
+
+- **Project 09 checks real work.** The acceptance checks now fail on the unfinished starter (0/9) and can't be passed with one-liners: Patterns A and B must be built with the handoff and subagent tools (not the reference builders), the manager policy is tested on extra probe payloads, and the ADR needs real sections and each pattern's own numbers. Steps 3, 4, 5 and 7 have collapsed hints (goal first, code if you're stuck).
+- **Scoring checks outcomes.** `score()` compares the refunds actually issued (invoice, customer, amount, once each) and fails conversations that ran side-effect tools they didn't ask for. The test set gained `expect.refunds`.
+- **Identity comes from the login.** New `SupportContext` runtime context: tools act only on the signed-in customer's account, whatever the chat says (new Lesson 09.02 Part 8; Exercise 2 rewritten; the custom refund workflow in 09.05 uses it too).
+- **Parallel approvals are counted right:** two refunds reviewed in one pause now count as 2 reviews (`interrupts`) and 1 pause (`pauses`).
+- **Lesson 09.03:** a loop guard (`max_handoffs`) hands a ping-ponging conversation to a human; the Exercise 4 solution is corrected.
+- **Lesson 09.04:** new Part 4b on classifier confidence, thresholds and escalation to a human; Exercise 2's solution no longer shares one router thread between customers; Exercise 3's arithmetic is corrected (54 calls).
+- **Lesson 09.05:** Exercise 3's arithmetic is corrected (38 calls).
+- **All Module 09 lessons** end with a short docs drill.
+
 ## 2026-10-14 · v2026.10
 
 **Re-run after pulling:** `python -m pip install -e ".[dev]"` (new optional `ci` extra and the `mastery.evals` package).
