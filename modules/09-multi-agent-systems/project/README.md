@@ -26,6 +26,8 @@ Outputs go to the git-ignored `data/outputs/m09/` (`project09-report.json`, `pro
 |---|---|---|
 | 1 | Step 3 | `build_pattern_a`: `handoff_tool(d, carry="turn")` per domain, `make_specialists(tools, handoffs=True)`, a triage `create_agent` with only transfer tools, each specialist with transfers to the **other** domains, then `handoff_graph(agents, entry="triage", checkpointer=...)` |
 | 2 | Step 4 | `build_pattern_b`: `subagent_tool(spec.build(model), name=f"{d}_agent", ...)` per domain, a coordinator `create_agent(..., system_prompt=COORDINATOR_PROMPT, checkpointer=...)` |
+
+Build both patterns yourself: wrapping the reference `build_handoffs_desk` / `build_subagents_desk` fails check 1–2. Each step has a collapsed **Hint** with the goal first and code only if you're stuck.
 | 3 | Step 5 | `manager_review(payload)`: approve refunds of the **full** invoice amount; reject partial refunds with `{"action": "reject", "feedback": ...}` |
 | 4 | Step 7 | `write_adr(reports, path)`: context, the measured table, a `## Recommendation` section, consequences, and the specialist that would benefit from a harness (Module 11) |
 
@@ -45,20 +47,25 @@ Outputs go to the git-ignored `data/outputs/m09/` (`project09-report.json`, `pro
 | S14 | Multi-domain in one message: a refund **and** a 429 question |
 | S15 | Vague first turn ("I need some help"), then the details |
 
-Each line has `turns`, an optional manager `decision` (used by the lessons' default reviewer; the project uses **your** `manager_review`), and `expect`: tools that must run (from the desk's event log, so it works for every pattern), the number of pauses, and text the final answer must contain. `score()` also fails a conversation if any refund over $50 was issued without the manager.
+Each line has `turns`, an optional manager `decision` (used by the lessons' default reviewer; the project uses **your** `manager_review`), and `expect`: tools that must run (from the desk's event log, so it works for every pattern), the number of pauses, and text the final answer must contain. `score()` checks **outcomes**, not just tool names: the refunds actually issued must match `expect.refunds` (invoice, customer and amount, each once), no side-effect tool (refund, reset, unlock, email change) may run that the conversation didn't ask for, and any refund over $50 issued without the manager fails. Pass the signed-in customer with `run_conversation(..., context=SupportContext("C-1003"))` (`from mastery.agents.support import SupportContext`): the tools then act only on that customer's account, whatever the chat text claims (Lesson 09.02 Part 8).
 
 ## Acceptance criteria (9 checks in Step 8)
 
-- **Both patterns pass ≥ 12/15 conversations** (offline: all 15 run; LIVE: ≥ 80% of the `LIVE_LIMIT` conversations that ran).
-- **Refunds over the threshold always interrupt** (S02, S03 pause once in both patterns) and **no refund over $50 is issued without the manager**.
-- The manager policy works: S02 refunded, S03 not.
-- **A written comparison (ADR)** in `data/outputs/m09/project09-ADR.md` with the measured numbers for both patterns and a `## Recommendation` section.
+1–2. **Pattern A is your handoffs graph** (built with `handoff_tool` + `handoff_graph`) and **Pattern B your coordinator** (built with `subagent_tool`), not the reference builders.
+3–4. **Both patterns pass ≥ 12/15 conversations** (offline: all 15 run; LIVE: ≥ 80% of the `LIVE_LIMIT` conversations that ran).
+5. **Refunds over the threshold pause exactly once** (S02 and S03, both patterns; parallel refunds count one review each).
+6. **No refund over $50 is issued without the manager.**
+7. **The manager policy works:** S02 refunds exactly $199 on INV-2001, S03 refunds nothing, and every synthetic policy probe in Step 5 (partial, unknown invoice, over-amount…) gets the right decision.
+8. **ADR** in `data/outputs/m09/project09-ADR.md` with Context, Evidence, Recommendation and Consequences sections, naming the recommended pattern.
+9. **ADR Evidence table** with one row per pattern carrying **its** measured pass count and model calls.
+
+Plus: **Restart & Run All** passes with `GROQ_API_KEY` and without any key. Outputs cleared; `data/outputs/` and `data/vectorstores/` never committed.
 - **Restart & Run All** passes with `GROQ_API_KEY` and without any key. Outputs cleared; `data/outputs/` and `data/vectorstores/` never committed.
 
 ## Modes
 
 - **LIVE** (`GROQ_API_KEY` set): `openai/gpt-oss-20b` (`reasoning_effort="low"`) for every agent; FAQ search over a Chroma index with `default_embeddings()` (fastembed `BAAI/bge-small-en-v1.5` if the `[embeddings]` extra is installed, else the offline hashing embeddings). `LIVE_LIMIT = 5` conversations per pattern by default (≈ 40–80 model calls in total, 30–60k tokens: free on the free tier). Set `LIVE_LIMIT = 15` for the full acceptance run; on the free tier you may hit the requests-per-minute limit, which `get_model` retries (slower, not broken). Expect a few ❌: read the failing rows before changing prompts.
-- **OFFLINE DEMO** (no key): `offline_model()` is rule-based: it reads its role from the system prompt (triage, billing, technical, account, coordinator) and its options from the tool names it is bound to, so your TODO code drives it like a real model. Reference result: A 15/15 with 53 model calls, B 15/15 with 71, 9/9 checks. The untouched starter passes 1/9, with ❌ pointing at the TODOs.
+- **OFFLINE DEMO** (no key): `offline_model()` is rule-based: it reads its role from the system prompt (triage, billing, technical, account, coordinator) and its options from the tool names it is bound to, so your TODO code drives it like a real model. Reference result: A 15/15 with 53 model calls, B 15/15 with 71, 9/9 checks. The untouched starter passes 0/9, with ❌ pointing at the TODOs.
 
 ## Stretch goals
 
