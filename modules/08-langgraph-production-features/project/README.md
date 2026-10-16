@@ -23,18 +23,31 @@ Docs search uses **Project 06's Chroma index** when it exists in `data/vectorsto
 
 | TODO | Where | What |
 |---|---|---|
-| 1 | Step 2 | `clarify_question`: pause with a clarifying question when the request is ambiguous, and make it resume-safe |
-| 2 | Step 2 | `web_node_options`: `TimeoutPolicy(run_timeout=...)`, `RetryPolicy(retry_on=(ConnectionError, TimeoutError, NodeTimeoutError))`, `error_handler=web_failed` |
-| 3 | Step 2 | `make_approval`: `approval_node(approved="finalize", rejected="draft", max_rejections=3, give_up="finalize")` + destinations |
-| 4 | Step 5 | `fork_from_plan`: find the checkpoint with `next == ("research",)`, `aupdate_state(..., as_node="plan")`, run the branch with `metadata={"branch", "forked_from"}` |
+| 1 | Step 2 | `clarify_question`: pause with a clarifying question when the request is ambiguous, in a way that survives the resume (the node re-runs from the top) |
+| 2 | Step 2 | `web_node_options`: bound the web search's time, retry only transient failures (one retry layer), and fall back to a docs-only answer when it stays down |
+| 3 | Step 2 | `make_approval`: approve finalizes, reject loops back to the writer with the feedback, and the loop gives up after a few rejections |
+| 4 | Step 5 | `fork_from_plan`: rewind to just after planning, change the plan, and run a labelled branch you can find in the trace |
+
+Each TODO has a 💡 hint cell under it (collapsed); the solution notebook has the full code.
 
 ## Acceptance criteria (9 checks in Step 7 offline; 8 in LIVE)
 
 - **Survives a restart:** a thread of **your** graph paused at `approval` finalizes after the database is closed and reopened. (Step 4b also kills the reference graph in a child process mid-search and resumes it from SQLite: a runtime demo, reported but not graded.)
-- **Approval is required before finalization:** the run pauses at `approval`; a rejection sends it back to `draft` with the feedback; a vague request triggers a clarifying question first, and the clarify step is **resume-safe** (the model's verdict is computed once and replayed on resume, so the human's answer can't be dropped).
+- **Approval is required before finalization:** the run pauses at `approval` and nothing is final before it; each rejection sends it back to `draft` with that rejection's feedback (the writer runs once more per rejection, and the revision shows up in the final text); giving up only happens after the rejection limit; a vague request triggers a clarifying question first, and the clarify step is **resume-safe** (the model's verdict is computed once and replayed on resume, so the human's answer can't be dropped).
 - **The fork is a different, traceable branch:** different plan, different sources, different final answer, and checkpoints labelled `branch=fork-1` with `forked_from=<checkpoint id>`. With LangSmith tracing on, filter by tag `fork` or `metadata.branch`.
-- **Fault tolerance:** a transient web failure is retried invisibly; a dead or hanging web search ends in `Web search unavailable (...)` and a docs-only answer instead of a failed run.
+- **Fault tolerance:** a transient web failure is retried invisibly (`retry_on=mastery.models.is_transient`, the LIVE web model has `max_retries=0` so retries live in one layer); 400/401 errors are not retried; a dead or hanging web search ends in `Web search unavailable (...)` and a docs-only answer instead of a failed run.
+- **Traces:** the notebook sets `LANGSMITH_PROJECT=m08-project-research-agent` unless you set your own.
 - **Restart & Run All** passes with `GROQ_API_KEY` and without any key. Outputs cleared; `data/outputs/` never committed.
+
+## Rubric (self-assessment)
+
+| Criterion | ✅ Meets | ⭐ Exceeds |
+|---|---|---|
+| Durability | A paused thread of your graph finalizes after the database is reopened | Explains which nodes re-ran after the child-process kill and why that is safe |
+| Human approval | Nothing is final before approval; each rejection loops back with its feedback | Approval records who approved which draft (draft hash, reviewer, time) |
+| Time travel | The fork is a different, labelled branch | Compares the fork and the original in LangSmith, linked from your findings |
+| Fault tolerance | Transient failures retried once in one layer; 400/401 not retried | A failure case of your own (e.g. a timeout) with the expected behaviour asserted |
+| Hygiene | Restart & Run All with and without a key; traces in your project; outputs cleared | Writing-preferences stretch with two users and a check that they don't mix |
 
 ## Modes
 
