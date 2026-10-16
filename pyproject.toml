@@ -94,6 +94,28 @@ evals = [
     "opentelemetry-sdk>=1.42.1,<2",
     "opentelemetry-exporter-otlp>=1.42.1,<2",
 ]
+# Self-hosted agent service (Module 12): mastery.service.app (FastAPI, native SSE), uvicorn, settings.
+# VERIFIED 2026-10-16 on PyPI: fastapi 0.143.3, uvicorn 0.54.0, pydantic-settings 2.16.0.
+# fastapi stays below 0.142 in the course env: 0.142+ requires opentelemetry-api>=1.44, while
+# langgraph-api 0.16.1 ([studio]) pins opentelemetry-exporter-prometheus<0.64 (sdk ~=1.42.1), so both
+# can't be installed together (measured 2026-10-16). 0.141.1 has native SSE (fastapi.sse, since 0.135).
+# The Docker image (Lesson 12.06) installs these same ranges with the constraints/ lock: one set of tested versions.
+service = [
+    "fastapi>=0.141.1,<0.142",
+    "uvicorn>=0.54.0,<1",
+    "pydantic-settings>=2.16.0,<3",
+    # Lesson 12.05: JWT verification (RS256 needs the crypto extra) and durable state on Postgres.
+    # VERIFIED 2026-10-16 on PyPI: pyjwt 2.15.1, langgraph-checkpoint-postgres 3.2.0, psycopg 3.3.6.
+    # SQLite needs nothing new ([memory] has langgraph-checkpoint-sqlite and aiosqlite).
+    "pyjwt[crypto]>=2.15.1,<3",
+    "langgraph-checkpoint-postgres>=3.2.0,<4",
+    "psycopg[binary]>=3.3.6,<4",
+    # Lesson 12.07: Prometheus metrics. VERIFIED 2026-10-16 on PyPI: prometheus-client 0.26.0
+    # (already pulled by [studio]; listed so the image gets it without [studio]).
+    "prometheus-client>=0.26.0,<1",
+    # The desk's FAQ search (mastery.rag) splits documents; the image has no [rag] (Chroma is ~100 MB).
+    "langchain-text-splitters>=1.1.3,<2",
+]
 # Developer tools: `python -m pip install -e ".[dev]"`
 # Includes the llm extra so every unit test runs (offline, with fake models).
 dev = [
@@ -118,6 +140,8 @@ dev = [
     "mastery[notebooks]",
     # Module 10: openevals, agentevals and OpenTelemetry, so every eval and tracing test runs offline.
     "mastery[evals]",
+    # Module 12: FastAPI service, uvicorn and settings, so every service test runs offline.
+    "mastery[service]",
 ]
 
 # CI and notebook QA: what `python -m pytest -m notebooks` needs to run every notebook headless
