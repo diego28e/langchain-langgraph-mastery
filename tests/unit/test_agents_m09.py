@@ -477,3 +477,44 @@ def test_router_escalates_low_confidence_routes_instead_of_guessing(desk, tools)
     assert [r["amount"] for r in sure["refunds"]] == [19.0] and not sure["escalated"]
     unsure = run_conversation(router, {"id": "lo", "turns": ["something feels off with my stuff"]}, desk)
     assert unsure["escalated"] and unsure["answer"] == ESCALATION_MESSAGE and unsure["tools"] == []
+
+
+def test_custom_desk_remembers_active_agent(desk, tools):
+    app = build_custom_desk(offline_model, tools, desk, checkpointer=InMemorySaver())
+    config = {"configurable": {"thread_id": "custom-memory"}}
+    out = app.invoke({"messages": [{"role": "user", "content": "I'm C-1001. Show my invoices please."}]}, config)
+    assert out["active_agent"] == "billing"
+    meter = UsageMeter()
+    out = app.invoke({"messages": [{"role": "user", "content": "And what about INV-1003?"}]},
+                     {**config, "callbacks": [meter]})
+    assert set(meter.agents()) == {"billing"}            # no triage re-run on the second turn
+    assert any(m.type == "tool" for m in out["messages"])  # the agents' tool results are kept
+
+
+@pytest.mark.parametrize("limit, keeps_id", [(None, True), (4, False)])
+def test_subagent_history_is_not_silently_truncated(limit, keeps_id):
+    seen: list[str] = []
+
+    def echo(messages):
+        seen.append(messages[-1].text)
+        return "sub done"
+
+    sub = create_agent(ScriptedChatModel(responses=[echo], repeat_last=True), tools=[], name="sub")
+    t = subagent_tool(sub, name="helper", description="Helps.", context="history", history_limit=limit)
+    boss = create_agent(ScriptedChatModel(responses=[call("helper", {"query": "refund it"}), "ok"]),
+                        tools=[t], name="boss")
+    history = [HumanMessage("I am C-1001")] + [m for i in range(7) for m in
+                                               (AIMessage(f"note {i}"), HumanMessage(f"more {i}"))]
+    boss.invoke({"messages": history})
+    assert ("C-1001" in seen[0]) is keeps_id
+
+
+def test_faq_chroma_collection_is_per_embedding_size(tmp_path):
+    pytest.importorskip("langchain_chroma")
+    from mastery.memory import HashingEmbeddings
+
+    from mastery.agents.support import faq_search
+
+    small, big = HashingEmbeddings(dims=64), HashingEmbeddings(dims=128)
+    assert faq_search("chroma", embeddings=small, persist_dir=tmp_path)("429 errors")
+    assert faq_search("chroma", embeddings=big, persist_dir=tmp_path)("429 errors")   # no dimension clash

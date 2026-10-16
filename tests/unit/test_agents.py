@@ -61,7 +61,8 @@ def test_execute_tool_calls_turns_every_failure_into_an_error_message() -> None:
     assert [r.tool_call_id for r in results] == ["a", "b", "c", "d"]
     assert results[0].content == "42" and results[0].status == "success"
     assert [r.status for r in results[1:]] == ["error", "error", "error"]
-    assert "not a valid tool" in results[1].content and "database is down" in results[3].content
+    assert "not a valid tool" in results[1].content
+    assert "database is down" not in results[3].content and "RuntimeError" in results[3].content
 
 
 def test_run_tool_loop_stops_when_the_model_stops_calling_tools() -> None:
@@ -154,3 +155,25 @@ def test_recursion_limit_for_matches_the_real_step_count():
     assert recursion_limit_for(plain, 3) == 8                  # 2 nodes per round x 3 + 2
     out = plain.invoke({"messages": [{"role": "user", "content": "go"}]}, {"recursion_limit": 8})
     assert out["messages"][-1].text == "done"
+
+
+def test_tool_exception_text_still_reaches_the_model() -> None:
+    from langchain_core.tools import ToolException
+
+    @tool
+    def picky(x: int) -> str:
+        """Refuses."""
+        raise ToolException("x must be even")
+
+    [result] = execute_tool_calls(call("picky", {"x": 1}), [picky])
+    assert result.status == "error" and "x must be even" in result.content
+
+
+def test_run_tool_loop_answers_malformed_calls_and_continues() -> None:
+    bad = AIMessage("", invalid_tool_calls=[{"name": "calculator", "args": "{2+2", "id": "bad1", "error": "bad json",
+                                             "type": "invalid_tool_call"}])
+    model = ScriptedChatModel(responses=[bad, call("calculator", {"expression": "2+2"}), "It is 4."])
+    history = run_tool_loop(model, [calculator], [("user", "2+2?")])
+    assert history[-1].text == "It is 4."
+    assert any(isinstance(m, ToolMessage) and m.tool_call_id == "bad1" and m.status == "error" for m in history)
+    assert "malformed call calculator" in format_transcript(history)

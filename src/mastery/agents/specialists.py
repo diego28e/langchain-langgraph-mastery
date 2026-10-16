@@ -85,9 +85,9 @@ def _text(message: Any) -> str:
     return getattr(message, "text", "") or str(content)
 
 
-def _transcript(messages: Sequence[Any], limit: int = 12) -> str:
+def _transcript(messages: Sequence[Any], limit: int | None = None) -> str:
     lines = []
-    for m in list(messages)[-limit:]:
+    for m in (list(messages)[-limit:] if limit else list(messages)):
         if isinstance(m, HumanMessage):
             lines.append(f"user: {_text(m)}")
         elif isinstance(m, AIMessage):
@@ -101,13 +101,15 @@ def _transcript(messages: Sequence[Any], limit: int = 12) -> str:
 # --------------------------------------------------------------------------- subagents
 def subagent_tool(agent: Any, *, name: str, description: str,
                   context: Literal["query", "history"] = "query",
-                  output: Literal["last", "all"] = "last") -> BaseTool:
+                  output: Literal["last", "all"] = "last", history_limit: int | None = None) -> BaseTool:
     """Wrap ``agent`` as a tool the coordinator can call (docs: Subagents → tool per agent).
 
     ``context="query"``: the subagent sees only the query the coordinator wrote (isolated, cheap).
     ``context="history"``: it also sees the coordinator's conversation so far, as a transcript
     in its first message (forked; more tokens, fewer "what is your customer ID?" moments).
     ``output="last"`` returns the final message; ``"all"`` a transcript of the subagent's run.
+    ``history_limit`` keeps only the last N messages of that history (default: all). It is the
+    token knob, and a risky one: cut too much and the customer ID from turn 1 is gone.
     """
 
     def run(query: str, runtime: ToolRuntime[Any]) -> str:
@@ -115,7 +117,7 @@ def subagent_tool(agent: Any, *, name: str, description: str,
         if context == "history":
             history = [m for m in runtime.state.get("messages", [])
                        if not (isinstance(m, AIMessage) and m.tool_calls)]
-            content = f"Conversation so far:\n{_transcript(history)}\n\nYour task: {query}"
+            content = f"Conversation so far:\n{_transcript(history, history_limit)}\n\nYour task: {query}"
         result = agent.invoke({"messages": [{"role": "user", "content": content}]})
         if output == "all":
             return _transcript(result["messages"][1:])

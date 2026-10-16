@@ -26,11 +26,13 @@ from langchain_core.messages import (
     SystemMessage,
     ToolMessage,
 )
-from langchain_core.tools import BaseTool
+from langchain_core.tools import BaseTool, ToolException
+from pydantic import ValidationError
 
 __all__ = [
     "LoopLimitError",
     "agent_stats",
+    "answer_invalid_tool_calls",
     "execute_tool_calls",
     "format_stream_part",
     "format_transcript",
@@ -45,10 +47,16 @@ class LoopLimitError(RuntimeError):
 def execute_tool_calls(message: AIMessage, tools: Sequence[BaseTool]) -> list[ToolMessage]:
     """Run every tool call in ``message`` and return one ``ToolMessage`` per call.
 
-    Errors never raise: an unknown tool name, invalid arguments, or an exception
-    inside the tool becomes a ``ToolMessage(status="error")`` that tells the model
-    what went wrong, so it can correct itself (the same contract ``create_agent``
-    uses for unknown tools and invalid arguments).
+    Errors never raise: an unknown tool name, invalid or malformed arguments, or an
+    exception inside the tool becomes a ``ToolMessage(status="error")``, so the model
+    can correct itself. Mistakes the model can fix (unknown tool, invalid arguments,
+    a ``ToolException`` the tool raised on purpose) are passed through word for word;
+    an unexpected exception is reported by type only, because its text can carry
+    internals (paths, SQL, hostnames) the model and the user should not see.
+    This is more lenient than ``create_agent``, which lets unexpected exceptions crash
+    the run (Lesson 02.04): a hand-written loop has no middleware to add that policy.
+    Malformed calls (``message.invalid_tool_calls``: JSON the provider could not parse)
+    get an error answer too, so the model can resend them.
 
     Args:
         message: The model's reply (``AIMessage``) with ``tool_calls``.
@@ -67,13 +75,31 @@ def execute_tool_calls(message: AIMessage, tools: Sequence[BaseTool]) -> list[To
             # Passing the whole ToolCall (not just args) makes the tool return a ToolMessage
             # with the right tool_call_id, and keeps any artifact.
             output = tool.invoke(call)
-        except Exception as exc:  # noqa: BLE001 - every failure must reach the model as data.
+        except (ToolException, ValidationError) as exc:   # the model's own mistake, or a deliberate message
             output = ToolMessage(content=f"Error: {type(exc).__name__}: {exc}", tool_call_id=call["id"],
                                  name=call["name"], status="error")
+        except Exception as exc:  # noqa: BLE001 - every failure must reach the model as data, without internals.
+            output = ToolMessage(content=f"Error: {call['name']} failed ({type(exc).__name__}). Do not retry with "
+                                         "the same input; tell the user it is unavailable right now.",
+                                 tool_call_id=call["id"], name=call["name"], status="error")
         if not isinstance(output, ToolMessage):  # Tools returning Command etc. are agent-only.
             output = ToolMessage(content=str(output), tool_call_id=call["id"], name=call["name"])
         results.append(output)
+    results.extend(answer_invalid_tool_calls(message))
     return results
+
+
+def answer_invalid_tool_calls(message: AIMessage) -> list[ToolMessage]:
+    """One error ``ToolMessage`` per malformed call in ``message.invalid_tool_calls``.
+
+    Without an answer, a reply that holds only malformed calls looks like "no tool calls",
+    and the loop stops silently with an empty answer.
+    """
+    return [ToolMessage(content=f"Error: the arguments for {c.get('name') or 'this tool'} were not valid JSON "
+                                f"({_short(c.get('error') or c.get('args'), 120)}). Send the call again with valid JSON "
+                                "matching the tool's schema.",
+                        tool_call_id=c.get("id") or "invalid", name=c.get("name") or "unknown", status="error")
+            for c in getattr(message, "invalid_tool_calls", None) or []]
 
 
 def run_tool_loop(
@@ -104,7 +130,7 @@ def run_tool_loop(
     for _ in range(max_steps):
         reply = bound.invoke(history)
         history.append(reply)
-        if not reply.tool_calls:          # The stop condition of every agent loop.
+        if not reply.tool_calls and not reply.invalid_tool_calls:   # The stop condition of every agent loop.
             return history
         history.extend(execute_tool_calls(reply, tools))
     raise LoopLimitError(f"Stopped after {max_steps} model calls; the model kept calling tools.")
@@ -136,6 +162,9 @@ def format_transcript(messages: Iterable[BaseMessage], *, max_chars: int = 200) 
             calls = ", ".join(
                 f"{c['name']}(" + ", ".join(f"{k}={v!r}" for k, v in c["args"].items()) + ")" for c in message.tool_calls
             )
+            bad = ", ".join(f"⚠️ malformed call {c.get('name') or '?'}({_short(c.get('args'), 40)})"
+                            for c in getattr(message, "invalid_tool_calls", None) or [])
+            calls = ", ".join(x for x in (calls, bad) if x)
             text = message.text
             body = (f"→ {calls}" if calls else "") + (("  " if calls and text else "") + _short(text, max_chars) if text else "")
             lines.append(f"{number}. 🤖 model     {body or '(empty reply)'}")

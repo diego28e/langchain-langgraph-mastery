@@ -175,8 +175,13 @@ class SupportDesk:
 
 
 # --------------------------------------------------------------------------- FAQ search
-def faq_search(kind: str = "bm25", *, embeddings: Any = None, k: int = 2) -> Callable[[str], list[Document]]:
-    """``query -> top-k FAQ chunks``. ``kind="bm25"`` is keyless; ``"chroma"`` builds a vector index."""
+def faq_search(kind: str = "bm25", *, embeddings: Any = None, k: int = 2,
+               persist_dir: Any = None) -> Callable[[str], list[Document]]:
+    """``query -> top-k FAQ chunks``. ``kind="bm25"`` is keyless; ``"chroma"`` builds a vector index.
+
+    The Chroma collection is named after the embedding size (``support_faq_384``), so switching
+    embedding backends (fastembed vs the hashing fallback) never mixes vectors in one collection.
+    """
     from mastery.rag import BM25, build_index, load_corpus, retrieve, split_documents
 
     root = find_repo_root()
@@ -188,7 +193,9 @@ def faq_search(kind: str = "bm25", *, embeddings: Any = None, k: int = 2) -> Cal
     if embeddings is None:
         from mastery.rag import default_embeddings
         embeddings = default_embeddings()
-    store = build_index(chunks, embeddings, kind=kind, collection="support_faq")  # type: ignore[arg-type]
+    collection = f"support_faq_{len(embeddings.embed_query('dimension probe'))}"
+    store = build_index(chunks, embeddings, kind=kind, collection=collection,  # type: ignore[arg-type]
+                        persist_dir=persist_dir)
     return lambda query: retrieve(store, query, k=k)
 
 
@@ -762,23 +769,26 @@ def is_refund_request(text: str) -> bool:
 
 def build_custom_desk(model_for: Callable[[str], Any], tools: dict[str, list[Any]], desk: SupportDesk, *,
                       checkpointer: Any, writer: Any = None) -> Any:
-    """Pattern C embedded: refunds go to the custom workflow, everything else to the handoffs desk."""
+    """Pattern C embedded: refunds go to the custom workflow, everything else to the handoffs desk.
+
+    The handoffs graph is added as a **subgraph node** sharing ``messages`` and ``active_agent``
+    with this parent, so the active agent and the agents' tool results survive between turns
+    (wrapping it in a function and returning only its last message would forget both).
+    """
     from langgraph.graph import END, START, StateGraph
+
+    from mastery.agents.specialists import HandoffState
 
     refunds = build_refund_workflow(desk, writer if writer is not None else _echo_writer())
     agents = build_handoffs_desk(model_for, tools, checkpointer=None)
 
-    def agents_node(state: MessagesState) -> dict:
-        out = agents.invoke({"messages": state["messages"]})
-        return {"messages": [out["messages"][-1]]}
-
-    def pick(state: MessagesState) -> str:
+    def pick(state: dict) -> str:
         text, _ = _turn(state["messages"])
         return "refunds" if is_refund_request(text) else "agents"
 
-    builder = StateGraph(MessagesState, context_schema=SupportContext)
+    builder = StateGraph(HandoffState, context_schema=SupportContext)
     builder.add_node("refunds", refunds)
-    builder.add_node("agents", agents_node)
+    builder.add_node("agents", agents)
     builder.add_conditional_edges(START, pick, ["refunds", "agents"])
     builder.add_edge("refunds", END)
     builder.add_edge("agents", END)
@@ -1113,7 +1123,7 @@ def evaluate(app: Any, conversations: list[dict], desk: SupportDesk, *, meter: A
         except Exception as exc:
             if not catch_errors:
                 raise
-            outcome = {"id": conv["id"], "answers": [], "answer": f"⚠️ {type(exc).__name__}: {str(exc)[:160]}",
+            outcome = {"id": conv["id"], "answers": [], "answer": f"⚠️ {type(exc).__name__}: {str(exc)[:320]}",
                        "tools": desk.tools_called(), "route": desk.route(), "interrupts": -1,
                        "refunds": list(desk.refunds), "events": list(desk.events), "denials": list(desk.denials),
                        "escalated": False, "error": type(exc).__name__}
