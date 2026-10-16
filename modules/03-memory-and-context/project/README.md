@@ -13,8 +13,8 @@
 
 1. **Short-term memory:** a SQLite checkpointer (`make_checkpointer("sqlite", ...)`). Conversations survive kernel restarts, and you demonstrate it.
 2. **Long-term memory:** a SQLite store with namespace `("learners", user_id)` holding the learner **profile**, **weak topics** and **preferred explanation style**, written by a `remember_fact(kind, fact)` tool.
-3. **`SummarizationMiddleware`** keeps every model call under a token budget you choose (the notebook uses 900 tokens for system prompt + messages). Show before/after token counts.
-4. **Runtime context** (`LearnerContext(user_id)`) carries the user id. Two different users must not see each other's memories: a test cell proves it.
+3. **`SummarizationMiddleware`** keeps every model call under a token budget you choose (the notebook uses 900 tokens for system prompt + messages + tool schemas; the tool schema alone is about 180 tokens on every call). Show before/after token counts.
+4. **Runtime context** (`LearnerContext(user_id)`) carries the user id. Two different users must not see each other's memories **or threads**: a thread belongs to the user who first used it, and `chat()` refuses anyone else. A test cell proves it.
 
 | TODO | Where | What |
 |---|---|---|
@@ -36,10 +36,20 @@
 ## Acceptance criteria
 
 - The scripted 3-session demo shows that **session 3 uses facts from session 1**.
-- **No cross-user leakage** (all isolation checks pass).
+- **No cross-user leakage**: your own ≥4 checks (TODO 4) **and** a fixed suite that you don't edit: a positive control (Bruno's own fact is in his memory and prompt), none of Ana's stored items in Bruno's memory or prompt, Bruno's prompt identical when built from a store that never held Ana's data, and **thread ownership** (Bruno can't open `ana-s2`; `chat()` checks the thread's owner before any checkpoint is read).
 - **Token budget respected**: no call in session 2 sends more than the budget, and at least one summary happened.
 - **Restart & Run All** passes with only `GROQ_API_KEY`, and also without any key (OFFLINE DEMO).
 - No secrets in outputs; outputs cleared; memory files (`data/outputs/memory/`) never committed.
+
+## Rubric (self-assessment)
+
+| Criterion | ✅ Meets | ⭐ Exceeds |
+|---|---|---|
+| Persistence | A thread survives a kernel restart, shown in the notebook | Also shows what a fresh thread id does and does not remember |
+| Long-term memory | Profile, weak topics and style stored per user; session 3 uses a session-1 fact | Semantic search stretch, with one query where it beats a key lookup |
+| Isolation | Your ≥ 4 leakage checks and the fixed suite pass | A leakage check of your own that fails on a deliberately broken namespace, then passes |
+| Context budget | No session-2 call over the budget; at least one summary | A before/after table of tokens per call, with the cost of the summary calls |
+| Hygiene | Restart & Run All in both modes; memory files never committed | A decision-log entry on what you'd store per user, and for how long |
 
 ## Modes
 
