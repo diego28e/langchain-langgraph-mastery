@@ -4,7 +4,7 @@
 
 **Goals:** Build retrieval systems that are grounded, cited, and measurable: loading and parsing documents, chunking, embeddings, vector stores, 2-step RAG vs agentic RAG vs hybrid RAG, re-ranking, and basic RAG evaluation.
 
-**Estimated time:** 2–2.5 weeks (about 16–20 hours of lessons plus 6–8 hours for the project).
+**Estimated time:** 2–2.5 weeks (about 17–22 hours of lessons plus 6–8 hours for the project).
 
 ## Before you start this module
 
@@ -25,7 +25,7 @@ python -c "from mastery.memory import local_embeddings; print('embeddings ok', l
 | | |
 |---|---|
 | 🔑 Keys | `GROQ_API_KEY` (optional: without it 💸 cells print `⏭️ Skipped` and an offline extractive reader stands in). **No new keys.** Optional paid comparisons (`OPENAI_API_KEY` embeddings, `COHERE_API_KEY` re-ranking) are clearly marked and skipped without a key |
-| 💰 Cost | $0. Embeddings and re-ranking run **locally on your CPU** (fastembed, ONNX, no PyTorch). Chroma runs in-process. Groq free tier: a RAG answer is ~1.5–4k input tokens (the retrieved chunks), so keep `k` small |
+| 💰 Cost | $0. Embeddings and re-ranking run **locally on your CPU** (fastembed, ONNX, no PyTorch). Chroma runs in-process. Groq free tier: a RAG answer is ~1–1.5k input tokens with k=4–5 (the retrieved chunks plus prompt and schema), so keep `k` small |
 | 💾 Disk | ~67 MB embedding model + ~80 MB re-ranker (cached in `~/.cache/fastembed`), a few MB of Chroma files in `data/vectorstores/` (git-ignored) |
 | 🌐 Network | Only the first model download (Hugging Face). Offline, corporate proxy, or `[embeddings]` not installed? 🌐 cells print ⚠️ and fall back to the offline `HashingEmbeddings`; everything still runs |
 | ✅ Ready when | `pip check` is clean, `pytest` shows no failures, `rag ok` and `embeddings ok 384` print |
