@@ -4,7 +4,7 @@
 
 **Goals:** Think in graphs. Build deterministic + agentic workflows with the Graph API. Know the canonical workflow patterns. Use the Functional API when it fits. Debug in Studio.
 
-**Estimated time:** 2 weeks (about 14–17 hours of lessons plus 6–8 hours for the project).
+**Estimated time:** 2 weeks (about 12–15.5 hours of lessons plus 5–7 hours for the project).
 
 ## Before you start this module
 
@@ -14,7 +14,7 @@ Run this **once**, in **Git Bash**, from the **repo root**, with the **`lc-maste
 cd ~/path/to/langchain-langgraph-mastery   # your clone; quote the path if it has spaces
 conda activate lc-mastery
 git pull                                   # get this module's files
-python -m pip install -e ".[dev,embeddings]"   # re-run after every pull (Module 07 adds no packages; it keeps langgraph-api >= 0.16, see D-023)
+python -m pip install -e ".[dev,embeddings]"   # re-run after every pull (Module 07 adds no required packages; it keeps langgraph-api >= 0.16, see D-023. Optional: `grandalf` for ASCII drawings in 07.02)
 python -m pip check                        # expect: No broken requirements found.  (not clean? Module 06 README, "Saw ERROR: pip's dependency resolver...")
 python -m pytest -q                        # expect: "... passed" and no failures (offline, no keys)
 python -c "import langgraph, importlib.metadata as m; print('langgraph', m.version('langgraph'), '| langgraph-api', m.version('langgraph-api'))"   # expect: langgraph 1.2.x | langgraph-api 0.16.x
