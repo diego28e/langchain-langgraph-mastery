@@ -12,14 +12,14 @@
 
 | Lesson | Title | Notebook | Status |
 |---|---|---|---|
-| 10.01 | Error analysis first: read traces, build a failure taxonomy | `10-01-error-analysis.ipynb` | 📝 Planned |
-| 10.02 | Observability in depth: LangSmith and OpenTelemetry | `10-02-observability.ipynb` | 📝 Planned |
-| 10.03 | Datasets and offline experiments, with honest statistics | `10-03-datasets-and-experiments.ipynb` | 📝 Planned |
-| 10.04 | Evaluators and LLM-as-judge done right | `10-04-evaluators.ipynb` | 📝 Planned |
-| 10.05 | Agent evals: trajectories, multi-turn, and reliability | `10-05-agent-trajectory-evals.ipynb` | 📝 Planned |
-| 10.06 | Production monitoring: online evals, feedback, annotation queues | `10-06-online-evaluation-and-feedback.ipynb` | 📝 Planned |
-| 10.07 | Prompt management with the Prompt & Context Hub | `10-07-prompt-hub.ipynb` | 📝 Planned |
-| 10.08 | Testing strategy, eval gates, and CI | `10-08-testing-and-ci-gates.ipynb` | 📝 Planned |
+| 10.01 | Error analysis first: read traces, build a failure taxonomy | `10-01-error-analysis.ipynb` | ✅ Built |
+| 10.02 | Observability in depth: LangSmith and OpenTelemetry | `10-02-observability.ipynb` | ✅ Built |
+| 10.03 | Datasets and offline experiments, with honest statistics | `10-03-datasets-and-experiments.ipynb` | ✅ Built |
+| 10.04 | Evaluators and LLM-as-judge done right | `10-04-evaluators.ipynb` | ✅ Built |
+| 10.05 | Agent evals: trajectories, multi-turn, and reliability | `10-05-agent-trajectory-evals.ipynb` | ✅ Built |
+| 10.06 | Production monitoring: online evals, feedback, annotation queues | `10-06-online-evaluation-and-feedback.ipynb` | ✅ Built |
+| 10.07 | Prompt management with the Prompt & Context Hub | `10-07-prompt-hub.ipynb` | ✅ Built |
+| 10.08 | Testing strategy, eval gates, and CI | `10-08-testing-and-ci-gates.ipynb` | ✅ Built |
 
 What runs through the lessons:
 
@@ -34,9 +34,15 @@ What runs through the lessons:
 
 ## Project
 
-**Project 10 — Error-Analysis Story: Eval Suite + CI Gate for a Previous Agent**: turn one earlier project (06, 07, 08, or 09) into an evaluated, regression-tested system, and tell it as a story with numbers. Read ≥ 100 traces and build a failure taxonomy → fix the top two failure categories → measure before vs after on a held-out split with confidence intervals → gate CI on the result, and show that a deliberately broken commit is blocked.
+**Project 10 — Pre-release Gate and Error-Analysis Report for the Support Desk**: the Project 09 desk is live and "feels flaky". Label 200 production traces, rank a failure taxonomy, validate the two LLM judges (TPR/TNR on held-out labels), fix the top two causes, prove it with a paired comparison and pass^3 on the frozen release suite and a held-out suite, pass this release's gate while a known-bad build is blocked, and write the release report from the measured numbers. Runs fully offline; an optional LIVE re-measure on `gpt-oss-20b`.
 
-Project files go in `project/`.
+| File | What it is |
+|---|---|
+| [`project/10-project-release-gate.ipynb`](project/10-project-release-gate.ipynb) | Starter (5 TODOs with collapsed hints; 0/9 checks until done) |
+| [`project/solutions/10-project-release-gate-solution.ipynb`](project/solutions/10-project-release-gate-solution.ipynb) | Reference solution (9/9) |
+| [`project/README.md`](project/README.md) | Spec, acceptance checks, how the checks resist shortcuts |
+
+The CI side is in the repo: [`.github/workflows/eval-gate.yml`](../../.github/workflows/eval-gate.yml) runs the Module 10 tests and `python -m mastery.evals.release_gate` on pull requests that touch the desk or the evals (Lesson 10.08).
 
 ## Jupyter skill
 
@@ -44,7 +50,7 @@ Project files go in `project/`.
 
 ## `src/mastery` increment
 
-`mastery/evals/` grows from the `stats` module of Module 01: `taxonomy.py` (open-coding label sheets, category counts, frequency × severity), `datasets.py` (builders from traces and failure categories, dev/test splits, version tags), `judges.py` (binary judge factory with few-shot examples, TPR/TNR check against your labels, corrected pass rates), and `gates.py` (CI thresholds on confidence bounds, red-team regressions, cost budgets) + `tests/unit/`, `tests/integration/`.
+`mastery/evals/` grows from the `stats` module of Module 01: `taxonomy.py` (open-coding label sheets, category counts, frequency × severity), `datasets.py` (builders from traces and failure categories, dev/test splits, version tags), `judges.py` (binary judge factory with few-shot examples, TPR/TNR check against your labels, corrected pass rates), and `gates.py` (CI thresholds on confidence bounds, red-team regressions, cost budgets), `monitoring.py` (sampling, judge budgets, alerts, review queue), `prompts.py` (a local prompt registry with gated promotion) and `release_gate.py` (the CLI the CI workflow runs); `mastery.agents.release_suite` holds the frozen release suite and red team + `tests/unit/`.
 
 ## Research checkpoint
 
@@ -52,7 +58,7 @@ Check [Usage and billing](https://docs.langchain.com/langsmith/usage-and-billing
 
 ## Status
 
-📝 Planned. No notebooks yet.
+✅ Built. Lessons 10.01–10.08 and Project 10 (docs verified 2026-10-15).
 
 ---
 
