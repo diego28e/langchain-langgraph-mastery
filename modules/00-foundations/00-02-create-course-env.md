@@ -24,8 +24,10 @@ This is the **only install step in Module 00**. You will create one isolated env
 **Option B (type it):** open Git Bash from the Start menu and `cd` into the repo. Paths with spaces **must be quoted**:
 
 ```bash
-cd "/c/Users/<you>/Documents/AI courses/My-langchain-course/langchain-langgraph-mastery"
+cd "/c/Users/<you>/<folder where you cloned it>/langchain-langgraph-mastery"
 ```
+
+Use **your** clone's folder (it can be anywhere, for example `~/projects/langchain-langgraph-mastery`). Not sure where it is? Use Option A, then run `pwd`.
 
 > Git Bash writes Windows paths with forward slashes and a lowercase drive: `C:\Users\you` becomes `/c/Users/you`, and `~` is your user folder. Tab completion (press **Tab** after typing a few letters) adds the quotes or escapes for you.
 
@@ -241,7 +243,7 @@ Jupyter itself stays in `base`, where Anaconda installed it. It can run any regi
 
 ```bash
 conda activate base
-cd "/c/Users/<you>/Documents/AI courses/My-langchain-course/langchain-langgraph-mastery"   # if not there already
+cd "/c/Users/<you>/<folder where you cloned it>/langchain-langgraph-mastery"   # if not there already
 jupyter notebook
 ```
 
@@ -287,6 +289,8 @@ Quick index of the failures learners hit most, also after pulling a new module. 
 | Prompt does not start with `(lc-mastery)` | `conda activate lc-mastery`. Every new Git Bash window needs it |
 | `pip install` fails with `SSL: CERTIFICATE_VERIFY_FAILED` or `FileNotFoundError` from `ssl` | [Step 4b](#step-4b): fix `SSL_CERT_FILE`, open a new window, retry |
 | `ModuleNotFoundError: No module named 'mastery'` (or `langchain`, `langgraph`) in a notebook | Wrong kernel: pick **Python (lc-mastery)** (top-right). In Git Bash, rerun `python -m pip install -e ".[dev]"`, then **Kernel → Restart** |
+| `Could not find the course repo` in a notebook's first cell | Jupyter (or your IDE) started outside the clone. Start it from the repo folder, or set the `LC_MASTERY_ROOT` environment variable to your clone's folder (for example `export LC_MASTERY_ROOT="$PWD"` in the repo root before `jupyter notebook`). Nothing in the course hardcodes a path, so the clone can live anywhere |
+| `⚠️ This env's own mastery install does not use this clone's src/` | The env was installed from **another copy** of the repo. Rerun `python -m pip install -e ".[dev]"` from **this** clone's root. Don't work around it with a `PYTHONPATH` pointing at a fixed folder: it breaks as soon as the clone moves |
 | `ImportError` / missing name right after `git pull` | A new module added code or packages: rerun `python -m pip install -e ".[dev]"`, then restart the kernel |
 | **Python (lc-mastery)** missing from the kernel list | Redo [Step 6](#step-6--register-the-environment-as-a-jupyter-kernel), then reload the Jupyter browser tab |
 | `pytest` fails in `test_notebook_hygiene` | A notebook was saved with outputs: see the table under [Step 5](#step-5--install-the-course-package-mastery-in-editable-mode) |
