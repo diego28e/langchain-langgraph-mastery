@@ -1,0 +1,13 @@
+{
+  // Zero-install path: open the repo in GitHub Codespaces or VS Code Dev Containers.
+  // Same stack as the course env (Python 3.12, the [dev] extra), pinned to the tested versions.
+  // Keys: add GROQ_API_KEY (and optionally LANGSMITH_API_KEY) as Codespaces secrets, or create .env from .env.example.
+  "name": "lc-mastery",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "postCreateCommand": "python -m pip install -e \".[dev]\" -c constraints/constraints-2026-10-16.txt && python -m ipykernel install --user --name lc-mastery --display-name \"Python (lc-mastery)\"",
+  "containerEnv": { "PYTHONUTF8": "1" },
+  "forwardPorts": [8888, 2024],
+  "customizations": {
+    "vscode": { "extensions": ["ms-python.python", "ms-toolsai.jupyter"] }
+  }
+}

@@ -103,7 +103,7 @@ dev = [
     # `jupyter nbconvert --clear-output --inplace` inside the course env.
     "nbconvert>=7.17.2,<8",
     # VERIFIED 2026-10-14: markdown-it-py 4.2.0 is current on PyPI (jupytext already pulls it).
-    # tests/unit/test_notebook_markdown.py parses every notebook Markdown cell with it.
+    # Parses notebook Markdown cells (Markdown rendering checks).
     "markdown-it-py>=4.2.0,<5",
     "mastery[llm]",
     # Module 02: `langgraph dev` for Studio (Lesson 02.07), so one install covers it.
