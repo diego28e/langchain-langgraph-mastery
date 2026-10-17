@@ -36,7 +36,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | Part | Modules | What you can do at the end | Est. time |
 |---|---|---|---|
 | **Part 1 — Core** | 00–08 | Design, build, and debug agents, RAG systems, and LangGraph workflows with memory, guardrails, MCP tools, and human approval | about 150–195 h (lessons ~107–136 h + projects ~41–58 h) |
-| **Part 2 — Pro** | 09–14 | Build multi-agent systems, prove quality with evals, build long-running **deep agents**, and run agents as a self-hosted production service (plus two optional electives: voice/multimodal, and local models/fine-tuning) | about 125–160 h for the core (09–12) + 31–41 h for the electives (13–14) + 25–40 h per capstone (Module 14 is planned, so its hours are rough) |
+| **Part 2 — Pro** | 09–14 | Build multi-agent systems, prove quality with evals, build long-running **deep agents**, and run agents as a self-hosted production service (plus two optional electives: voice/multimodal, and local models/fine-tuning) | about 125–160 h for the core (09–12) + 31–41 h for the electives (13–14) + 25–40 h per capstone |
 
 **Plan your time.** The hours come from each notebook's own estimate. Part 1 at 6 h/week takes about 25–32 weeks; at 8 h/week, 19–24 weeks; at 10 h/week, 15–20 weeks. Experienced developers move faster through Module 00.
 
@@ -91,7 +91,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | 11 | [Deep Agents](modules/11-deep-agents/) | ✅ Built |
 | 12 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/12-production-and-deployment/) | ✅ Built |
 | 13 | [Multimodal & Voice (elective)](modules/13-multimodal-and-voice/) | ✅ Built |
-| 14 | [Local Models & Fine-Tuning (elective)](modules/14-local-models-and-fine-tuning/) | 📝 Planned |
+| 14 | [Local Models & Fine-Tuning (elective)](modules/14-local-models-and-fine-tuning/) | ✅ Built |
 | — | [Capstones](capstones/) | 📝 Planned |
 
 Status legend: 📝 Planned · 🚧 In progress · ✅ Complete · 🔍 Reviewed (verified end to end)
@@ -146,8 +146,8 @@ See [RESOURCES.md](RESOURCES.md) for the full curated list.
 
 ## Project status
 
-- **Part 1 (Modules 00–08) and Module 09 are built**: every notebook runs top to bottom with no API keys (offline mode), and the unit tests run on every push (GitHub Actions).
-- **Modules 10–14 and the capstones are planned**; their full specs are in the [Course Outline](COURSE_OUTLINE.md).
+- **Modules 00–14 are built**: every notebook runs top to bottom with no API keys (offline mode), and the unit tests run on every push (GitHub Actions).
+- **The capstones are planned**; their full specs are in the [Course Outline](COURSE_OUTLINE.md).
 - What changed and when: [COURSE_CHANGELOG.md](COURSE_CHANGELOG.md).
 
 ## License

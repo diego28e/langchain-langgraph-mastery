@@ -43,6 +43,8 @@ Step-by-step with troubleshooting: [Lesson 00.02 guide](../modules/00-foundation
 | 11 | `mastery/deep/` | `build_deep_agent()` with course defaults (explicit model, `CompositeBackend` layout, deny rules for secrets, limits), `sandboxes/docker.py` (`DockerSandbox`), course `skills/`, trajectory and file-state evaluators |
 | 12 | `mastery/service/` | FastAPI app factory, `pydantic-settings` config, API-key auth, SSE helpers (self-hosted with Docker) |
 | 13 (elective) | `mastery/voice/` | `transcribe()`, `speak()` (≤ 200-char chunking), `VoicePipeline` |
+| 14 (elective) | `mastery/local/` | `ollama.py` (`ollama_status` with capabilities, `require_model`, `measure` tokens per second, `fits_in_memory`), `hub.py` (`search_models`, `model_details`, `license_verdict`, `quant_files`, `ollama_hf_tag`, offline snapshot); `get_model(role, "ollama")` in `models.py` |
+| 14 (elective) | `mastery/finetune/` | `tickets.py` (router dataset, family splits, `write_chat_jsonl` for TRL/Unsloth), `baselines.py` (numpy `NaiveBayes`, `LogReg` on hashed n-grams), `llm_router.py` (`route_with_llm`: batched few-shot with strict schema), `metrics.py` (accuracy CI, macro-F1, calibration/ECE, `route_curve`, `best_threshold`), `predictions.py` (recorded runs) |
 
 Notebooks import it after the editable install above (packaging is defined in [`pyproject.toml`](../pyproject.toml)). If it isn't installed, each notebook's setup cell falls back to `src/` and tells you how to fix it. While editing `src/mastery`, restart the kernel to pick up changes, or use `%autoreload 2` (Module 03).
 
@@ -54,6 +56,8 @@ Notebooks import it after the editable install above (packaging is defined in [`
 | `[llm]` | `langchain`, `langchain-core`, `langchain-groq` | `models`, `pricing`, `display` import LangChain **lazily**, so `import mastery` works without it |
 | `[studio]` | `langgraph-cli[inmem]` | `langgraph dev` for LangSmith Studio (Lesson 02.07); pulls the local Agent Server (Python ≥ 3.11) |
 | `[dev]` | `pytest`, `nbformat`, `nbconvert` + `[llm]` + `[studio]` | Every unit test runs, offline; notebook tooling; `langgraph dev` |
+| `[local]` | `langchain-ollama`, `huggingface-hub` (<2) | Module 14: Ollama and the Hub API (in `[dev]`) |
+| `[transformers]` | `transformers`, `torch`, `langchain-huggingface` | Lesson 14.02 stretch: run Hub models in-process on the CPU; PyTorch is large, so never in `[dev]` |
 
 Other providers are installed only when you use them: `python -m pip install "langchain-openai>=1.7.0,<2"` (paid benchmark) or `"langchain-google-genai>=4.4.1,<5"`. `get_model()` tells you the exact command if one is missing.
 
