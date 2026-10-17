@@ -37,6 +37,10 @@ __all__ = [
     "DEFAULT_BENCHMARK_MODEL",
     "DEFAULT_BENCHMARK_MODEL_STRONG",
     "DEFAULT_MODEL_FAST",
+    "DEFAULT_MODEL_LOCAL",
+    "DEFAULT_MODEL_LOCAL_EMBED",
+    "DEFAULT_MODEL_LOCAL_VISION",
+    "DEFAULT_OLLAMA_BASE_URL",
     "DEFAULT_MODEL_REASONING",
     "DEFAULT_MODEL_MULTIMODAL",
     "DEFAULT_MODEL_STT",
@@ -85,6 +89,13 @@ DEFAULT_TTS_VOICE_GEMINI = "Kore"
 # Which TTS the course uses by default: "gemini" (free tier, multilingual) or "groq" (Orpheus, preview,
 # 100 requests / 3.6K tokens a day on the free tier: https://console.groq.com/docs/rate-limits).
 DEFAULT_TTS_PROVIDER = "gemini"
+# Module 14: local models through Ollama (no key). VERIFIED 2026-10-16 on https://ollama.com/library:
+# qwen3:4b (2.5 GB, tools + thinking) runs on a CPU-only laptop with 16 GB RAM; qwen3.5:4b adds vision;
+# nomic-embed-text (274 MB) for local embeddings. gpt-oss:20b (14 GB) fits in 32 GB RAM but is slow on CPU.
+DEFAULT_MODEL_LOCAL = "qwen3:4b"
+DEFAULT_MODEL_LOCAL_VISION = "qwen3.5:4b"
+DEFAULT_MODEL_LOCAL_EMBED = "nomic-embed-text"
+DEFAULT_OLLAMA_BASE_URL = "http://localhost:11434"
 # A model that reads PDFs, audio and video, as "provider:model".
 DEFAULT_MODEL_MULTIMODAL = "google_genai:gemini-3.6-flash"
 # Paid benchmark, as "provider:model" strings (docs/paid-benchmark-openai-vs-gemini.md).
@@ -375,6 +386,10 @@ class Settings:
         tts_provider: ``"gemini"`` or ``"groq"`` (``MASTERY_TTS_PROVIDER``).
         model_tts_gemini: Gemini TTS model (``MASTERY_MODEL_TTS_GEMINI``).
         tts_voice_gemini: Voice for ``model_tts_gemini`` (``MASTERY_TTS_VOICE_GEMINI``).
+        model_local: Ollama model for the fast/reasoning roles (``MASTERY_MODEL_LOCAL``), Module 14.
+        model_local_vision: Ollama model for the vision role (``MASTERY_MODEL_LOCAL_VISION``).
+        model_local_embed: Ollama embedding model (``MASTERY_MODEL_LOCAL_EMBED``).
+        ollama_base_url: Ollama server address (``OLLAMA_BASE_URL``).
         benchmark_model: Paid benchmark as ``"provider:model"`` (``MASTERY_BENCHMARK_MODEL``).
         benchmark_model_strong: Paid quality ceiling (``MASTERY_BENCHMARK_MODEL_STRONG``).
         langsmith_tracing: Whether LangSmith tracing is on (``LANGSMITH_TRACING``).
@@ -391,6 +406,10 @@ class Settings:
     tts_provider: str = DEFAULT_TTS_PROVIDER
     model_tts_gemini: str = DEFAULT_MODEL_TTS_GEMINI
     tts_voice_gemini: str = DEFAULT_TTS_VOICE_GEMINI
+    model_local: str = DEFAULT_MODEL_LOCAL
+    model_local_vision: str = DEFAULT_MODEL_LOCAL_VISION
+    model_local_embed: str = DEFAULT_MODEL_LOCAL_EMBED
+    ollama_base_url: str = DEFAULT_OLLAMA_BASE_URL
     benchmark_model: str = DEFAULT_BENCHMARK_MODEL
     benchmark_model_strong: str = DEFAULT_BENCHMARK_MODEL_STRONG
     langsmith_tracing: bool = False
@@ -429,6 +448,10 @@ def load_settings(*, load_dotenv_file: bool = True) -> Settings:
         tts_provider=get_setting("MASTERY_TTS_PROVIDER", DEFAULT_TTS_PROVIDER).lower(),
         model_tts_gemini=get_setting("MASTERY_MODEL_TTS_GEMINI", DEFAULT_MODEL_TTS_GEMINI),
         tts_voice_gemini=get_setting("MASTERY_TTS_VOICE_GEMINI", DEFAULT_TTS_VOICE_GEMINI),
+        model_local=get_setting("MASTERY_MODEL_LOCAL", DEFAULT_MODEL_LOCAL),
+        model_local_vision=get_setting("MASTERY_MODEL_LOCAL_VISION", DEFAULT_MODEL_LOCAL_VISION),
+        model_local_embed=get_setting("MASTERY_MODEL_LOCAL_EMBED", DEFAULT_MODEL_LOCAL_EMBED),
+        ollama_base_url=get_setting("OLLAMA_BASE_URL", DEFAULT_OLLAMA_BASE_URL).rstrip("/"),
         benchmark_model=get_setting("MASTERY_BENCHMARK_MODEL", DEFAULT_BENCHMARK_MODEL),
         benchmark_model_strong=get_setting("MASTERY_BENCHMARK_MODEL_STRONG", DEFAULT_BENCHMARK_MODEL_STRONG),
         langsmith_tracing=tracing,

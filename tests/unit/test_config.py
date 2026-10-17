@@ -191,3 +191,14 @@ def test_module13_voice_settings_default_and_override(monkeypatch: pytest.Monkey
     monkeypatch.setenv("MASTERY_TTS_VOICE_GEMINI", "Puck")
     settings = load_settings()
     assert settings.tts_provider == "groq" and settings.tts_voice_gemini == "Puck"
+
+
+def test_module14_local_settings_default_and_override(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    for name in ("MASTERY_MODEL_LOCAL", "MASTERY_MODEL_LOCAL_EMBED", "OLLAMA_BASE_URL"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.chdir(tmp_path)
+    settings = load_settings()
+    assert settings.model_local == config.DEFAULT_MODEL_LOCAL == "qwen3:4b"
+    assert settings.model_local_embed == "nomic-embed-text" and settings.ollama_base_url == "http://localhost:11434"
+    monkeypatch.setenv("OLLAMA_BASE_URL", "http://10.0.0.5:11434/")
+    assert load_settings().ollama_base_url == "http://10.0.0.5:11434"

@@ -1,0 +1,801 @@
+{
+ "recorded": "2026-10-16",
+ "search": {
+  "query": "qwen3",
+  "task": "text-generation",
+  "ids": [
+   "Qwen/Qwen3-0.6B",
+   "Qwen/Qwen3-4B",
+   "Qwen/Qwen3-8B",
+   "Qwen/Qwen3-Embedding-0.6B",
+   "Qwen/Qwen3-14B",
+   "nvidia/Qwen3.6-35B-A3B-NVFP4",
+   "Qwen/Qwen3-1.7B",
+   "Qwen/Qwen3-32B"
+  ]
+ },
+ "models": [
+  {
+   "id": "Qwen/Qwen3-0.6B",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 29878421,
+   "likes": 1821,
+   "files": [
+    [
+     ".gitattributes",
+     1570
+    ],
+    [
+     "LICENSE",
+     11343
+    ],
+    [
+     "README.md",
+     13965
+    ],
+    [
+     "config.json",
+     726
+    ],
+    [
+     "generation_config.json",
+     239
+    ],
+    [
+     "merges.txt",
+     1671853
+    ],
+    [
+     "model.safetensors",
+     1503300328
+    ],
+    [
+     "tokenizer.json",
+     11422654
+    ],
+    [
+     "tokenizer_config.json",
+     9732
+    ],
+    [
+     "vocab.json",
+     2776833
+    ]
+   ]
+  },
+  {
+   "id": "Qwen/Qwen3-4B",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 11645634,
+   "likes": 762,
+   "files": [
+    [
+     ".gitattributes",
+     1570
+    ],
+    [
+     "LICENSE",
+     11343
+    ],
+    [
+     "README.md",
+     16857
+    ],
+    [
+     "config.json",
+     726
+    ],
+    [
+     "generation_config.json",
+     239
+    ],
+    [
+     "merges.txt",
+     1671853
+    ],
+    [
+     "model-00001-of-00003.safetensors",
+     3957900840
+    ],
+    [
+     "model-00002-of-00003.safetensors",
+     3987450520
+    ],
+    [
+     "model-00003-of-00003.safetensors",
+     99630640
+    ],
+    [
+     "model.safetensors.index.json",
+     32819
+    ],
+    [
+     "tokenizer.json",
+     11422654
+    ],
+    [
+     "tokenizer_config.json",
+     9732
+    ],
+    [
+     "vocab.json",
+     2776833
+    ]
+   ]
+  },
+  {
+   "id": "Qwen/Qwen3-8B",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 9422391,
+   "likes": 2120,
+   "files": []
+  },
+  {
+   "id": "Qwen/Qwen3-Embedding-0.6B",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "feature-extraction",
+   "downloads": 8585774,
+   "likes": 1294,
+   "files": []
+  },
+  {
+   "id": "Qwen/Qwen3-14B",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 7660871,
+   "likes": 507,
+   "files": []
+  },
+  {
+   "id": "nvidia/Qwen3.6-35B-A3B-NVFP4",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 4544960,
+   "likes": 660,
+   "files": []
+  },
+  {
+   "id": "Qwen/Qwen3-1.7B",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 4094182,
+   "likes": 582,
+   "files": []
+  },
+  {
+   "id": "Qwen/Qwen3-32B",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 3098452,
+   "likes": 768,
+   "files": []
+  },
+  {
+   "id": "Qwen/Qwen3-4B-GGUF",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 532417,
+   "likes": 193,
+   "files": [
+    [
+     ".gitattributes",
+     1798
+    ],
+    [
+     "LICENSE",
+     11544
+    ],
+    [
+     "Qwen3-4B-Q4_K_M.gguf",
+     2497280256
+    ],
+    [
+     "Qwen3-4B-Q5_0.gguf",
+     2823710976
+    ],
+    [
+     "Qwen3-4B-Q5_K_M.gguf",
+     2889513184
+    ],
+    [
+     "Qwen3-4B-Q6_K.gguf",
+     3306260704
+    ],
+    [
+     "Qwen3-4B-Q8_0.gguf",
+     4280404704
+    ],
+    [
+     "README.md",
+     7576
+    ],
+    [
+     "params",
+     270
+    ]
+   ]
+  },
+  {
+   "id": "unsloth/Qwen3-1.7B-GGUF",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 205280,
+   "likes": 79,
+   "files": [
+    [
+     ".gitattributes",
+     3135
+    ],
+    [
+     "Qwen3-1.7B-BF16.gguf",
+     3447349568
+    ],
+    [
+     "Qwen3-1.7B-IQ4_NL.gguf",
+     1054423616
+    ],
+    [
+     "Qwen3-1.7B-IQ4_XS.gguf",
+     1010383424
+    ],
+    [
+     "Qwen3-1.7B-Q2_K.gguf",
+     777796160
+    ],
+    [
+     "Qwen3-1.7B-Q2_K_L.gguf",
+     777796160
+    ],
+    [
+     "Qwen3-1.7B-Q3_K_M.gguf",
+     939539008
+    ],
+    [
+     "Qwen3-1.7B-Q3_K_S.gguf",
+     867252800
+    ],
+    [
+     "Qwen3-1.7B-Q4_0.gguf",
+     1056782912
+    ],
+    [
+     "Qwen3-1.7B-Q4_1.gguf",
+     1142504000
+    ],
+    [
+     "Qwen3-1.7B-Q4_K_M.gguf",
+     1107409472
+    ],
+    [
+     "Qwen3-1.7B-Q4_K_S.gguf",
+     1060190784
+    ],
+    [
+     "Qwen3-1.7B-Q5_K_M.gguf",
+     1257880128
+    ],
+    [
+     "Qwen3-1.7B-Q5_K_S.gguf",
+     1230584384
+    ],
+    [
+     "Qwen3-1.7B-Q6_K.gguf",
+     1417755200
+    ],
+    [
+     "Qwen3-1.7B-Q8_0.gguf",
+     1834426944
+    ],
+    [
+     "Qwen3-1.7B-UD-IQ1_M.gguf",
+     561947200
+    ],
+    [
+     "Qwen3-1.7B-UD-IQ1_S.gguf",
+     537829952
+    ],
+    [
+     "Qwen3-1.7B-UD-IQ2_M.gguf",
+     708715072
+    ],
+    [
+     "Qwen3-1.7B-UD-IQ2_XXS.gguf",
+     605790784
+    ],
+    [
+     "Qwen3-1.7B-UD-IQ3_XXS.gguf",
+     765174336
+    ],
+    [
+     "Qwen3-1.7B-UD-Q2_K_XL.gguf",
+     797866560
+    ],
+    [
+     "Qwen3-1.7B-UD-Q3_K_XL.gguf",
+     968899136
+    ],
+    [
+     "Qwen3-1.7B-UD-Q4_K_XL.gguf",
+     1132952128
+    ],
+    [
+     "Qwen3-1.7B-UD-Q5_K_XL.gguf",
+     1262991936
+    ],
+    [
+     "Qwen3-1.7B-UD-Q6_K_XL.gguf",
+     1610949184
+    ],
+    [
+     "Qwen3-1.7B-UD-Q8_K_XL.gguf",
+     2332582464
+    ],
+    [
+     "README.md",
+     17080
+    ],
+    [
+     "config.json",
+     757
+    ],
+    [
+     "imatrix_unsloth.dat",
+     2070884
+    ],
+    [
+     "params",
+     178
+    ],
+    [
+     "template",
+     1482
+    ]
+   ]
+  },
+  {
+   "id": "meta-llama/Llama-3.2-1B-Instruct",
+   "license": "llama3.2",
+   "gated": "manual",
+   "pipeline_tag": "text-generation",
+   "downloads": 5841558,
+   "likes": 1850,
+   "files": [
+    [
+     ".gitattributes",
+     1519
+    ],
+    [
+     "LICENSE.txt",
+     7712
+    ],
+    [
+     "README.md",
+     41742
+    ],
+    [
+     "USE_POLICY.md",
+     6021
+    ],
+    [
+     "config.json",
+     877
+    ],
+    [
+     "generation_config.json",
+     189
+    ],
+    [
+     "model.safetensors",
+     2471645608
+    ],
+    [
+     "original/consolidated.00.pth",
+     2471677246
+    ],
+    [
+     "original/params.json",
+     220
+    ],
+    [
+     "original/tokenizer.model",
+     2183982
+    ],
+    [
+     "special_tokens_map.json",
+     296
+    ],
+    [
+     "tokenizer.json",
+     9085657
+    ],
+    [
+     "tokenizer_config.json",
+     54528
+    ]
+   ]
+  },
+  {
+   "id": "google/gemma-3-1b-it",
+   "license": "gemma",
+   "gated": "manual",
+   "pipeline_tag": "text-generation",
+   "downloads": 1877309,
+   "likes": 1239,
+   "files": [
+    [
+     ".gitattributes",
+     1676
+    ],
+    [
+     "README.md",
+     24265
+    ],
+    [
+     "added_tokens.json",
+     35
+    ],
+    [
+     "config.json",
+     899
+    ],
+    [
+     "generation_config.json",
+     215
+    ],
+    [
+     "model.safetensors",
+     1999811208
+    ],
+    [
+     "special_tokens_map.json",
+     662
+    ],
+    [
+     "tokenizer.json",
+     33384568
+    ],
+    [
+     "tokenizer.model",
+     4689074
+    ],
+    [
+     "tokenizer_config.json",
+     1156999
+    ]
+   ]
+  },
+  {
+   "id": "HuggingFaceTB/SmolLM2-360M-Instruct",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": "text-generation",
+   "downloads": 227787,
+   "likes": 231,
+   "files": [
+    [
+     ".gitattributes",
+     1519
+    ],
+    [
+     "README.md",
+     7304
+    ],
+    [
+     "all_results.json",
+     786
+    ],
+    [
+     "config.json",
+     846
+    ],
+    [
+     "eval_results.json",
+     589
+    ],
+    [
+     "generation_config.json",
+     132
+    ],
+    [
+     "merges.txt",
+     466391
+    ],
+    [
+     "model.safetensors",
+     723674912
+    ],
+    [
+     "onnx/model.onnx",
+     1449582810
+    ],
+    [
+     "onnx/model_bnb4.onnx",
+     368284174
+    ],
+    [
+     "onnx/model_fp16.onnx",
+     724891911
+    ],
+    [
+     "onnx/model_int8.onnx",
+     364564558
+    ],
+    [
+     "onnx/model_q4.onnx",
+     387943246
+    ],
+    [
+     "onnx/model_q4f16.onnx",
+     272737275
+    ],
+    [
+     "onnx/model_quantized.onnx",
+     364564671
+    ],
+    [
+     "onnx/model_uint8.onnx",
+     364564671
+    ],
+    [
+     "runs/Oct31_09-01-58_ip-26-0-172-142/events.out.tfevents.1730365788.ip-26-0-172-142.451351.0",
+     78139
+    ],
+    [
+     "runs/Oct31_09-01-58_ip-26-0-172-142/events.out.tfevents.1730371773.ip-26-0-172-142.451351.1",
+     828
+    ],
+    [
+     "runs/Oct31_09-19-57_ip-26-0-174-36/events.out.tfevents.1730366818.ip-26-0-174-36.3233632.0",
+     38996
+    ],
+    [
+     "runs/Oct31_09-20-43_ip-26-0-161-142/events.out.tfevents.1730366856.ip-26-0-161-142.1301887.0",
+     37621
+    ],
+    [
+     "special_tokens_map.json",
+     655
+    ],
+    [
+     "tokenizer.json",
+     2104556
+    ],
+    [
+     "tokenizer_config.json",
+     3764
+    ],
+    [
+     "train_results.json",
+     232
+    ],
+    [
+     "trainer_state.json",
+     57621
+    ],
+    [
+     "training_args.bin",
+     6520
+    ],
+    [
+     "vocab.json",
+     800662
+    ]
+   ]
+  },
+  {
+   "id": "BAAI/bge-small-en-v1.5",
+   "license": "mit",
+   "gated": false,
+   "pipeline_tag": "feature-extraction",
+   "downloads": 58505382,
+   "likes": 643,
+   "files": [
+    [
+     ".gitattributes",
+     1519
+    ],
+    [
+     "1_Pooling/config.json",
+     190
+    ],
+    [
+     "README.md",
+     94783
+    ],
+    [
+     "config.json",
+     743
+    ],
+    [
+     "config_sentence_transformers.json",
+     124
+    ],
+    [
+     "model.safetensors",
+     133466304
+    ],
+    [
+     "modules.json",
+     349
+    ],
+    [
+     "onnx/model.onnx",
+     133093490
+    ],
+    [
+     "pytorch_model.bin",
+     133508397
+    ],
+    [
+     "sentence_bert_config.json",
+     52
+    ],
+    [
+     "special_tokens_map.json",
+     125
+    ],
+    [
+     "tokenizer.json",
+     711396
+    ],
+    [
+     "tokenizer_config.json",
+     366
+    ],
+    [
+     "vocab.txt",
+     231508
+    ]
+   ]
+  },
+  {
+   "id": "mistralai/Mistral-7B-Instruct-v0.3",
+   "license": "apache-2.0",
+   "gated": false,
+   "pipeline_tag": null,
+   "downloads": 1991739,
+   "likes": 3803,
+   "files": [
+    [
+     ".gitattributes",
+     1519
+    ],
+    [
+     "README.md",
+     7893
+    ],
+    [
+     "config.json",
+     601
+    ],
+    [
+     "consolidated.safetensors",
+     14496078512
+    ],
+    [
+     "generation_config.json",
+     116
+    ],
+    [
+     "model-00001-of-00003.safetensors",
+     4949453792
+    ],
+    [
+     "model-00002-of-00003.safetensors",
+     4999819336
+    ],
+    [
+     "model-00003-of-00003.safetensors",
+     4546807800
+    ],
+    [
+     "model.safetensors.index.json",
+     23950
+    ],
+    [
+     "params.json",
+     202
+    ],
+    [
+     "special_tokens_map.json",
+     414
+    ],
+    [
+     "tokenizer.json",
+     1961548
+    ],
+    [
+     "tokenizer.model",
+     130
+    ],
+    [
+     "tokenizer.model.v3",
+     587404
+    ],
+    [
+     "tokenizer_config.json",
+     140874
+    ]
+   ]
+  },
+  {
+   "id": "CohereLabs/c4ai-command-r7b-12-2024",
+   "license": "cc-by-nc-4.0",
+   "gated": "auto",
+   "pipeline_tag": "text-generation",
+   "downloads": 6587,
+   "likes": 432,
+   "files": [
+    [
+     ".gitattributes",
+     1570
+    ],
+    [
+     "README.md",
+     17166
+    ],
+    [
+     "config.json",
+     1021
+    ],
+    [
+     "generation_config.json",
+     178
+    ],
+    [
+     "model-00001-of-00004.safetensors",
+     4915779696
+    ],
+    [
+     "model-00002-of-00004.safetensors",
+     4915824704
+    ],
+    [
+     "model-00003-of-00004.safetensors",
+     4999719592
+    ],
+    [
+     "model-00004-of-00004.safetensors",
+     1224771944
+    ],
+    [
+     "model.safetensors.index.json",
+     20990
+    ],
+    [
+     "signatures/c4ai-command-r7b-12-2024.sig",
+     14098
+    ],
+    [
+     "signatures/verification-instructions.txt",
+     1430
+    ],
+    [
+     "special_tokens_map.json",
+     664
+    ],
+    [
+     "tokenizer.json",
+     20124922
+    ],
+    [
+     "tokenizer_config.json",
+     44971
+    ]
+   ]
+  }
+ ]
+}

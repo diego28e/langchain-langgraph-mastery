@@ -136,7 +136,8 @@ def model_string(role: Role | str = "fast", provider: str = "groq", *, settings:
     Args:
         role: ``"fast"``, ``"reasoning"``, ``"vision"`` or ``"multimodal"`` (Module 13: always
             ``MASTERY_MODEL_MULTIMODAL``, a full ``"provider:model"`` string).
-        provider: ``"groq"`` (course default, free tier) or ``"benchmark"``
+        provider: ``"groq"`` (course default, free tier), ``"ollama"`` (Module 14: local,
+            ``MASTERY_MODEL_LOCAL`` / ``MASTERY_MODEL_LOCAL_VISION``) or ``"benchmark"``
             (the paid benchmark from ``MASTERY_BENCHMARK_MODEL*``; ``"fast"``
             maps to the cheap benchmark, ``"reasoning"`` to the strong one,
             ``"vision"`` to the cheap one because both OpenAI and Gemini
@@ -164,8 +165,11 @@ def model_string(role: Role | str = "fast", provider: str = "groq", *, settings:
         spec = settings.benchmark_model_strong if role == "reasoning" else settings.benchmark_model
         split_model_string(spec)  # Validate the format early, with a clear message.
         return spec
+    if provider == "ollama":
+        # Module 14: local models. "vision" needs an image-capable local model; the others share one.
+        return f"ollama:{settings.model_local_vision if role == 'vision' else settings.model_local}"
     raise ValueError(
-        f"Unknown provider {provider!r} for role lookup. Use 'groq' or 'benchmark', "
+        f"Unknown provider {provider!r} for role lookup. Use 'groq', 'benchmark' or 'ollama', "
         "or pass an explicit model, e.g. get_model(model='ollama:llama3.2')."
     )
 
@@ -262,16 +266,36 @@ def get_model(
         "rate_limiter": rate_limiter,
     }
     params = {name: value for name, value in params.items() if value is not None}
+    if provider_name == "ollama":
+        params = _ollama_params(params, kwargs, settings)
     params.update(kwargs)
     try:
         primary = init_chat_model(spec, **params)
-        return _with_env_fallbacks(primary, params, explicit=model is not None)
+        return _with_env_fallbacks(primary, params, explicit=model is not None or provider_name == "ollama")
     except ImportError as error:
         package = PROVIDER_PACKAGES.get(provider_name, f"the package for provider '{provider_name}'")
         raise ImportError(
             f"Could not create {spec!r}: {package} is not installed in this kernel. "
             f'In a notebook run:  %pip install "{package}"  then restart the kernel.'
         ) from error
+
+
+# Module 14. ChatOllama has its own parameter names and no retries; a CPU-only machine can need minutes
+# for a first answer (model load + slow generation), so local calls get a longer default timeout.
+OLLAMA_DEFAULT_TIMEOUT = 300.0
+
+
+def _ollama_params(params: dict[str, Any], kwargs: dict[str, Any], settings: Settings | None) -> dict[str, Any]:
+    """Translate get_model's parameters to ChatOllama's (``num_predict``, ``client_kwargs``, ``base_url``)."""
+    out = {k: v for k, v in params.items() if k in ("temperature", "rate_limiter")}
+    if "max_tokens" in params:
+        out["num_predict"] = params["max_tokens"]
+    timeout = params.get("timeout")
+    out["client_kwargs"] = {"timeout": OLLAMA_DEFAULT_TIMEOUT if timeout in (None, 60.0) else timeout}
+    out.setdefault("base_url", (settings or load_settings()).ollama_base_url)
+    # Qwen3 and other thinking models think by default: minutes on a CPU. Off unless asked for.
+    kwargs.setdefault("reasoning", False)
+    return out
 
 
 def _rate_limit_errors() -> tuple[type[BaseException], ...]:

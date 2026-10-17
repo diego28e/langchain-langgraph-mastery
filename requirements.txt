@@ -100,4 +100,5 @@ jupytext>=1.19.6,<2
 # Paid benchmark (default): OpenAI. Gemini (langchain-google-genai) is active above.
 # langchain-openai>=1.7.0,<2
 # langchain-anthropic>=1.7.5,<2
-# langchain-ollama>=1.1.0,<2
+langchain-ollama>=1.1.0,<2  # Module 14 (local models through Ollama)
+huggingface-hub>=1.33.0,<2  # Module 14 (Hub API, Lesson 14.02); <2 because fastembed and langchain-huggingface cap it

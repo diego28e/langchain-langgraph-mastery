@@ -116,6 +116,22 @@ service = [
     # The desk's FAQ search (mastery.rag) splits documents; the image has no [rag] (Chroma is ~100 MB).
     "langchain-text-splitters>=1.1.3,<2",
 ]
+# Local models (Module 14): Ollama through LangChain (14.01) and the Hugging Face Hub API (14.02).
+# VERIFIED 2026-10-16 on PyPI: langchain-ollama 1.1.0, huggingface-hub 2.2.0 is current but fastembed 0.9.0
+# and langchain-huggingface 1.2.3 both require huggingface-hub<2, so the course stays on 1.x (1.33.0).
+local = [
+    "langchain-ollama>=1.1.0,<2",
+    "huggingface-hub>=1.33.0,<2",
+]
+# Optional: run Hub models in-process with transformers on the CPU (Lesson 14.02, stretch). NOT in [dev]:
+# torch is a large download (Windows/macOS PyPI wheels are CPU-only; on Linux add
+# --extra-index-url https://download.pytorch.org/whl/cpu to avoid the CUDA build).
+# VERIFIED 2026-10-16 on PyPI: transformers 5.20.1, torch 2.14.1, langchain-huggingface 1.2.3.
+transformers = [
+    "transformers>=5.20.1,<6",
+    "torch>=2.14.1,<3",
+    "langchain-huggingface>=1.2.3,<2",
+]
 # Developer tools: `python -m pip install -e ".[dev]"`
 # Includes the llm extra so every unit test runs (offline, with fake models).
 dev = [
@@ -142,6 +158,8 @@ dev = [
     "mastery[evals]",
     # Module 12: FastAPI service, uvicorn and settings, so every service test runs offline.
     "mastery[service]",
+    # Module 14: langchain-ollama and huggingface-hub (mastery.local tests run offline with fakes).
+    "mastery[local]",
 ]
 
 # CI and notebook QA: what `python -m pytest -m notebooks` needs to run every notebook headless
