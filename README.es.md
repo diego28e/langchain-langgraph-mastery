@@ -93,6 +93,7 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 | 12 | [Producción y despliegue (FastAPI + Docker, autoalojado)](modules/12-production-and-deployment/) | ✅ Construido |
 | 13 | [Multimodalidad y voz (electivo)](modules/13-multimodal-and-voice/) | ✅ Construido |
 | 14 | [Modelos locales y fine-tuning (electivo)](modules/14-local-models-and-fine-tuning/) | ✅ Construido |
+| 15 | [Modelos de decisión con Jev (opcional)](modules/15-decision-models-with-jev/) | ✅ Construido |
 | — | [Proyectos finales (capstones)](capstones/) | 📝 Planificado |
 
 Leyenda: 📝 Planificado · 🚧 En progreso · ✅ Construido · 🔍 Revisado (verificado de punta a punta)

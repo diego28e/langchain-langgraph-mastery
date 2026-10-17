@@ -1184,6 +1184,47 @@ This is the one module where the default model is **not** Groq. Deep agents run 
 - **Stack:** Free: Ollama, Colab free GPU (when available), HF. Paid: Colab Pro / cloud GPU.
 - **As built (verified 2026-10-16): Local-First Support Assistant and Ticket Router** ([`project/README.md`](modules/14-local-models-and-fine-tuning/project/README.md)). Part 1: 16 Project 06 questions (12 answerable, 4 to decline), the same BM25 context for the extractive reader, a recorded `qwen3:4b` run (13/16, 2.4 s per question on a CPU) and live Ollama/Groq readers, with Wilson CIs and a paired test (16 questions can't separate a 4–0 win). Part 2: every router on the 234 held-out tickets (numpy baselines, few-shot `qwen3:0.6b`/`qwen3:4b`, the recorded CPU LoRA, plus the learner's `fewshot-groq.json` from #59 and Colab `qlora-predictions.json` from #60 when present, the served `orbita-router` timed live), paired tests, and `recommend()` under Orbita's constraints (local only, ≤ 0.5 s per ticket): offline it picks the tuned 0.6B (87%, 0.11 s) over few-shot 4B (94%, 1.6 s). Starter 2/8, solution 8/8 offline; live check #62. The vLLM-behind-Module-12 stretch stays a stretch.
 
+
+## Module 15 — Decision Models with Jev (optional)
+
+**Goal:** Use a decision model (Jev, TypeSafe's System One model) at the branches of LangChain/LangGraph apps: typed answers with calibrated probabilities, cheap by default and frontier on exception. **Keys:** optional `TYPESAFE_API_KEY` (paid, no free tier, verified 2026-10-16); every notebook runs in replay mode without it. Package: `langchain-typesafe[experimental]==0.0.1a3` (alpha, pinned).
+
+### Lesson 15.01 — Decision models vs LLMs: first calls to Jev
+- **Notebook:** `modules/15-decision-models-with-jev/15-01-decision-models-vs-llms.ipynb`
+- **Covers:** System One vs LLM, access and cost, `Noul`/`Choice`/`Score`, many questions per state, batching, routing on confidence, Groq structured output for comparison, replay misses, 429 retry, auth errors.
+
+### Lesson 15.02 — Probabilities, calibration and thresholds
+- **Notebook:** `modules/15-decision-models-with-jev/15-02-calibration-and-thresholds.ipynb`
+- **Covers:** top probability vs margin vs `confidence`; reliability table and plot, ECE, Brier on Module 14's 234 held-out tickets; cost-based routing threshold (tune/check halves, `route_curve`); an act/ignore/review band for a yes/no answer; LLM self-reported confidence; self-consistency.
+
+### Lesson 15.03 — Jev in LangChain
+- **Notebook:** `modules/15-decision-models-with-jev/15-03-jev-in-langchain.ipynb`
+- **Covers:** `prepare | jev | route` chains, one request vs many (token bill), `abatch` with `max_concurrency`, messages as state, retry then LLM fallback in Jev's response shape (`llm_decider`), endpoints (TypeSafe, OpenRouter, LangSmith and Vercel gateways) and model IDs.
+
+### Lesson 15.04 — Jev in LangGraph: decision nodes and escalation
+- **Notebook:** `modules/15-decision-models-with-jev/15-04-jev-in-langgraph.ipynb`
+- **Covers:** a decide node with conditional edges, LLM escalation on low top probability, an `interrupt` for enterprise churn risk with `Command(resume=...)` and no repeated Jev call, decisions stored as JSON in checkpoints, a 234-ticket `Send` fan-out comparing the hybrid with an LLM on every ticket, live escalation with Groq.
+
+### Lesson 15.05 — Middleware: model routing and tool guardrails
+- **Notebook:** `modules/15-decision-models-with-jev/15-05-middleware-routing-and-guardrails.ipynb`
+- **Covers:** `ModelRouterMiddleware` (small vs large model) and `AutoModeMiddleware` through `with_classifier`, `JevToolGate` (allow / review with `interrupt` / block), prompt injection through tool output, fail-closed on classifier errors, a live Groq agent behind the gate.
+
+### Lesson 15.06 — Jev as a LangSmith evaluator vs LLM-as-judge
+- **Notebook:** `modules/15-decision-models-with-jev/15-06-jev-as-evaluator.ipynb`
+- **Covers:** evaluators in LangSmith's `{"key", "score"}` shape sharing one Jev request, agreement with human labels (TPR / TNR with intervals), a cost-based threshold chosen on dev and reported on test, the same items through an LLM judge (`llm_decider`), `langsmith.evaluate` upload.
+
+### Lesson 15.07 — Benchmarking cost and latency
+- **Notebook:** `modules/15-decision-models-with-jev/15-07-benchmarking-decisions.ipynb`
+- **Covers:** a warm-up + p50 / p95 harness with a labeled source (replay overhead vs live), batch throughput, cost per 1,000 decisions from usage, monthly projections, the Groq baseline measured, live Jev latency, a decision worksheet.
+
+### Project 15A — Support Triage with Escalation
+- **Notebooks:** `modules/15-decision-models-with-jev/project/15a-project-support-triage.ipynb` (starter) · `project/solutions/15a-project-support-triage-solution.ipynb`
+- **Build:** Jev by default with escalation below a threshold chosen from misroute and escalation costs, an outage paging band, three policies compared on held-out tickets with CIs and a paired test, a report. 8 acceptance checks.
+
+### Project 15B — Agent Safety Gate
+- **Notebooks:** `modules/15-decision-models-with-jev/project/15b-project-agent-safety-gate.ipynb` (starter) · `project/solutions/15b-project-agent-safety-gate-solution.ipynb`
+- **Build:** 32 labeled tool calls scored with the gate's own question, review / block thresholds from costs, zero unsafe calls allowed on held-out calls, the gate proven in the sandboxed agent (injection, review, fail closed), a report. 8 acceptance checks.
+
 ---
 
 ## Capstones (choose 2 of 8)

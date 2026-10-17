@@ -92,6 +92,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | 12 | [Production & Deployment (self-hosted FastAPI + Docker)](modules/12-production-and-deployment/) | ✅ Built |
 | 13 | [Multimodal & Voice (elective)](modules/13-multimodal-and-voice/) | ✅ Built |
 | 14 | [Local Models & Fine-Tuning (elective)](modules/14-local-models-and-fine-tuning/) | ✅ Built |
+| 15 | [Decision Models with Jev (optional)](modules/15-decision-models-with-jev/) | ✅ Built |
 | — | [Capstones](capstones/) | 📝 Planned |
 
 Status legend: 📝 Planned · 🚧 In progress · ✅ Complete · 🔍 Reviewed (verified end to end)
