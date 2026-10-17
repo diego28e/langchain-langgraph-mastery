@@ -123,6 +123,11 @@ local = [
     "langchain-ollama>=1.1.0,<2",
     "huggingface-hub>=1.33.0,<2",
 ]
+# Decision models (Module 15): Jev through langchain-typesafe. It is an ALPHA (0.0.1a3, the only line on PyPI,
+# VERIFIED 2026-10-16), so it is pinned exactly; [experimental] adds the agent middleware (needs langchain).
+decisions = [
+    "langchain-typesafe[experimental]==0.0.1a3",
+]
 # Optional: run Hub models in-process with transformers on the CPU (Lesson 14.02, stretch). NOT in [dev]:
 # torch is a large download (Windows/macOS PyPI wheels are CPU-only; on Linux add
 # --extra-index-url https://download.pytorch.org/whl/cpu to avoid the CUDA build).
@@ -160,6 +165,8 @@ dev = [
     "mastery[service]",
     # Module 14: langchain-ollama and huggingface-hub (mastery.local tests run offline with fakes).
     "mastery[local]",
+    # Module 15: langchain-typesafe (mastery.decisions tests run offline with replay transports).
+    "mastery[decisions]",
 ]
 
 # CI and notebook QA: what `python -m pytest -m notebooks` needs to run every notebook headless

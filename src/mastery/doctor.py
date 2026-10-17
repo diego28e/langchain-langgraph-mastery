@@ -32,7 +32,7 @@ import os
 from collections.abc import Mapping
 from pathlib import Path
 
-__all__ = ["CertificateSettingError", "check_dependencies", "check_ssl_env", "require_valid_ssl_env"]
+__all__ = ["CertificateSettingError", "check_decisions_env", "check_dependencies", "check_ssl_env", "require_valid_ssl_env"]
 
 FIX_HINT = (
     "Fix (Git Bash on Windows, with the course env active):\n"
@@ -125,3 +125,26 @@ def check_dependencies(prefixes: tuple[str, ...] = STACK_PREFIXES) -> list[str]:
         except InvalidVersion:
             pass
     return problems
+
+
+def check_decisions_env(environ: Mapping[str, str] | None = None) -> list[str]:
+    """Module 15 notes on the Jev setup (``TYPESAFE_*`` variables). Empty list = nothing to fix.
+
+    Never prints a key. A missing key is not an error (replay mode); a mode that needs one is.
+    """
+    env = os.environ if environ is None else environ
+    key = (env.get("TYPESAFE_API_KEY") or "").strip()
+    mode = (env.get("MASTERY_DECISIONS_MODE") or "auto").strip().lower()
+    base = (env.get("TYPESAFE_BASE_URL") or "").strip()
+    notes: list[str] = []
+    if mode not in ("auto", "live", "replay", "record"):
+        notes.append(f"MASTERY_DECISIONS_MODE={mode!r} is unknown: use auto, live, replay or record")
+    elif mode in ("live", "record") and not key:
+        notes.append(f"MASTERY_DECISIONS_MODE={mode} needs TYPESAFE_API_KEY (or set it to auto/replay)")
+    if base and not base.startswith("https://"):
+        notes.append(f"TYPESAFE_BASE_URL should be an https:// root URL, got {base!r}")
+    if base.rstrip("/").endswith("/v1/systemone") or base.rstrip("/").endswith("/v1"):
+        notes.append("TYPESAFE_BASE_URL must be the API root (e.g. https://openrouter.ai/api): the client adds /v1/systemone")
+    if key and "openrouter.ai" not in base and key.startswith("sk-or-"):
+        notes.append("TYPESAFE_API_KEY looks like an OpenRouter key: also set TYPESAFE_BASE_URL=https://openrouter.ai/api")
+    return notes

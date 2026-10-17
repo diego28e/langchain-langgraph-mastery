@@ -49,6 +49,7 @@ class ModelPrice:
 _GROQ = "https://console.groq.com/docs/models"
 _OPENAI = "https://developers.openai.com/api/docs/pricing"
 _GEMINI = "https://ai.google.dev/gemini-api/docs/pricing"
+_TYPESAFE = "https://docs.typesafe.ai/models"
 
 # Keys are "provider:model" strings, the same format as get_model(model=...).
 # VERIFIED 2026-10-11 on the source pages. Re-check at every research checkpoint.
@@ -63,6 +64,9 @@ PRICES: dict[str, ModelPrice] = {
     "google_genai:gemini-3.8-flash": ModelPrice(0.75, 3.75, "stable", _GEMINI),
     "google_genai:gemini-3.6-flash": ModelPrice(0.75, 3.75, "stable", _GEMINI),
     "google_genai:gemini-3.5-flash-lite": ModelPrice(0.30, 2.50, "stable", _GEMINI),
+    # Module 15: Jev decision models bill input tokens only (output is free). Early access; no free tier.
+    "typesafe:jev-1.13.0": ModelPrice(0.042, 0.0, "preview", _TYPESAFE, "2026-10-16"),
+    "typesafe:jev-1.14.0": ModelPrice(0.042, 0.0, "preview", _TYPESAFE, "2026-10-16"),
 }
 
 
