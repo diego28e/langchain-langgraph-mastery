@@ -1,0 +1,900 @@
+{"id": "K0001", "text": "dark mode when pls", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0002", "text": "Hey, SSO login loops back to the sign-in page forever. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0003", "text": "URGENT: Could you add a Slack integration? It would help our taem a lot.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0004", "text": "Hello team, Login works on Edge but not on the iOS app, says unauthorized. Ticket from C-3310.", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0005", "text": "Quick question: It would be great to have multi-language UI in the iOS app. Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0006", "text": "Hey, How do I add our VAT number to future invoices? Ticket from C-0457.", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0007", "text": "hey, alerts crashes when i open the settings page. thanks!", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0008", "text": "Good morning. Where do I see the battery level of each station? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0009", "text": "URGENT: The password reset link says it expired immediately. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0010", "text": "URGENT: Dark theme makes the axis labels invisible on the humidity chart. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0011", "text": "No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0012", "text": "Hey, I was charged twice for June. Please refund the extra payment.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0013", "text": "Buenos días. La gráfica muestra Fahrenheit aunque elegí Celsius. Gracias.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0014", "text": "Quick question: SSO login loops back to the sign-in page forever. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0015", "text": "Sería genial tener reporte semanal en PDF en las alertas. Saludos.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0016", "text": "Hey, What does the yellow icon next to a station mean? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0017", "text": "All stations show offline since the update in EU. Is there an incident? Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0018", "text": "Hey, We downgraded plans but the March bill still shows the Pro price of $120.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0019", "text": "New hire can't accept the invite, the link says invalid token. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0020", "text": "CHART BROKEN ASAP", "queue": "bug", "lang": "en", "family": "bug-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0021", "text": "Quick question: Whole company is blocked: the iOS app unreachable since yesterday night. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0022", "text": "Quick question: Data ingestion stopped across all our sites since this morning, please check your servers. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0023", "text": "Hi, Would love CSV export per station, is that coming? Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0024", "text": "the Android app is down for our whole team since this morning, nobody can see any readings! Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0025", "text": "Quick question: There is a $35 charge I don't recognize on our statement. Ticket from C-3310.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0026", "text": "Hey, All stations show offline since this morning in Bogotá. Is there an incident? Cheers", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0027", "text": "Buenos días. ¿Dónde cambio las unidades a sistema métrico?", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0028", "text": "Good morning. Please consider adding a weekly PDF report to the roadmap. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0029", "text": "All stations show offline for 20 minutes in all regions. Is there an incident? Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0030", "text": "URGENT: The password reset link says it expired immedaitely. Ticket from C-3310.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0031", "text": "El código de verificación no me llega y quedé bloqueado. Saludos.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0032", "text": "Good morning. We'd pay more for adrk mode. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0033", "text": "hey, the export button deos nothing when i click it in firefox. no error. asap please.", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0034", "text": "Buenos días. Sería genial tener modo oscuro en el Station Bridge. Gracias.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0035", "text": "Hi, What does the ylelow icon next to a station mean?", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0036", "text": "My account was deactivated by mistake, pelase restore access. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0037", "text": "Can you explain how alert thresholds work for wind speed? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0038", "text": "Hey, The password reset link says it expired immediately.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0039", "text": "Hey, Timestamps in the CSV are off by one hour after daylight saving. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0040", "text": "Hey, Our admin left the company, how do we get admin rights back on C-2041? Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0041", "text": "The 2FA code never arrives by SMS, I'm locked out of the web console.", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0042", "text": "Hola, Me cobraron dos veces en este mes, por favor devuelvan el pago extra. Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0043", "text": "Hi, Request: an option for SSO with Okta on mobile. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0044", "text": "Hi, How do I move a new station to another workspace?", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0045", "text": "Hey, Is there a guide for connecting the Station Bridge to our own database? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0046", "text": "Good morning. Everything is timing out since the update, we can't load anything at all.", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0047", "text": "our card was declined but you still charged $1,240. what happened?", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0048", "text": "Quick question: Could you add CSV export per station? It would help our team a lot. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0049", "text": "Hello team, We downgraded plans but the October bill still shows the Pro price of $35. Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0050", "text": "Good morning. All stations show offline since 9am in all regions. Is there an incident?", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0051", "text": "Hello team, Can we vote somewhere for dark mode? Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0052", "text": "Good morning. My account was deactivatde by mistake, please restore access. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0053", "text": "Hi, New hire can't accept the invite, the link says invalid token. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0054", "text": "temperature chart shows fahrenheit even though i picked celsius. ticket from c-3310.", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0055", "text": "WOW, THE CSV EXPORT PUTS EVERY VALUE IN ONE COLUMN. VERY USEFUL. ALSO HOW DO I ADD AN API KEY?", "queue": "bug", "lang": "en", "family": "bug-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0056", "text": "Can you explain how alert thrseholds work for wind speed?", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0057", "text": "Buenos días. No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar. Saludos.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0058", "text": "URGENT: How do I rotate a webhook without downtime? Thnaks.", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0059", "text": "How do I share a dashboard with someone outside my team?", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0060", "text": "URGENT: I can't log in. It says my password is wrong but I just reset it.", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0061", "text": "Quick question: Why did my invoice go from $1,240 to $1,240 this month?", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0062", "text": "Hi, Temperature chart shows Fahrenheit even though I picked Celsius. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0063", "text": "URGENT: There is a $9.99 charge I don't recognize on our statement.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0064", "text": "i changed phones and lost my authenticator app. how do i get back in? thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0065", "text": "Where do I see the battery level of each station? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0066", "text": "good morning. why did my invoice go from $120 to $20 this month?", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0067", "text": "Login works on Chrome but not on the iOS app, says unauthorized. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0068", "text": "We cancelled last week, why was $9.99 taken from our account? Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0069", "text": "¿Por qué mi factura subió a $35 este mes? Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0070", "text": "Hi, Everything is timing out since the update, we can't load anything at all. Ticket from C-1002.", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0071", "text": "Quick question: the web console is down for our whole team since 9am, nobody can see any readings! Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0072", "text": "Hey, How do I move a team member to another workspace? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0073", "text": "urgent: teh nivoice total is wrong: we have 3 stations, not 5. regards, ana", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0074", "text": "Hey, We cancelled last week, why was $1,240 taken from our account? ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0075", "text": "Hey, The 2FA code never arrives by SMS, I'm locked out of the web console. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0076", "text": "Can I get a copy of the invoice for this month? Finance needs it. ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0077", "text": "Hello team, Timestamps in the CSV are off by one hour after daylight saving. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0078", "text": "Quick question: All stations show offline since the update in US-East. Is there an incident? Ticket from C-3310.", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0079", "text": "URGENT: What does the yellow icon next to a station mean? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0080", "text": "the Station Bridge crashes hwen I opne the settings page.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0081", "text": "We cancelled last week, why was $1,240 taken from our account? ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0082", "text": "Quick question: We cancellde last week, why was $20 taken from our account? Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0083", "text": "Timestamps in the CSV are off by one hour after daylight saving.", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0084", "text": "api docs?!!", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0085", "text": "Hi, Live map is blank for every customer we have for an hour. Cheers", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0086", "text": "How do I create a team member? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0087", "text": "Hi, The search obx on the iOS app ignores accents, 'Bogota' finds nothing. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0088", "text": "URGENT: SSO login loops back to the sign-in page forever. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0089", "text": "Hello team, Suggestion: let us choose an hourly rain chart per user. Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0090", "text": "Uploading a logo gives a blank error message in Safari. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0091", "text": "Please unolck my account, too many failed attempts. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0092", "text": "Buenos días. Me cobraron dos veces en el mes pasado, por favor devuelvan el pago extra. Saludos.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0093", "text": "Hi, Timestamps in the CSV are off by one hour after daylight saving. ASAP plaese.", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0094", "text": "URGENT: Our card was declined but you still charged $20. What happened? Cheers", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0095", "text": "Me cobraron dos veces en marzo, por favor devuelvan el pago extra. Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0096", "text": "Good morning. Login works on Chrome but not on the iOS app, says unauthorized. Ticket from C-0457.", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0097", "text": "Sería genial tener integración con Slack en las alertas. Gracias.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0098", "text": "Quick question: Please consider adding csutom alert sounds to the roadmap. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0099", "text": "Hello team, Can I get a copy of the invoice for September? Finance needs it.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0100", "text": "locked out :(", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0101", "text": "My account was deactivated by mistake, please restore access.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0102", "text": "Not a bug I think, but how do I make the chart show Celsius by default? pls", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0103", "text": "refund pls??", "queue": "billing", "lang": "en", "family": "billing-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0104", "text": "Buenos días. No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0105", "text": "Quick question: Any plans to support an hourly rain chart? Our competitors' tools have it. Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0106", "text": "URGENT: We downgraded plans but the last month bill still shows the Pro price of $1,240. Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0107", "text": "URGENT: Where do I see the battery level of each station? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0108", "text": "urgent: no data is arriving from any of our 40 stations since the update. urgent. cheers", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0109", "text": "URGENT: I can't log in. It says my password is wrong but I just reset it. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0110", "text": "LOCKED OUT??", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0111", "text": "Hi, Alert emails arrive twice fro the saem event. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0112", "text": "Hello team, Our card was declined but you still charged $35. What happened? Cheers", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0113", "text": "Wow, the CSV export puts every value in one column. Very useful. Also how do I add a new station?", "queue": "bug", "lang": "en", "family": "bug-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0114", "text": "Hey, There is a $1,240 charge I don't recognize on our statement. Ticket from C-3310.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0115", "text": "quick question: how do i create an alert rule? ticket from c-3310.", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0116", "text": "Good morning. Your status page says operational but station WX-200 returns 503 for everyone since this morning. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0117", "text": "Hola, Me cobraron dos veces en marzo, por favor devuelvan el pago extra. Saludos.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0118", "text": "Request: an option for CSV export per station on mobile. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0119", "text": "Hey, We'd pay more for a weekly PDF report. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0120", "text": "Hey, Temperature chart shows Fahrenheit even though I picked Celsius. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0121", "text": "Everything is timing out since yesterday night, we can't load anything at all. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0122", "text": "Please consider adding multi-language UI to the roadmap. Ticket from C-1002.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0123", "text": "Suggestion: let us choose multi-language UI per user. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0124", "text": "Good morning. What's the best way to export a year of data from the API?", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0125", "text": "I changed phones and lost my authenticator app. How do I get back in? Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0126", "text": "Hello team, Our admin left the company, how do we get admin rights back on C-1002?", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0127", "text": "good morning. is asia having problems? the station bridge won't load for any of our users. cheers", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0128", "text": "can't log in at all, and also, while you fix that, could you add a weekly pdf report? :(", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0129", "text": "Good morning. No data is arriving from any of our 40 stations since the update. Urgent. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0130", "text": "dark mode when??", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0131", "text": "URGENT: There is a $1,240 charge I don't recognize on our statement. Cheers", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0132", "text": "Hey, Is EU having problems? the mobile app won't load for any of our users. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0133", "text": "Hello team, I can't log in. It says my password is wrong but I just reset it. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0134", "text": "Can you explain how alert thresholds work for wind speed? Ticket from C-1002.", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0135", "text": "El botón de exportar no hace nada en el Station Bridge, sin ningún error. Saludos.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0136", "text": "Good morning. How do I rotate an API key without downtime? Ticket from C-0457.", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0137", "text": "timestamps in the csv are off by one hour after daylight saving. cheers", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0138", "text": "Hey, Whole company is blocked: alerts unreachable since the update. Cheers", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0139", "text": "Quick question: Can we vote somewhere for a weekly PDF report? Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0140", "text": "How do I rotate an API key without downtime? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0141", "text": "URGENT: Rain totals in the weekly view don't match the daily values. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0142", "text": "Hello team, How do I create a custom dashobard? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0143", "text": "¿Podrían agregar modo oscuro? Nos ayudaría mucho. Gracias.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0144", "text": "Please change the billing email on account C-0457 to finance@ourcompany.example. Regards, Ana", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0145", "text": "URGENT: The station list sorts by name incorrectly, Z ocmes before A. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0146", "text": "Can't log in at all, and also, while you fix that, could you add multi-language UI?!!", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0147", "text": "SSO login loops back to the sign-in page forever. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0148", "text": "Quick question: Where do I see the battery level of each station? Ticket from C-1002.", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0149", "text": "Hola, Me cobraron dos veces en marzo, por favor devuelvan el pago extra.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0150", "text": "hi, could you add csv export per station? it would help our team a lot. cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0151", "text": "Live map is blank for every customer we have since 9am.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0152", "text": "The export button does nothing when I click it in Safari. No error. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0153", "text": "Hey, Login works on Firefox but not on the iOS app, says unauthorized.", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0154", "text": "Great, another Monday where the API is dead for everyone. Fantastic uptime, really.", "queue": "outage", "lang": "en", "family": "outage-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0155", "text": "Hello team, The station list sorts by name incorrectly, Z comes before A.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0156", "text": "rain totals in the weekly view don't match the daily values. thanks!", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0157", "text": "My account was deactivated by mistake, please restore access. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0158", "text": "Hi, the Station Bridge crashes when I open the settings page. Ticket from C-1002.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0159", "text": "urgent: the export button does nothing when i click it in edge. no error.", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0160", "text": "Buenos días. ¿Podrían agregar modo oscuro? Nos ayudaría mucho.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0161", "text": "URGENT: I can't log in. It says my password is wrong ubt I just reset it. Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0162", "text": "Good morning. How do I share a dashboard with someone outside my team?", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0163", "text": "Good morning. Suggestion: let us choose a weekly PDF report per user.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0164", "text": "Can I get a copy of the invoice for March? Finance needs it. Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0165", "text": "quick question: please consider adding an hourly rain chart to the roadmap.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0166", "text": "urgent: our admin left the company, how do we get admin rights back on c-3310? ticket from c-0457.", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0167", "text": "Hey, Where do I see the battery level of each station? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0168", "text": "La gráfica muestra Fahrenheit aunque elegí Celsius. Saludos.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0169", "text": "down again??!!", "queue": "outage", "lang": "en", "family": "outage-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0170", "text": "quick question: what does the yellow icon next to a station mean?", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0171", "text": "the search box on the android app ignores accents, 'bogota' finds nothing. thanks.", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0172", "text": "Please unlock my account, too many failed attempts. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0173", "text": "Good morning. Temperature chart shows Fahrenheit even though I picked Celsius.", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0174", "text": "Good morning. Please unlock my account, too many failed attempts. Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0175", "text": "New hire can't accept the invite, the link says invalid token.", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0176", "text": "New hire can't accept the invite, the link says invalid token. Ticket from C-3310.", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0177", "text": "good morning. sso login loops back to the sign-in page forever. thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0178", "text": "Upolading a logo gives a blank error message in Safari. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0179", "text": "hello team, could you add csv export per station? it would help our team a lot. thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0180", "text": "Feature idea: SSO with Okta, so we don't have to build it ourselves. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0181", "text": "Quick qeustion: There is a $35 charge I don't recognize on our statement. Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0182", "text": "Hey, How do I create an API key? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0183", "text": "Hello team, I changed phones and lost my authenticator app. How do I get back in? Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0184", "text": "Hello team, Dark theme makes the axis labels invisible on the humidity chart. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0185", "text": "URGENT: Live map is blank for every customer we have since the update.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0186", "text": "Hey, Would love a weekly PDF report, is that coming? ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0187", "text": "Major outage? Our monitoring shows your API failing since the update. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0188", "text": "The export button does nothing when I click it in Chrome. No error. Ticket from C-7781.", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0189", "text": "URGENT: Request: an option for SSO with Okta on mobile. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0190", "text": "my account was deactivated by mistake, please restore access.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0191", "text": "I changed phones and lost my authenticator app. How do I get back in? ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0192", "text": "URGENT: Rain totals in the weekly view don't match teh daily values. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0193", "text": "CHART BROKEN :(", "queue": "bug", "lang": "en", "family": "bug-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0194", "text": "el panel está caído para todo el equipo desde las 9, no vemos ninguna lectura. Gracias.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0195", "text": "El código de verificación no me llega y quedé bloqueado.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0196", "text": "Hola, ¿Dónde cambio las unidades a sistema métrico?", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0197", "text": "Quick question: I can't log in. It says my password is wrong but I just reset it. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0198", "text": "Is there a guide for connecting alerts to our own database? Rgeards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0199", "text": "no data is arriving from any of our 40 stations since 9am. urgent. cheers", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0200", "text": "Buenos días. las alertas está caído para todo el equipo hace una hora, no vemos ninguna lectura.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0201", "text": "Buenos días. ¿Podrían agregar integración con Slack? Nos ayudaría mucho.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0202", "text": "Hola, ¿Dónde cambio las unidades a sistema métrico? Gracias.", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0203", "text": "How do I rotate an API key without downtime? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0204", "text": "Good morning. I can't log in. It says my password is wrong but I just reset it. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0205", "text": "Good morning. Dark theme makes the axis labels invisible on the humidity chart.", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0206", "text": "Timestamps in the CSV are off by one hour after daylight saving. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0207", "text": "URGENT: The export button does nothing when I click it in Edge. No error. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0208", "text": "URGENT: the iOS app is down for our whole team since this morning, nobody can see any readings! Ticket from C-1002.", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0209", "text": "Hey, How do I add our VAT number to future invoices? ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0210", "text": "URGENT: Please consider adding a weekly PDF report to the roadmap. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0211", "text": "Good morning. Feature idea: an hourly rain chart, so we don't have to build it ourselves. Ticket from C-0457.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0212", "text": "Any plans to support SSO with Okta? Our competitors' tools have it. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0213", "text": "Hello team, Any plans to support a Slack integration? Our competitors' tools have it. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0214", "text": "Quick question: Alert emails arrive twice for the same event.", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0215", "text": "Hey, The 2FA code never arrives by SMS, I'm locked out of the dashboard.", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0216", "text": "The export button does nothing when I click it in Firefox. No error. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0217", "text": "It would be great to have multi-language UI in alerts.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0218", "text": "Good morning. Would love CSV export per station, is that coming?", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0219", "text": "Hi, Why did my invoice go from $9.99 to $20 this month? Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0220", "text": "Hola, Ninguna estación envía datos desde esta mañana. ¿Hay un incidente?", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0221", "text": "Where can I change the uints from imperial to metric? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0222", "text": "I can't log in. It says my password is wrong but I just reset it. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0223", "text": "Good morning. Rain totals in the weekly view don't match the daily values.", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0224", "text": "Quick question: Login works on Chrome but not on the iOS app, says unauthorized. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0225", "text": "temperature chart shows fahrenheit even though i picked celsius. asap please.", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0226", "text": "Data ingestion stopped across all our sites since yesterday night, please check your servers. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0227", "text": "Good morning. Feature idea: CSV export per station, so we don't have to build it ourselves. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0228", "text": "Love paying $9.99 for a dashboard that I can't even read invoices on. Refund the March charge.??", "queue": "billing", "lang": "en", "family": "billing-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0229", "text": "Good morning. We cancelled last week, why was $35 taken from our account? Ticket from C-2041.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0230", "text": "Major outage? Our monitoring shows your API failing since this morning. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0231", "text": "Our card was declined but you still charged $9.99. What happened? Cheers", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0232", "text": "All stations show offline for 20 mintues in Asia. Is there an incident?", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0233", "text": "URGENT: Uploading a logo gives a blank error message in Edge. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0234", "text": "how do i add our vat number to future invoices?", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0235", "text": "Quick question: Temperature chart shows Fahrenheit even though I picked Celsius. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0236", "text": "Login works on Edge but not on the iOS app, says unauthorized. Ticket from C-0457.", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0237", "text": "Hey, The export button does nothing when I click it in Safari. No error.", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0238", "text": "Hello team, Where do I see the battery level of each station? Ticket from C-3310.", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0239", "text": "Hi, Why did my invoice go from $9.99 to $1,240 this month? Ticket from C-7781.", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0240", "text": "Hello team, No data is arriving from any of our 40 stations since 9am. Urgent.", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0241", "text": "Hey, Is Bogotá having problems? the Android app won't load for any of our users. Ticket from C-0457.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0242", "text": "Hey, How do I add our VAT number to future invoices? iTcket frmo C-1002.", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0243", "text": "Quick question: Data ingestion stopped across all our sites since yesterday night, please check your servers. Ticket from C-3310.", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0244", "text": "Hi, Can you explain how alert thresholds work for wind speed?", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0245", "text": "Hi, The export button does nothing when I click it in Edge. No error. Ticket from C-7781.", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0246", "text": "Hi, Please change the billing email on account C-0457 to finance@ourcompayn.example. Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0247", "text": "Hello team, We downgraded plans but the June bill still shows the Pro price of $20. Ticket from C-3310.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0248", "text": "Hey, I was charged twice for March. Please refund the extra payment. Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0249", "text": "Quick question: Temperature chart shows Fahrenheit even though I picked Celsius. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0250", "text": "is there a guide for connecting station wx-200 to our own database? regards, ana", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0251", "text": "Live map is blank for every customer we have for an hour.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0252", "text": "URGENT: Is US-East having problems? the mobile app won't load for any of our users.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0253", "text": "Hello team, Request: an option for a weekly PDF report on mobile. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0254", "text": "Hey, Can I get a copy of the invoice for June? Finance needs it. Regards, Ana", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0255", "text": "hey, i can't log in. it says my password is wrong but i just reset it. regards, ana", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0256", "text": "Hola, La gráfica muestra Fahrenheit aunque elegí Celsius. Gracias.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0257", "text": "Hola, la API está caído para todo el equipo desde las 9, no vemos ninguna lectura.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0258", "text": "The search box on the web console ignores accents, 'Bogota' finds nothing. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0259", "text": "La gráfica muestra Fahrenheit aunque elegí Celsius.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0260", "text": "We cancelled last week, why was $35 taken from our account? ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0261", "text": "Wow, the CSV export puts every value in one column. Very useful. Also how do I add a team member?!!", "queue": "bug", "lang": "en", "family": "bug-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0262", "text": "Three is a $120 charge I don't recognize on our statement.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0263", "text": "The 2FA code never arrives by SMS, I'm locked out of the dashboard. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0264", "text": "Good morning. Rain totals in the weekly view don't match the daily values. Ticket from C-7781.", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0265", "text": "Hello team, the mobile app is down for our whole team since yesterday night, nobody can see any readings! Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0266", "text": "Hi, How do I move a new station to another workspace? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0267", "text": "urgent: our admin left the company, how do we get admin rights back on c-1002?", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0268", "text": "la exportación de datos está caído para todo el equipo desde esta mañana, no vemos ninguna lectura.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0269", "text": "Everything is timing out since the update, we can't load anything at all. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0270", "text": "Hello team, Live map is blank for every customer we have since yesterday night. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0271", "text": "Hello team, Can you explain how alert thresholds work for wind speed? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0272", "text": "Hello etam, There is a $1,240 charge I don't recognize on our statement. Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0273", "text": "quick question: new hire can't accept the invite, the link says invalid token. thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0274", "text": "Temperature chart shows Fahrenheit even though I picked Celsius. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0275", "text": "hello team, can oyu explain how alert thresholds work for wind speed? regards, ana", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0276", "text": "Quick question: I changed phones and lost my authenticator app. How do I get back in? Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0277", "text": "Our admin left the company, how do we get admin rights back on C-3310? Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0278", "text": "Hi, Can we vote somewhere for custom alert sounds? Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0279", "text": "Where can I change the units from imperial to metric?", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0280", "text": "NOT A BUG I THINK, BUT HOW DO I MAKE THE CHART SHOW CELSIUS BY DEFAULT?!!", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0281", "text": "Data ingestion stopped across all our sites since the update, please check your servers. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0282", "text": "quick question: rain totals in the weekly view don't match the daily values. asap please.", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0283", "text": "Hey, Everything is timing out since this morning, we can't load anything at all. Ticket from C-0457.", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0284", "text": "quick question: how do i share a dashboard with someone oustide my team? asap please.", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0285", "text": "Hey, No data is arriving from any of our 40 stations since yesterday night. Urgent. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0286", "text": "Hey, Uploading a logo gives a blank error message in Edge. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0287", "text": "urgent: the dashboard crashes when i open the settings page.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0288", "text": "Hola, la API está caído para todo el equipo desde las 9, no vemos ninguna lectura. Gracias.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0289", "text": "Buenos días. ¿Cómo creo un usuario del equipo?", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0290", "text": "The export button does nothing when I click it in Firefox. No error. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0291", "text": "Temperature chart shows Fahrenheit even though I picked Celsius.", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0292", "text": "Good morning. My account was deactivated by mistake, please restore access.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0293", "text": "Hi, It would be great to have dark mode in the API. Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0294", "text": "Hola, ¿Por qué mi factura subió a $35 este mes? Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0295", "text": "Hello team, Our card was declined but you still charged $35. What happened?", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0296", "text": "Quick question: Alert emails arrive twice for the same event. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0297", "text": "Hi, Feature idea: dark mode, so we don't have to build it ourselves. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0298", "text": "Good morning. Is there a guide for connecting the dashboard to our own database? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0299", "text": "Quick question: Your status page says operational but the mobile app returns 503 for everyone since the update. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0300", "text": "the mobile app is down for our whole team for an hour, nobody can see any readings! Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0301", "text": "Good morning. I changed phones and lost my authenticator app. How do I get back in?", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0302", "text": "Hi, The password reset link says it expired immediately.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0303", "text": "good morning. whole company is blocked: the web console unreachable since the update. thanks.", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0304", "text": "hi, the data export is down for our whole team for 20 minutes, nobody can see any readings! ticket from c-7781.", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0305", "text": "locked out...", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0306", "text": "Hello team, No data si arriving from any of our 40 stations since this morinng. Urgent.", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0307", "text": "Hey, Timestamps in the CSV are off by one hour after daylight saving. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0308", "text": "Hey, station WX-200 crashes when I open the settings page. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0309", "text": "Good morning. How do I move an alert rule to another workspace? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0310", "text": "Hi, We cancelled last week, why was $1,240 taken from our account? Ticket from C-0457.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0311", "text": "hi, feature idea: multi-language ui, so we don't have to build it ourselves. thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0312", "text": "Quick question: It would be great to have CSV export per station in the dsahboard. Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0313", "text": "Buenos días. Ninguna estación envía datos hace una hora. ¿Hay un incidente? Saludos.", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0314", "text": "Good morning. Our card was declined but you still charged $20. What happened? Regards, Ana", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0315", "text": "It would be great to have CSV export per station in the Android app.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0316", "text": "love paying $120 for a dashboard that i can't even read invoices on. refund the june charge.??", "queue": "billing", "lang": "en", "family": "billing-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0317", "text": "Can you explain how alert thresholds work for wind speed? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0318", "text": "Major outage? Our monitoring shows your API failing for 20 minutes.", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0319", "text": "URGENT: Can we vote somewhere for SSO with Okta?", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0320", "text": "Any plans to support multi-language UI? Our competitors' tools have it.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0321", "text": "Quick question: What does the yellow icon next to a station mean?", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0322", "text": "Hello team, The 2FA code never arrives by SMS, I'm locked out of the iOS app. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0323", "text": "Quick question: Can I get a copy of the invoice for last month? Finance needs it.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0324", "text": "Please unlock my account, too many failed attempts.", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0325", "text": "Quick question: Your status page says operational but the API returns 503 for everyone for an hour.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0326", "text": "hey, please consider adding sso with okta to the roadmap. cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0327", "text": "Live map is blank for every customer we have since 9am. Ticket from C-2041.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0328", "text": "Hello team, Could you add dark mode? It would help our team a lot. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0329", "text": "Hey, SSO login loops back to the sign-in page forever.", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0330", "text": "El botón de exportar no hace nada en el panel, sin ningún error. Gracias.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0331", "text": "Hey, All stations show offline since this morning in US-East. Is there an incident?", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0332", "text": "Hi, Uploading a logo gives a blank error message in Chrome. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0333", "text": "Hey, Could you add an hourly rain chart? It would help our team a lot. Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0334", "text": "Request: an option for multi-language UI on mobile. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0335", "text": "the 2fa code never arrives by sms, i'm locked out of the data export. cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0336", "text": "Hey, Can you explain how alert thersholds work for wind speed?", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0337", "text": "Good morning. We'd pay more for CSV export per station.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0338", "text": "Hey, Where do I see the battery level of each station? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0339", "text": "api docs?...", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0340", "text": "¿Dónde cambio las unidades a sistema métrico? Gracias.", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0341", "text": "URGENT: Could you add SSO with Okta? It would help our team a lot. Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0342", "text": "Where can I change the units from imperial to metric? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0343", "text": "Hi, Can we vote somewhere for an hourly rain chart? Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0344", "text": "Good morning. What does the yellow icon next to a station mean? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0345", "text": "not a bug i think, but how do i make the chart show celsius by default?", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0346", "text": "Hey, What does the yellow icon next to a station mean? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0347", "text": "Hello team, Whole copmany is blocked: station WX-200 unreachable since 9am. Cheers", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0348", "text": "chart broken??", "queue": "bug", "lang": "en", "family": "bug-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0349", "text": "hey, would love sos with okta, is that coming? asap please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0350", "text": "Wow, the CSV export puts every value in one column. Very useful. Also how do I add a new station???", "queue": "bug", "lang": "en", "family": "bug-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0351", "text": "Hey, Please consider adding custom alert sounds to the roadmap. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0352", "text": "hello tema, can we vote somewhere for custom alert sounds? cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0353", "text": "Good morning. Why did my invoice go from $49 to $120 this month? Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0354", "text": "El botón de exportar no hace nada en la API, sin ningún error. Saludos.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0355", "text": "Your status page says operational but the mobile app returns 503 for everyone since 9am.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0356", "text": "Quick question: My account was deactivated by mistake, please restore access. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0357", "text": "quick question: i changed phones and lost my authenticator app. how do i get back in?", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0358", "text": "Hey, Could you add custom alert sounds? It would help our team a lot. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0359", "text": "Hey, The password reset link says it expired immediately. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0360", "text": "Quick question: I was charged twice for last month. Please refund the extra payment. Regards, Ana", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0361", "text": "Sería genial tener integración con Slack en el panel. Gracias.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0362", "text": "Hey, There is a $1,240 charge I don't recognize on our statement.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0363", "text": "Hola, Ninguna estación envía datos desde esta mañana. ¿Hay un incidente? Gracias.", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0364", "text": "We downgraded plans but the March bill still shows the Pro price of $9.99.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0365", "text": "Hello team, New hire can't accept the invite, the link says invalid token. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0366", "text": "Hola, ¿Podrían agregar reporte semanal en PDF? Nos ayudaría mucho. Saludos.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0367", "text": "Quick question: The station list sorts by name incorrectly, Z comes before A. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0368", "text": "Not urgent at all: some day it would be nice to have dark mode.!!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0369", "text": "Buenos días. El código de verificación no me llega y quedé bloqueado.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0370", "text": "Hey, Dark theme makes the axis labels invisible on the humidity chart. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0371", "text": "Good morning. I can't log in. It says my password is wrong but I just reset it.", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0372", "text": "Good morning. New hire can't accept the invite, the link says invalid token. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0373", "text": "Hi, The 2FA code nevre arrives by SMS, I'm locked out of the iOS app. Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0374", "text": "Hey, How do I move a team member to another workspace?", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0375", "text": "urgent: the station list sorts by name incorrectly, z comes before a.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0376", "text": "Could you add custom alert sounds? It would help our team a lot.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0377", "text": "Can't log in at all, and also, while you fix that, could you add multi-language UI? asap", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0378", "text": "Hey, Our admin left the company, how do we get admin rights back on C-0457? ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0379", "text": "Hello team, Can I get a copy of the invoice for March? Finance needs it.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0380", "text": "Hola, La gráfica muestra Fahrenheit aunque elegí Celsius.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0381", "text": "locked out asap", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0382", "text": "Quick question: The station list sorts by name incorrectly, Z comes before A.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0383", "text": "Hello team, How do I move an API key to another workspace?", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0384", "text": "Hola, Sería genial tener SSO con Okta en el Station Bridge.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0385", "text": "The invoice total is wrong: we have 3 stations, not 5. Cheers", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0386", "text": "timestamps in the csv are off by one hour after daylight saving.", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0387", "text": "Good morning. Temperature chart shows Fahrenheit even though I picked Celsius. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0388", "text": "Not a bug I think, but how do I make the chart show Celsius by default? asap", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0389", "text": "Hi, How do I rotate an API key without downtime?", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0390", "text": "¿Dónde cambio las unidades a sistema métrico?", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0391", "text": "Hello team, How do I add our VAT number to future invoices? Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0392", "text": "¿Por qué mi factura subió a $49 este mes? Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0393", "text": "Hey, Request: an option for multi-language UI on mobile. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0394", "text": "Hey, Everything is timing out since yesterday night, we can't load anything at all. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0395", "text": "Good morning. Can you explain how alert thresholds work for wind speed? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0396", "text": "Hola, No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar. Saludos.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0397", "text": "Quick question: Major outage? Our monitoring shows your API failing since this morning. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0398", "text": "No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar. Gracias.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0399", "text": "Buenos días. La gráfica muestra Fahrenheit aunque elegí Celsius. Saludos.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0400", "text": "Good morning. The station list sorts by name incorrectly, Z comes before A. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0401", "text": "urgent: can you explain how alert thresholds work for wind speed? ticket from c-1002.", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0402", "text": "¿Por qué mi factura subió a $20 este mes?", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0403", "text": "Hello team, the mobile app crashes when I open the settings page. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0404", "text": "Hello team, Our card was declined but you still charged $20. What happened?", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0405", "text": "The invoice total is wrong: we have 3 stations, not 5. Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0406", "text": "Great, another Monday where the Android app is dead for everyone. Fantastic uptime, really. :(", "queue": "outage", "lang": "en", "family": "outage-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0407", "text": "Hello team, It would be great to have an hourly rain chart in the API.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0408", "text": "Hi, What's the best way to export a year of data from alerts? Ticket from C-3310.", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0409", "text": "URGENT: Any palns to support a weekly PDF report? Our competitors' tools have it. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0410", "text": "Hello team, Our card was declined but you still charged $9.99. What happened?", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0411", "text": "Buenos días. Me cobraron dos veces en octubre, por favor devuelvan el pago extra. Saludos.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0412", "text": "El código de verificación no me llega y quedé bloqueado. Gracias.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0413", "text": "Please change the billing email on account C-0457 to finance@ourcompany.example. Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0414", "text": "Not a bug I think, but how do I make the chart show Celsius by default???", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0415", "text": "URGENT: Please consider adding a weekly PDF report to the roadmap.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0416", "text": "the password reset link says it expired immediately. ticket from c-7781.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0417", "text": "Hello team, Where do I see the battery level of each station?", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0418", "text": "Live map is blank for every customer we have since yesterday night. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0419", "text": "Where do I see the battery level of each station? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0420", "text": "Buenos días. ¿Cómo creo una clave de API? Gracias.", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0421", "text": "New hire can't accept the invite, the link says invalid token. Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0422", "text": "your status page says operational but the ios app returns 503 for everyone since the update. ticket from c-1002.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0423", "text": "Quick question: How do I share a dashboard with someone outside my team? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0424", "text": "Hi, Whole company is blocked: the iOS app unreachable since the update. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0425", "text": "hello team, feature idea: an hourly rain chart, so we don't have to build it ourselves. asap please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0426", "text": "Hey, Feature idea: dark mode, so we don't have to build it ourselves. Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0427", "text": "Love paying $35 for a dashboard that I can't even read invoices on. Refund the last month charge.??", "queue": "billing", "lang": "en", "family": "billing-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0428", "text": "Godo morning. SSO login loops back to the sign-in page forever. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0429", "text": "URGENT: the web console is down for our whole team for an hour, nobody can see any readings! Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0430", "text": "Would love custom alert sounds, is that coming? Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0431", "text": "Quick question: Where can I change the units from imperial to metric? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0432", "text": "Hi, I was charged twice for March. Please refund the extra payment.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0433", "text": "Hola, El código de verificación no me llega y quedé bloqueado.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0434", "text": "Everything is timing out for 20 minutes, we can't load anything at all. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0435", "text": "Quick question: Where can I change the units from imperial to mteric? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0436", "text": "Hello team, How do I share a dashboard with someone outside my team? Ticket from C-2041.", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0437", "text": "quick question: the password reset link says it expired immediately.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0438", "text": "hi, data ingestion stopped across all our sites for 20 minutes, please check your servers.", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0439", "text": "Hola, Sería genial tener integración con Slack en el Station Bridge.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0440", "text": "Hey, Request: an option for custom alert sounds on mobile. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0441", "text": "Hello team, We downgraded plans but the June bill still shows the Pro price of $49. Ticket from C-3310.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0442", "text": "Hola, ¿Por qué mi factura subió a $20 este mes? Saludos.", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0443", "text": "Hi, Login works on Safari but not on the iOS app, says unauthorized.", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0444", "text": "Hola, Me cobraron dos veces en octubre, por favor devuelvan el pago extra. Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0445", "text": "Hi, I changed phones and lost my authenticator app. How do I get back in?", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0446", "text": "URGENT: Please unlock my account, too many failed attempts.", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0447", "text": "Suggestion: let us choose SSO with Okta per user. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0448", "text": "Hi, Whole company is blocked: alerts unreachable since this morning.", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0449", "text": "URGENT: The invoice total is wrong: we have 3 stations, not 5. ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0450", "text": "Good morning. We'd pay more for multi-language UI.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0451", "text": "Hi, Login works on Edge but not on the iOS app, says unauthorized. Ticket from C-2041.", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0452", "text": "There is a $35 charge I don't recognize on our statement. ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0453", "text": "Great, another Monday where the dashboard is dead for everyone. Fantastic uptime, really.", "queue": "outage", "lang": "en", "family": "outage-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0454", "text": "What's the best way to export a year of data from the data export? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0455", "text": "Hey, Suggestion: let us choose dark mode per user.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0456", "text": "Hello team, Feature idea: a weekly PDF report, so we don't have to build it ourselves.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0457", "text": "Quick question: Any plans to support dark mode? Our competitors' tools have it. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0458", "text": "Good morning. The invoice total is wrong: we have 3 stations, not 5. Regards, Ana", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0459", "text": "Hi, Dark theme makes the axis labels invisible on the humidity chart. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0460", "text": "Is there a guide for connecting the web console to our own database? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0461", "text": "Hi, The search box on the data export ignores accents, 'Bogota' finds nothing. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0462", "text": "Hello team, Temperature chart shows Fahrenheit even though I picked Celsius. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0463", "text": "REFUND PLS", "queue": "billing", "lang": "en", "family": "billing-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0464", "text": "Good morning. Any plans to support custom alert sounds? Our competitors' tools have it. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0465", "text": "Hi, How do I share a dashboard with someone outside my team?", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0466", "text": "Good morning. The export button does nothing when I click it in Firefox. No error. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0467", "text": "Buenos días. el Station Bridge está caído para todo el equipo desde las 9, no vemos ninguna lectura. Gracias.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0468", "text": "¿Podrían agregar reporte semanal en PDF? Nos ayudaría mucho. Saludos.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0469", "text": "Not urgent at all: some day it would be nice to have CSV export per station. pls", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0470", "text": "Quick question: All stations show offline since this morning in US-East. Is there an incident?", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0471", "text": "My account was deactivated by mistake, please restore access. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0472", "text": "Hi, vEerything is timing out since this morning, we can't load anything at all. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0473", "text": "¿Dónde cambio las unidades a sistema métrico? Saludos.", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0474", "text": "We downgraded plans but the September bill still shows the Pro price of $35.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0475", "text": "Quick question: How do I rotate a webhook without downtime? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0476", "text": "Hey, Login works on Edge but not on the iOS app, says unauthorized. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0477", "text": "Hi, Is Asia having problems? the data export won't load for any of our users.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0478", "text": "Can't log in at all, and also, while you fix that, could you add an hourly rain chart?...", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0479", "text": "El botón de exportar no hace nada en el panel, sin ningún error.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0480", "text": "Hello team, Live map is blank for every customer we have since this morning. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0481", "text": "Quick question: Request: an option for custom aletr sounds on mobile. Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0482", "text": "Buenos días. Ninguna estación envía datos desde esta mañana. ¿Hay un incidente?", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0483", "text": "Buenos días. ¿Dónde cambio las unidades a sistema métrico? Saludos.", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0484", "text": "Alert emails arrive twice for the same event.", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0485", "text": "Hi, Would love a Slack integration, is that coming? Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0486", "text": "Major outage? Our monitoring shows your AIP failing for an hour.", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0487", "text": "Hello team, The station list sorts by name incorrectly, Z comes before A. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0488", "text": "Quick question: Everything is timing out for an hour, we can't load anything at all.", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0489", "text": "Quick question: The invoice total is wrong: we have 3 stations, not 5.", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0490", "text": "Hey, Alert emails arrive twice for the same event. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0491", "text": "Hello team, Please change the billing email on account C-3310 to finance@ourcompany.example. Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0492", "text": "Hi, How do I add our VAT number to future invoices? ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0493", "text": "hello team, how do i rotate a team member without downtime?", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0494", "text": "Quick question: Uploading a logo gives a blank error message in Firefox. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0495", "text": "Login works on Safari but not on the iOS app, says unauthorized. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0496", "text": "Hi, Suggestion: let us choose SSO with Okta per user. Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0497", "text": "Good morning. Please unlock my account, too many failed attempts. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0498", "text": "Quick question: No data is arriving from any of our 40 stations since yesterday night. Urgent. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0499", "text": "Hi, What does the yellow icon next to a station mean?", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0500", "text": "Quick question: Why did my invoice go from $1,240 to $120 this month? Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0501", "text": "locked out!!", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0502", "text": "dark mode when...", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0503", "text": "Sería genial tener modo oscuro en el panel. Gracias.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0504", "text": "Buenos días. La gráfica muestra Fahrenheit aunque elegí Celsius.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0505", "text": "hey, the invoice total is wrong: we have 3 stations, not 5. cheers", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0506", "text": "Request: an option for an hourly rain chart on mobile. Ticket from C-0457.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0507", "text": "We'd pay more for CSV export per station. Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0508", "text": "Hola, la app móvil está caído para todo el equipo desde esta mañana, no vemos ninguna lectura. Saludos.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0509", "text": "Good morning. I was charged twice for September. Please refund the extra payment. Ticket from C-0457.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0510", "text": "Quick question: What's the best way to export a year of data from the dashboard? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0511", "text": "Quick question: The search box on alerts ignores accents, 'Bogota' finds nothing. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0512", "text": "Hey, How do I rotate a custom dashboard without downtime? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0513", "text": "Hey, Where can I change the units from imperial to metric? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0514", "text": "I was charged twice for March. Please refund the extra payment.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0515", "text": "chart broken!!", "queue": "bug", "lang": "en", "family": "bug-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0516", "text": "the API crashes when I open the settings page.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0517", "text": "Major outage? Our monitoring shows your API failing for an hour. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0518", "text": "Hey, Can we vote somewhere for a Slack integration?", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0519", "text": "Hello team, It would be great to have dark mode in the Android app. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0520", "text": "refund pls...", "queue": "billing", "lang": "en", "family": "billing-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0521", "text": "Hello team, The invoice total is wrong: we have 3 stations, not 5.", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0522", "text": "urgent: we'd pay more for csv export per station. ticket from c-7781.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0523", "text": "Hey, The search box on the iOS app ignores accents, 'Bogota' finds nothing. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0524", "text": "Hi, Can we vote somewhere for dark mode? Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0525", "text": "dark mode when", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0526", "text": "Quick question: Dark theme makes the axis labels invisible on the humidity chart. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0527", "text": "How do I create an alert rule? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0528", "text": "Quick question: Whole company is blocked: the dashboard unreachable since the update. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0529", "text": "Hi, We'd pay more for dark mode.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0530", "text": "Hola, El código de verificación no me llega y quedé bloqueado. Gracias.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0531", "text": "Good morning. What's the best way to export a year of data from the dashboard?", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0532", "text": "Good morning. Data ingestion stopped across all our sites since yesterday night, please check your servers.", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0533", "text": "Hey, Dark theme makes the axis labels invisible on the humidity chart. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0534", "text": "URGENT: Where do I see the battery level of each station?", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0535", "text": "good morning. rain totals in the weekly view don't match the daily values. asap please.", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0536", "text": "URGENT: All stations show offline since this morning in Bogotá. Is there an incident? ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0537", "text": "Hi, No data is arriving from any of our 40 stations since yesterday night. Urgent. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0538", "text": "Good morning. New hire can't accept the invite, the link says invalid token. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0539", "text": "Hello team, How do I create a new station?", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0540", "text": "Hey, Major outage? Our monitoring shows your API failing for an hour. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0541", "text": "urgent: your status page says operational but the api returns 503 for everyone since the update.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0542", "text": "Hey, We'd pay more for SSO with kOta.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0543", "text": "URGENT: Dark theme makes the axis labels invisible on the humidity chart.", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0544", "text": "hi, the invoice total is wrong: we have 3 stations, not 5. regards, ana", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0545", "text": "Hello team, Would love a weekly PDF report, is that coming? Ticket from C-2041.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0546", "text": "Quick question: Rain totals in the weekly view don't match the daily values.", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0547", "text": "Hello team, Login works on Edge but not on the iOS app, says unauthorized.", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0548", "text": "station wx-200 is down for our whole team for an hour, nobody can see any readings!", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0549", "text": "Hi, I can't log in. It says my password is wrong but I just reset it. Ticket from C-0457.", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0550", "text": "Hi, How do I add our VAT number to future invoices? Regards, Ana", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0551", "text": "The password reset link says it expired immediately.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0552", "text": "URGENT: Any plans to support an hourly rain chart? Our competitors' tools have it. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0553", "text": "Hi, Timestamps in the CSV are off by one hour after daylight saving. Ticket from C-0457.", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0554", "text": "LOVE PAYING $1,240 FOR A DASHBOARD THAT I CAN'T EVEN READ INVOICES ON. REFUND THE THIS MONTH CHARGE.!!", "queue": "billing", "lang": "en", "family": "billing-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0555", "text": "URGENT: The search box on alerts ignores accents, 'Bogota' finds nothing. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0556", "text": "Hi, Where do I see the battery level of each station? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0557", "text": "hi, major outage? our monitoring shows your api failing rfo 20 minutes.", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0558", "text": "URGENT: Data ingestion stopped across all our sites since this morning, please check your servers. Ticket from C-7781.", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0559", "text": "Hello team, Please change the billing email on account C-0457 to finance@ourcompany.example.", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0560", "text": "Hello team, Dark theme makes the axis labels invisible on the humidity chart. Ticket from C-2041.", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0561", "text": "hi, we cancelled last week, why was $9.99 taken from our account? ticket from c-3310.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0562", "text": "Hi, I changed phones and lost my autehnticator app. How do I get back in? Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0563", "text": "Is there a guide for connecting the dashboard to our own database? Ticket from C-3310.", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0564", "text": "Buenos días. El código de verificación no me llega y quedé bloqueado. Saludos.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0565", "text": "Hi, How do I move a webhook to another workspace? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0566", "text": "I was charged twice for this month. Please refund the extra payment. Cheers", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0567", "text": "hello team, could you add dark mode? it would help our team a lot. regards, ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0568", "text": "Quick question: How do I create a custom dashboard? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0569", "text": "Hello team, Our card was declined but you still charged $120. What happened? Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0570", "text": "Quick question: We cancelled last week, why was $9.99 taken from our account? iTckte from C-2041.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0571", "text": "Quick question: Any plans to support an hourly rain chart? Our competitors' tools have it.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0572", "text": "Quick question: The search box on the mobile app ignores accents, 'Bogota' finds nothing. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0573", "text": "Good morning. Where can I change the units from imperial to metric? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0574", "text": "Rain totals in the weekly view don't match the daily values. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0575", "text": "Hello team, Is all regions having problems? the Station Bridge won't load for any of our users. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0576", "text": "Quick question: Where can I change the units from imperial to metric? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0577", "text": "Quick question: Request: an option for a weekly PDF rpeort on mobile.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0578", "text": "¿Cómo creo un webhook?", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0579", "text": "Quick question: What's the best way to export a year of data from the web console?", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0580", "text": "We'd pay more for multi-language UI.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0581", "text": "Quick question: No data is arriving from any of our 40 stations since yesterday night. Urgent. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0582", "text": "Hey, Tehre is a $35 charge I don't recognize on our statement.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0583", "text": "Please ulnock my account, too many failed attempts. Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0584", "text": "¿Cómo creo una clave de API?", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0585", "text": "Hello team, Would love a Slack integration, is that coming? Ticket from C-0457.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0586", "text": "Hey, The password reset link says it expired immediately. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0587", "text": "Hey, Can I get a copy of the invoice for September? Finance needs it. Cheers", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0588", "text": "Data ingestion stopped across all our sites since this morning, please check your servers. Ticket from C-2041.", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0589", "text": "Hello team, Dark theme makes the axis labels invisible on the humidity chart. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0590", "text": "Hey, How do I share a dashboard with someone outside my taem? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0591", "text": "Everything is timing out since the update, we can't load anything at all. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0592", "text": "Hey, Temperature chart shows Fahrenheit even though I picked Celsius. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-01", "hard": false, "split": "test"}
+{"id": "K0593", "text": "the mobile app crashes when I open the settings page. Ticket from C-1002.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0594", "text": "not urgent at all: some day it would be nice to have multi-language ui. :(", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0595", "text": "Feature idea: multi-language UI, so we don't have to build it ourselves. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0596", "text": "hello team, what's the best way to export a year of data from the ios app?", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0597", "text": "URGENT: Can we vote somewhere for multi-language UI?", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0598", "text": "What's the best way to export a year of data from the Android app? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0599", "text": "Quick question: I can't log in. It says my password is wrong but I just reset it. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0600", "text": "Live map is blank for every customer we have for 20 minutes.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0601", "text": "urgent: the search box on station wx-200 ignores accents, 'bogota' finds nothing. ticket from c-1002.", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0602", "text": "Hey, We'd pay more for an hourly rain chart. Thaksn!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0603", "text": "Hey, How do I move an alert rule to another workspace? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0604", "text": "CAN'T LOG IN AT ALL, AND ALSO, WHILE YOU FIX THAT, COULD YOU ADD CUSTOM ALERT SOUNDS? ASAP", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0605", "text": "Hi, Please consider adding a Slack integration to the roadmap. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0606", "text": "Good morning. How do I share a dashboard with someone outside my team? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0607", "text": "Dark theme makes the axis labels invisible on the humidity chart.", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0608", "text": "Please consider adding multi-language UI to the roadmap. Ticket from C-7781.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0609", "text": "refund pls", "queue": "billing", "lang": "en", "family": "billing-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0610", "text": "Hey, lPease unlock my account, too many failed attempts. Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0611", "text": "Hi, The station list sorts by name incorrectly, Z comes before A. Ticket from C-7781.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0612", "text": "Quick question: The search box on alerts ignores accents, 'Bogota' finds nothing. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0613", "text": "Hey, We downgraded plans but the last month bill still shows the Pro price of $9.99. Regards, Ana", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0614", "text": "Hey, How do I create a webhook? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0615", "text": "Hi, SSO login loops back to the sign-in page forever.", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0616", "text": "Hi, Can I get a copy of the invoice for this month? Finance needs it. Cheers", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0617", "text": "URGENT: Is EU having problems? the iOS app won't load for any of our users.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0618", "text": "The export button does nothing when I click it in Edge. No error. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0619", "text": "station WX-200 crashes when I open the settings page. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0620", "text": "Hello team, SSO login loops back to the sign-in page forever. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0621", "text": "New hire can't accept the invite, the link says invalid token. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0622", "text": "urgent: whole company is blocked: alerts unreachable since 9am. thanks.", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0623", "text": "Our admin left the company, how do we get admin rights back on C-7781? Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0624", "text": "Quick question: Suggestion: let us choose a weekly PDF report per user. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0625", "text": "Good morning. New hire can't accept the invite, the link says invalid token.", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0626", "text": "Quick question: The 2FA code never arrives by SMS, I'm locked out of the dashboard. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0627", "text": "Hola, ¿Podrían agregar integración con Slack? Nos ayudaría mucho.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0628", "text": "Buenos días. Sería genial tener modo oscuro en las alertas. Gracias.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0629", "text": "El botón de exportar no hace nada en la exportación de datos, sin ningún error. Gracias.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0630", "text": "URGENT: My account was deactivated by mistake, please restore access. Ticket from C-3310.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0631", "text": "Ninguna estación envía datos desde las 9. ¿Hay un incidente? Saludos.", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0632", "text": "Quick question: The password reset link says it expired immediately. Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0633", "text": "My account was deactivated by misatke, please restore access.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0634", "text": "Hi, How do I create an alert rule?", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0635", "text": "How do I share a dashboard with someone outside my team? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0636", "text": "How do I add our VAT number to future invoices?", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0637", "text": "hi, sso login loops back to the sign-in page forever.", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0638", "text": "hello team, the dashboard is down for our whole team for an hour, nobody can see any readings! asap please.", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0639", "text": "Good morning. Uploading a logo gives a blank error message in Firefox. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0640", "text": "I was charged twice for June. Please refund the extra payment.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0641", "text": "Hello team, Please consider adding multi-language UI to the roadmap.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0642", "text": "Quick question: The export button does nothing when I click it in Edge. No error. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-00", "hard": false, "split": "train"}
+{"id": "K0643", "text": "Quick question: Live map is blank for every customer we have for 20 minutes.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0644", "text": "good morning. how do i rotate a team member without downtime?", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0645", "text": "Quick question: Is US-East having problems? the Station Bridge won't load for any of our users. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0646", "text": "love paying $1,240 for a dashboard that i can't even read invoices on. refund the this month charge.", "queue": "billing", "lang": "en", "family": "billing-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0647", "text": "Buenos días. ¿Por qué mi factura subió a $20 este mes? Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0648", "text": "Hello team, Where can I change the units from imperial to metric? Ticket from C-7781.", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0649", "text": "not urgent at all: some day it would be nice to have custom alert sounds....", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0650", "text": "URGENT: My account was deactivated by mistake, please restore access.", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0651", "text": "Hey, Any plans to support dark mode? Our competitors' tools have it. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0652", "text": "There is a $1,240 charge I don't recognize on our statement.", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0653", "text": "Quick question: Is there a guide for connecting the mobile app to our own database? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0654", "text": "Hola, El botón de exportar no hace nada en el panel, sin ningún error. Saludos.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0655", "text": "URGENT: How do I share a dashboard with someone outside my team? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0656", "text": "locked out", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0657", "text": "Hello team, Your status page says operational but the Android app returns 503 for everyone since 9am. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0658", "text": "Quick question: How do I rotate a webhook without downtime? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0659", "text": "URGENT: All stations show offline since the update in Bogotá. Is there an incident?", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0660", "text": "Hi, Alert emails arrive twice for the same event. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0661", "text": "Good morning. Can we vote somewhere for CSV export per station? Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0662", "text": "Hey, Can I get a copy of the invoice for September? Finance needs it.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0663", "text": "Hi, How do I move a custom dashboard to another workspace? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0664", "text": "Hello team, We downgraded plans but the this month bill still shows the Pro price of $49. Ticket from C-3310.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0665", "text": "Quick question: What's the best way to export a yera of data from the dashboard? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0666", "text": "Data ingestion stopped across all our sites for 20 minutes, please check your servers. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0667", "text": "The station list sorts by name incorrectly, Z comes before A. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0668", "text": "¿Cómo creo un usuario del equipo? Gracias.", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0669", "text": "Quick question: the Station Bridge is down for our whole team since this morning, nobody can see any readings! Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0670", "text": "Quick question: Where can I change the units from imperial to metric?", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0671", "text": "Good morning. I changed phones and lost my authenticator app. How do I get back in? Ticket from C-7781.", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0672", "text": "Quick question: Feature idea: an hourly rain chart, so we don't have to build it ourselves. Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0673", "text": "station wx-200 crashes when i open the settings page. asap please.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0674", "text": "URGENT: Our card was declined but you still charged $9.99. What happened?", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0675", "text": "Hey, No data is arriving from any of our 40 stations since yesterday night. Urgent. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0676", "text": "The search box on the API ignores accents, 'Bogota' finds nothing.", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0677", "text": "URGENT: It would be great to have dark mode in the mobile app.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0678", "text": "Good mroning. The search box on the Android app ignores accents, 'Bogota' finds nothing. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-08", "hard": false, "split": "test"}
+{"id": "K0679", "text": "Buenos días. Ninguna estación envía datos desde la actualización. ¿Hay un incidente? Gracias.", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0680", "text": "Live map is blank for every customer we have since 9am. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0681", "text": "Hola, Ninguna estación envía datos desde la actualización. ¿Hay un incidente?", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0682", "text": "not urgent at all: some day it would be nice to have a weekly pdf report. :(", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0683", "text": "urgent: suggestion: let us choose csv export per station per user.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0684", "text": "Our card was declined but you still charged $49. What happened? Cheers", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0685", "text": "Wow, the CSV export puts every value in one column. Very useful. Also how do I add an alert rule? :(", "queue": "bug", "lang": "en", "family": "bug-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0686", "text": "URGENT: Our card was declined but you still chargde $120. What happened? ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-02", "hard": false, "split": "train"}
+{"id": "K0687", "text": "Hwo do I share a dashboard with someone outside my team? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0688", "text": "Hello team, Can you explain how alert thresholds work for wind speed? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0689", "text": "Hey, All stations show offline since 9am in EU. Is there an incident? Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0690", "text": "Not a bug I think, but how do I make the chart show Celsius by default?!!", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0691", "text": "Any plans to support a Slack integration? Our competitors' tools have it. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0692", "text": "Buenos días. El botón de exportar no hace nada en la exportación de datos, sin ningún error. Gracias.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0693", "text": "down again?? asap", "queue": "outage", "lang": "en", "family": "outage-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0694", "text": "URGENT: I changed phones and lost my authenticator app. How do I get back in? Ticket from C-2041.", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0695", "text": "How do I add our VAT number to future invoices? Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0696", "text": "Quick question: the dashboard crashes when I open the settings page. Ticket from C-1002.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0697", "text": "Could you add CSV export per station? It would help our team a lot. Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0698", "text": "Hola, La gráfica muestra Fahrenheit aunque elegí Celsius. Saludos.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0699", "text": "It would be great to have custom alert sounds in station WX-200.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0700", "text": "The 2FA code never arrives by SMS, I'm locked out of the iOS app. Ticket from C-2041.", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0701", "text": "Is there a guide for connecting the API to our own database? Regards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0702", "text": "Hi, Feature idea: CSV export per station, so we don't have to build it ourselves. Ticket from C-7781.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0703", "text": "REFUND PLS PLS", "queue": "billing", "lang": "en", "family": "billing-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0704", "text": "No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar. Saludos.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0705", "text": "Please unlock my account, too many failed attempts. Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0706", "text": "The station list sorts by name incorrectly, Z comes before A. Ticket from C-3310.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0707", "text": "Can we vote somewhere for a Slack integration? Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0708", "text": "Not urgent at all: some day it would be nice to have a Slack integration.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0709", "text": "Is there a guide for connecting the data export to our own database? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0710", "text": "Good morning. It would be great to have dark mode in the mobile app. Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0711", "text": "Quick question: Dark theme makes the axis labels invisible on the humidity chart. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-09", "hard": false, "split": "dev"}
+{"id": "K0712", "text": "your status page says operational but alerts returns 503 for everyone since this morning. ticket from c-1002.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0713", "text": "Good morning. Suggestion: let us choose SSO with Okta per user.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0714", "text": "station WX-200 is down for our whole team for an hour, nobody can see any readings!", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0715", "text": "Quick question: Uploading a logo gives a blank error message in Firefox. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0716", "text": "Quick question: What does teh yellow icon enxt to a station mean?", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0717", "text": "Hola, ¿Por qué mi factura subió a $20 este mes? Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0718", "text": "Hola, No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar. Gracias.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0719", "text": "Quick question: Why did my invoice go from $1,240 to $120 this month?", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0720", "text": "Buenos días. Ninguna estación envía datos desde las 9. ¿Hay un incidente? Gracias.", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0721", "text": "URGENT: Data ingestion stopped across all our sites for an hour, please check your servers. Cheers", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0722", "text": "Hola, ¿Podrían agregar modo oscuro? Nos ayudaría mucho. Saludos.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0723", "text": "Hello team, How do I add our VAT number to future invoices?", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0724", "text": "What's the best way to export a year of data from the mobile app? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0725", "text": "Hola, ¿Cómo creo un usuario del equipo? Gracias.", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0726", "text": "URGENT: I can't log in. It says my password is wrong but I just reset it. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-00", "hard": false, "split": "dev"}
+{"id": "K0727", "text": "api docs? pls", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0728", "text": "Good morning. Alert emails arrive twice for the same event. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0729", "text": "Good morning. Suggestion: let us choose an houlry rain chart per user. eRgards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0730", "text": "Is Bogotá having problems? the API won't load for any of our users.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0731", "text": "API DOCS? :(", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0732", "text": "URGENT: Please change the billing email on account C-1002 to finance@ourcompany.example. Regards, Ana", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0733", "text": "Quick question: Is there a guide for connecting the mobile app to our own database?", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0734", "text": "Hola, El código de verificación no me llega y quedé bloqueado. Saludos.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0735", "text": "Hi, Alert emails arrive twice for the same event.", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0736", "text": "Hello team, How do I move a webhook to another workspace? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0737", "text": "Wow, the CSV export puts every value in one column. Very useful. Also how do I add a team member?...", "queue": "bug", "lang": "en", "family": "bug-en-hard-13", "hard": true, "split": "train"}
+{"id": "K0738", "text": "Hey, I was charged twice for March. Please refund the extra payment.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0739", "text": "Hi, Everything is timing out since 9am, we can't load anything at all. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0740", "text": "Quick question: What's the best way to export a year of data from the Station Bridge? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0741", "text": "hey, my account was deactivated by mistake, please restore access. thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-08", "hard": false, "split": "train"}
+{"id": "K0742", "text": "Buenos días. ¿Cómo creo una estación nueva? Gracias.", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0743", "text": "Quick question: What does the yellow icon next to a station mean? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0744", "text": "Request: an option for an hourly rain chart on mobile. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0745", "text": "¿Podrían agregar SSO con Okta? Nos ayudaría mucho. Saludos.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0746", "text": "URGENT: I was charged twice for last month. Please refund the extra pyament. Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0747", "text": "DOWN AGAIN????", "queue": "outage", "lang": "en", "family": "outage-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0748", "text": "Hello team, Uploading a logo gives a blank error message in Edge. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0749", "text": "What's the best way to export a year of data from the iOS app?", "queue": "how_to", "lang": "en", "family": "how_to-en-02", "hard": false, "split": "train"}
+{"id": "K0750", "text": "down again??", "queue": "outage", "lang": "en", "family": "outage-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0751", "text": "Great, another Monday where station WX-200 is dead for everyone. Fantastic uptime, really. asap", "queue": "outage", "lang": "en", "family": "outage-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0752", "text": "The station list sorts by name incorrectly, Z comes before A.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0753", "text": "all stations show offline since 9am in all regions. is there an incident?", "queue": "outage", "lang": "en", "family": "outage-en-01", "hard": false, "split": "test"}
+{"id": "K0754", "text": "Good morning. What does the yellow icon next to a station mean? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0755", "text": "URGENT: Please unlock my account, too many failed attempts. Ticket from C-3310.", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0756", "text": "Buenos días. ¿Dónde cambio las unidades a sistema métrico? Gracias.", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0757", "text": "down again?? pls", "queue": "outage", "lang": "en", "family": "outage-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0758", "text": "Good morning. Timestamps in the CSV are off by one hour after daylight saving.", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0759", "text": "quick question: data ingestion stopped across all our sites since this morning, please check your servers.", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0760", "text": "Major outage? Our monitoring shows your API failing for 20 minutes. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0761", "text": "Hey, There is a $49 charge I don't recognize on our statement. Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-06", "hard": false, "split": "train"}
+{"id": "K0762", "text": "Buenos días. ¿Cómo creo un webhook? Gracias.", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0763", "text": "Good morning. New hire can't accept the invite, the link says invalid token. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-07", "hard": false, "split": "train"}
+{"id": "K0764", "text": "URGENT: the web console is down for our whole team since the update, nobody can ese any readings!", "queue": "outage", "lang": "en", "family": "outage-en-00", "hard": false, "split": "train"}
+{"id": "K0765", "text": "la exportación de datos está caído para todo el equipo desde esta mañana, no vemos ninguna lectura. Saludos.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0766", "text": "Hey, Timestamps in the CSV are off by one hour after daylight saving. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0767", "text": "how do i add our vat number to future invoices? regards, ana", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0768", "text": "The password reste link says it expired immediately. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0769", "text": "What does the yellow icon next to a station mean? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-09", "hard": false, "split": "test"}
+{"id": "K0770", "text": "Hey, Please unlock my account, too many failed attempts. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0771", "text": "chart broken :(", "queue": "bug", "lang": "en", "family": "bug-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0772", "text": "Hi, I was charged twice for October. Please refund the extra payment. Ticket from C-1002.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0773", "text": "Your status page says operational but alerts returns 503 for everyone since the update.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0774", "text": "Can't log in at all, and also, while you fix that, could you add multi-language UI?", "queue": "account_access", "lang": "en", "family": "account_access-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0775", "text": "Uploading a logo gives a blank error message ni Chrome. Cheers", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0776", "text": "Hey, We cancelled last week, why was $49 taken from our account? Ticket from C-1002.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0777", "text": "Hello team, The invoice total is wrong: we have 3 stations, not 5. ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0778", "text": "Hello team, Why did my invoice go from $20 to $49 this month? Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0779", "text": "please change the billing email on account c-7781 to finance@ourcompany.example. regards, ana", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0780", "text": "Quick question: Why did my invoice go frmo $9.99 ot $49 this month?", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0781", "text": "Hello team, Why did my invoice go from $35 to $1,240 this month? Cheers", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0782", "text": "Hello team, Can I get a copy of the invoice for October? Finance needs it. Ticket from C-3310.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0783", "text": "Quick question: Our admin left the company, how do we get admin rights back on C-1002?", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0784", "text": "Good morning. We'd pay more for CSV export per station. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0785", "text": "¿Por qué mi factura subió a $20 este mes? Saludos.", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0786", "text": "Love paying $1,240 for a dashboard that I can't even read invoices on. Refund the June charge.", "queue": "billing", "lang": "en", "family": "billing-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0787", "text": "chart broken pls", "queue": "bug", "lang": "en", "family": "bug-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0788", "text": "Hi, Your status page says operational but the data export returns 503 for everyone for 20 minutes. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0789", "text": "urgent: your status page says operational but the web console returns 503 for everyone since the update. cheers", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0790", "text": "Hi, The invoice total is wrong: we have 3 stations, not 5. Ticket from C-2041.", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0791", "text": "Quick question: Major outage? Our monitoring shows your API failing for an hour. Ticket from C-0457.", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0792", "text": "dark mode when!!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0793", "text": "urgent: the station bridge crashes when i open the settings page.", "queue": "bug", "lang": "en", "family": "bug-en-02", "hard": false, "split": "train"}
+{"id": "K0794", "text": "Good morning. Would love multi-language UI, is that coming? Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0795", "text": "Quick question: We downgraded plans but the June bill still shows the Pro price of $1,240.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0796", "text": "Buenos días. Me cobraron dos veces en el mes pasado, por favor devuelvan el pago extra. Gracias.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0797", "text": "Buenos días. El botón de exportar no hace nada en el Station Bridge, sin ningún error.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0798", "text": "Hello team, Alert emails arrive twice for the same event. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0799", "text": "Hi, How do I share a dashboard with someone outside my team? ASAP please.", "queue": "how_to", "lang": "en", "family": "how_to-en-03", "hard": false, "split": "dev"}
+{"id": "K0800", "text": "Hello team, Please hcange the billing email on account C-1002 to finance@ourcompany.eaxmple. Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0801", "text": "Good morning. Can you explain how aelrt thresholds work for wind speed?", "queue": "how_to", "lang": "en", "family": "how_to-en-04", "hard": false, "split": "train"}
+{"id": "K0802", "text": "Hey, No data is arriving from any of our 40 stations since this morning. Urgent. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0803", "text": "Hi, Whole company is blocked: the mobile app unreachable for an hour. Thanks!", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0804", "text": "URGENT: Our admin left the company, how do we get admin rights back on C-1002? Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0805", "text": "Hi, Data ingestion stopped across all our sites since this morning, please check your servers. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-09", "hard": false, "split": "train"}
+{"id": "K0806", "text": "The station list sorts by name incorrectly, Z comes before A. ASAP please.", "queue": "bug", "lang": "en", "family": "bug-en-05", "hard": false, "split": "train"}
+{"id": "K0807", "text": "No data is arriving from any of our 40 stations for an hour. Urgent. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-03", "hard": false, "split": "dev"}
+{"id": "K0808", "text": "Hi, How do I move a custom dashboard to another workspace? Regarsd, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0809", "text": "hi, timestamps in the csv are off by one hour after daylight saving. regards, ana", "queue": "bug", "lang": "en", "family": "bug-en-04", "hard": false, "split": "train"}
+{"id": "K0810", "text": "URGENT: Why did my invoice go from $9.99 to $9.99 thsi month?", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0811", "text": "URGENT: Alert emails arrive twice for the same event.", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0812", "text": "Hey, I was chagred twice for this month. Please rfeund the extra payment. Ticket from C-2041.", "queue": "billing", "lang": "en", "family": "billing-en-00", "hard": false, "split": "train"}
+{"id": "K0813", "text": "Hola, ¿Dónde cambio las unidades a sistema métrico? Saludos.", "queue": "how_to", "lang": "es", "family": "how_to-es-11", "hard": false, "split": "test"}
+{"id": "K0814", "text": "uregnt: would love multi-language ui, is that coming? cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0815", "text": "Great, another Monday where the Android app is dead for everyone. Fantastic uptime, really.!!", "queue": "outage", "lang": "en", "family": "outage-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0816", "text": "Quick question: Where do I see the battery level of each station?", "queue": "how_to", "lang": "en", "family": "how_to-en-07", "hard": false, "split": "test"}
+{"id": "K0817", "text": "Hey, Rain totals in the weekly view don't match the daily values.", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0818", "text": "Alert emails arrive twice for the same event. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0819", "text": "Hello team, Uploading a logo gives a blank error message in Firefox.", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0820", "text": "Is US-East having problems? the API won't load for any of our users. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0821", "text": "Hey, Whole company is blocked: station WX-200 unreachable since yesterday night. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0822", "text": "Hi, Alert emails arrive twice for the same event. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-03", "hard": false, "split": "train"}
+{"id": "K0823", "text": "Hola, Ninguna estación envía datos desde la actualización. ¿Hay un incidente? Saludos.", "queue": "outage", "lang": "es", "family": "outage-es-11", "hard": false, "split": "train"}
+{"id": "K0824", "text": "Hi, We canceleld last week, why was $120 taken from our account?", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0825", "text": "Buenos días. ¿Por qué mi factura subió a $49 este mes?", "queue": "billing", "lang": "es", "family": "billing-es-11", "hard": false, "split": "train"}
+{"id": "K0826", "text": "Rain totals in the weekly view don't match the daily values. Thanks!", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0827", "text": "Hola, Me cobraron dos veces en el mes pasado, por favor devuelvan el pago extra.", "queue": "billing", "lang": "es", "family": "billing-es-10", "hard": false, "split": "test"}
+{"id": "K0828", "text": "URGENT: Please change the billing email on account C-0457 to finance@ourcompany.example. Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0829", "text": "Please change the billing email on account C-3310 to finance@ourcompany.example. Cheers", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0830", "text": "Hey, The 2FA code never arrives by SMS, I'm locked out of the web console. Ticket from C-3310.", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0831", "text": "Hey, I changed phones and lost my authenticator app. How do I get back in? Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-05", "hard": false, "split": "train"}
+{"id": "K0832", "text": "Hi, Can I get a copy of the invoice for September? Finance needs it.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0833", "text": "URGENT: Can we vote somewhere for a Slack integration? Ticket from C-0457.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-09", "hard": false, "split": "test"}
+{"id": "K0834", "text": "Hello team, Please change the billing email on account C-3310 to finance@ourcompany.example. Ticket from C-3310.", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0835", "text": "api docs???", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0836", "text": "Where can I change the units from imperial to metric? Thanks!", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0837", "text": "Hello team, Would love a weekly PDF report, is that coming? Thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0838", "text": "Quick question: Please change the billing email on account C-3310 to finance@ourcompany.example. Ticket from C-7781.", "queue": "billing", "lang": "en", "family": "billing-en-04", "hard": false, "split": "train"}
+{"id": "K0839", "text": "Hey, We cancelled last week, why was $1,240 taken from our account? Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-08", "hard": false, "split": "train"}
+{"id": "K0840", "text": "We downgraded plans but the March bill still shows the Pro price of $35. Thanks.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0841", "text": "Hello team, Whole company is blocked: station WX-200 unreachable since 9am. Thanks.", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0842", "text": "Hello team, SSO login loops back to the sign-in page forever. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0843", "text": "hey, please considre adding dark mode to the rodamap. asap please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-04", "hard": false, "split": "train"}
+{"id": "K0844", "text": "Good morning. Whole company is blocked: statino WX-200 unreachable for 20 minutes. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-07", "hard": false, "split": "train"}
+{"id": "K0845", "text": "good morning. could you add a weekly pdf report? it would help our team a lot. thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-00", "hard": false, "split": "train"}
+{"id": "K0846", "text": "Good morning. Where can I change the units from imperial to metric? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-01", "hard": false, "split": "train"}
+{"id": "K0847", "text": "Hey, Is there a guide for connecting the API to our own database? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0848", "text": "Is Bogotá having problems? the API won't load for any of our users. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0849", "text": "Buenos días. la app móvil está caído para todo el equipo desde la actualización, no vemos ninguna lectura. Saludos.", "queue": "outage", "lang": "es", "family": "outage-es-10", "hard": false, "split": "test"}
+{"id": "K0850", "text": "the invoice total is wrong: we have 3 stations, not 5. asap please.", "queue": "billing", "lang": "en", "family": "billing-en-09", "hard": false, "split": "train"}
+{"id": "K0851", "text": "How do I rotate an API key without downtime? Cheers", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0852", "text": "Quick question: Major outage? Our monitoring shows your API failing since yesterday night. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0853", "text": "Hey, Why did my invoice go from $1,240 to $1,240 this month? ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-01", "hard": false, "split": "test"}
+{"id": "K0854", "text": "Good morning. Your status page says operational but the Android app returns 503 for everyone since yesterday night. Regards, Ana", "queue": "outage", "lang": "en", "family": "outage-en-02", "hard": false, "split": "train"}
+{"id": "K0855", "text": "Great, another Monday where the web console is dead for everyone. Fantastic uptime, really.??", "queue": "outage", "lang": "en", "family": "outage-en-hard-13", "hard": true, "split": "test"}
+{"id": "K0856", "text": "Hi, The password reset link says it expired immediately. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-04", "hard": false, "split": "train"}
+{"id": "K0857", "text": "good morning. feature idea: custom alert sounds, so we don't have to build it ourselves. thanks.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-03", "hard": false, "split": "dev"}
+{"id": "K0858", "text": "DARK MODE WHEN", "queue": "feature_request", "lang": "en", "family": "feature_request-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0859", "text": "aRin totals ni the weekly view don't match the daily values. Regards, Ana", "queue": "bug", "lang": "en", "family": "bug-en-07", "hard": false, "split": "train"}
+{"id": "K0860", "text": "Good morning. Login works on Firefox but not on the iOS app, says unauthorized. ASAP please.", "queue": "account_access", "lang": "en", "family": "account_access-en-09", "hard": false, "split": "train"}
+{"id": "K0861", "text": "La gráfica muestra Fahrenheit aunque elegí Celsius. Gracias.", "queue": "bug", "lang": "es", "family": "bug-es-11", "hard": false, "split": "test"}
+{"id": "K0862", "text": "api docs?", "queue": "how_to", "lang": "en", "family": "how_to-en-hard-12", "hard": true, "split": "test"}
+{"id": "K0863", "text": "Quick question: SSO login loops back to the sign-in page forever. Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-06", "hard": false, "split": "test"}
+{"id": "K0864", "text": "Suggestion: let us choose multi-language UI per user. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0865", "text": "Buenos días. Sería genial tener integración con Slack en el Station Bridge. Gracias.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-11", "hard": false, "split": "test"}
+{"id": "K0866", "text": "Buenos días. El código de verificación no me llega y quedé bloqueado. Gracias.", "queue": "account_access", "lang": "es", "family": "account_access-es-11", "hard": false, "split": "test"}
+{"id": "K0867", "text": "The 2FA code never arrives by SMS, I'm locked out of station WX-200. Cheers", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0868", "text": "Would love dark mode, is that coming? Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-07", "hard": false, "split": "train"}
+{"id": "K0869", "text": "Hi, Our admin left the company, how do we get admin rights back on C-0457? Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0870", "text": "Hola, El botón de exportar no hace nada en la API, sin ningún error. Saludos.", "queue": "bug", "lang": "es", "family": "bug-es-10", "hard": false, "split": "train"}
+{"id": "K0871", "text": "Hello team, It would be great to have an hourly rain chart in the Station Bridge.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
+{"id": "K0872", "text": "Hi, We downgraded plans but the September bill still shows the Pro price of $1,240. ASAP please.", "queue": "billing", "lang": "en", "family": "billing-en-05", "hard": false, "split": "dev"}
+{"id": "K0873", "text": "Uploading a logo gives a blank error message in Firefox. Thanks.", "queue": "bug", "lang": "en", "family": "bug-en-06", "hard": false, "split": "train"}
+{"id": "K0874", "text": "Good morning. How do I create a webhook?", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0875", "text": "Hi, Live map is blank for every customer we have for an hour.", "queue": "outage", "lang": "en", "family": "outage-en-08", "hard": false, "split": "test"}
+{"id": "K0876", "text": "URGENT: Everything is timing out for 20 minutes, we can't load anything at all. ASAP please.", "queue": "outage", "lang": "en", "family": "outage-en-04", "hard": false, "split": "train"}
+{"id": "K0877", "text": "Hi, The 2FA code never arrives by SMS, I'm locked out of the mobile app. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-01", "hard": false, "split": "test"}
+{"id": "K0878", "text": "Quick question: Suggestion: let us choose an hourly rain chart per user.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-06", "hard": false, "split": "train"}
+{"id": "K0879", "text": "Is EU having problems? station WX-200 won't load for any of our users. Cheers", "queue": "outage", "lang": "en", "family": "outage-en-05", "hard": false, "split": "train"}
+{"id": "K0880", "text": "Hello team, How do I add our VAT number to future invoices? Thanks!", "queue": "billing", "lang": "en", "family": "billing-en-07", "hard": false, "split": "train"}
+{"id": "K0881", "text": "Good morning. Any plans to support multi-language UI? Our competitors' tools have it. Regards, Ana", "queue": "feature_request", "lang": "en", "family": "feature_request-en-02", "hard": false, "split": "train"}
+{"id": "K0882", "text": "hello team, is there a guide for connecting the data export to our own database?", "queue": "how_to", "lang": "en", "family": "how_to-en-06", "hard": false, "split": "train"}
+{"id": "K0883", "text": "Hey, How do I create a new station? Thanks.", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0884", "text": "Quick question: Our admin left the company, how do we get admin rights back on C-7781? Thanks.", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0885", "text": "Hola, No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0886", "text": "good morning. major outage? our monitoring shows your api failing since yesterday night. thanks!", "queue": "outage", "lang": "en", "family": "outage-en-06", "hard": false, "split": "train"}
+{"id": "K0887", "text": "Good morning. How do I move a team member to another workspace?", "queue": "how_to", "lang": "en", "family": "how_to-en-05", "hard": false, "split": "train"}
+{"id": "K0888", "text": "Buenos días. No puedo iniciar sesión, dice que mi contraseña es incorrecta pero la acabo de cambiar. Gracias.", "queue": "account_access", "lang": "es", "family": "account_access-es-10", "hard": false, "split": "train"}
+{"id": "K0889", "text": "URGENT: Please unlock my account, too many failed attempts. Thanks!", "queue": "account_access", "lang": "en", "family": "account_access-en-02", "hard": false, "split": "train"}
+{"id": "K0890", "text": "Good morning. Our admin left the company, how do we get admin rights back on C-3310? Regards, Ana", "queue": "account_access", "lang": "en", "family": "account_access-en-03", "hard": false, "split": "train"}
+{"id": "K0891", "text": "Buenos días. ¿Cómo creo un webhook? Saludos.", "queue": "how_to", "lang": "es", "family": "how_to-es-10", "hard": false, "split": "train"}
+{"id": "K0892", "text": "refund pls :(", "queue": "billing", "lang": "en", "family": "billing-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0893", "text": "We'd pay more for a Slack integration. Thanks!", "queue": "feature_request", "lang": "en", "family": "feature_request-en-05", "hard": false, "split": "test"}
+{"id": "K0894", "text": "Hi, How do I creaet a team member? Rgeards, Ana", "queue": "how_to", "lang": "en", "family": "how_to-en-00", "hard": false, "split": "train"}
+{"id": "K0895", "text": "Hi, Can I get a copy of the invoice for March? Finance needs it.", "queue": "billing", "lang": "en", "family": "billing-en-03", "hard": false, "split": "test"}
+{"id": "K0896", "text": "Quick quetsion: Request: an option for a weekly PDF report on mobile. Cheers", "queue": "feature_request", "lang": "en", "family": "feature_request-en-08", "hard": false, "split": "train"}
+{"id": "K0897", "text": "down again??...", "queue": "outage", "lang": "en", "family": "outage-en-hard-12", "hard": true, "split": "train"}
+{"id": "K0898", "text": "how do i rotate a custom dashboadr without downtime?", "queue": "how_to", "lang": "en", "family": "how_to-en-08", "hard": false, "split": "train"}
+{"id": "K0899", "text": "Hola, ¿Podrían agregar integración con Slack? Nos ayudaría mucho. Gracias.", "queue": "feature_request", "lang": "es", "family": "feature_request-es-10", "hard": false, "split": "train"}
+{"id": "K0900", "text": "Hello team, It would be great to have dark mode in the data export. ASAP please.", "queue": "feature_request", "lang": "en", "family": "feature_request-en-01", "hard": false, "split": "train"}
