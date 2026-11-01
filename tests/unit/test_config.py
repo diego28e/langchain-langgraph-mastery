@@ -28,19 +28,13 @@ FAKE_KEY = "gsk_FAKE_test_value_1234567890abcdefghijklmnopqrstuvwxyz"  # Not a r
 
 
 @pytest.fixture
-def clean_env(monkeypatch: pytest.MonkeyPatch) -> pytest.MonkeyPatch:
-    """Remove every variable these tests touch, so the real environment can't leak in."""
-    for name in (
-        "GROQ_API_KEY",
-        "LANGSMITH_API_KEY",
-        "LANGSMITH_TRACING",
-        "LANGSMITH_PROJECT",
-        "MASTERY_MODEL_FAST",
-        "MASTERY_MODEL_REASONING",
-        "DEMO_VALUE",
-    ):
-        monkeypatch.delenv(name, raising=False)
-    return monkeypatch
+def clean_env(isolated_env: pytest.MonkeyPatch) -> pytest.MonkeyPatch:
+    """Remove every course variable (the shared list in conftest.py) and this file's demo variable.
+
+    The real environment can't leak in: an earlier test may have loaded a learner's .env (OPENAI_API_KEY, ...).
+    """
+    isolated_env.delenv("DEMO_VALUE", raising=False)
+    return isolated_env
 
 
 def test_load_env_reads_file_and_returns_its_path(tmp_path: Path, clean_env: pytest.MonkeyPatch) -> None:
