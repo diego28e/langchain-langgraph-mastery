@@ -29,6 +29,13 @@ class TimeoutException(Exception):
     pass
 
 
+def reset_secrets(monkeypatch: pytest.MonkeyPatch) -> None:
+    """A fresh kernel: no secret asked yet, no notebook list, Colab UI present."""
+    monkeypatch.setattr(config, "_colab_asked", set())
+    monkeypatch.setattr(config, "_colab_wanted", None)
+    monkeypatch.setattr(config, "_colab_no_ui", False)
+
+
 @pytest.fixture
 def fake_colab(monkeypatch: pytest.MonkeyPatch):
     """A fake google.colab with userdata.get backed by a dict (or by exceptions)."""
@@ -46,7 +53,7 @@ def fake_colab(monkeypatch: pytest.MonkeyPatch):
     google_colab = types.ModuleType("google.colab")
     google_colab.userdata = userdata  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "google.colab", google_colab)
-    monkeypatch.setattr(config, "_colab_secrets_done", False)
+    reset_secrets(monkeypatch)
     for name in config.COLAB_SECRET_NAMES:
         monkeypatch.delenv(name, raising=False)
     return types.SimpleNamespace(secrets=secrets, calls=calls)
@@ -55,7 +62,7 @@ def fake_colab(monkeypatch: pytest.MonkeyPatch):
 def test_not_colab_is_a_no_op(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.delitem(sys.modules, "google.colab", raising=False)
     monkeypatch.delenv("COLAB_RELEASE_TAG", raising=False)
-    monkeypatch.setattr(config, "_colab_secrets_done", False)
+    reset_secrets(monkeypatch)
     assert colab.in_colab() is False
     assert config.load_colab_secrets() == []
     ran: list[object] = []
@@ -171,8 +178,9 @@ def colab_runtime(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     monkeypatch.setenv("COLAB_RELEASE_TAG", "release-colab-test")
     monkeypatch.setattr(colab, "_STAMP_DIR", tmp_path)
     monkeypatch.setattr(colab.shutil, "which", lambda _: None)
-    monkeypatch.setattr(config, "_colab_secrets_done", False)
+    reset_secrets(monkeypatch)
     monkeypatch.setattr(colab, "_outdated_imports", list)
+    monkeypatch.setattr(colab, "notebook_source", lambda timeout=1.0: "")  # no local server in tests
     return tmp_path
 
 
@@ -350,3 +358,263 @@ def test_prepare_runtime_explains_the_runtime_notice(
     monkeypatch.setattr(colab, "_versions", lambda: {"langchain": "1.4.6"})
     colab.prepare_runtime(REPO, runner=lambda cmd: 0, load_secrets=False)
     assert "Unrecognized runtime lc-mastery" in capsys.readouterr().out
+
+
+# --- Only the keys a lesson uses are read (each Colab Secrets read can show an access prompt) ---------------
+
+
+def test_prepare_runtime_reads_only_the_notebooks_secrets(colab_runtime, fake_colab, monkeypatch) -> None:
+    monkeypatch.setattr(colab, "_versions", lambda: {})
+    fake_colab.secrets.update(GROQ_API_KEY="gsk_x", TAVILY_API_KEY="tvly-x", HF_TOKEN="hf_x")
+    assert colab.prepare_runtime(REPO, runner=lambda cmd: 0, secrets=("GROQ_API_KEY",)) == ["GROQ_API_KEY"]
+    assert fake_colab.calls == ["GROQ_API_KEY"]
+    config.load_env()  # reads the same list again: nothing new is asked
+    assert fake_colab.calls == ["GROQ_API_KEY"]  # TAVILY_API_KEY and HF_TOKEN were never read from Colab Secrets
+
+
+def test_require_env_reads_a_secret_lazily_once(fake_colab, monkeypatch) -> None:
+    import os
+
+    config.use_colab_secrets(())
+    fake_colab.secrets["TAVILY_API_KEY"] = "tvly-x"
+    assert config.load_colab_secrets() == [] and fake_colab.calls == []
+    config.require_env("TAVILY_API_KEY")  # needed now: read from Colab Secrets on demand
+    assert os.environ["TAVILY_API_KEY"] == "tvly-x"
+    assert fake_colab.calls == ["TAVILY_API_KEY"]
+    with pytest.raises(config.MissingSettingError):
+        config.require_env("DAYTONA_API_KEY")  # missing secret: a clear error, no prompt
+    with pytest.raises(config.MissingSettingError):
+        config.require_env("DAYTONA_API_KEY")
+    assert fake_colab.calls == ["TAVILY_API_KEY", "DAYTONA_API_KEY"]  # each name is looked up once per kernel
+
+
+def test_optional_keys_are_never_looked_up(fake_colab) -> None:
+    config.use_colab_secrets(("GROQ_API_KEY",))
+    fake_colab.secrets["LANGSMITH_API_KEY"] = "lsv2_x"
+    config.load_colab_secrets()
+    assert config.is_set("LANGSMITH_API_KEY") is False  # is_set never reads Colab Secrets
+    assert fake_colab.calls == ["GROQ_API_KEY"]
+
+
+def test_model_key_is_read_lazily(fake_colab) -> None:
+    from mastery import models
+
+    config.use_colab_secrets(())
+    fake_colab.secrets["GROQ_API_KEY"] = "gsk_x"
+    models._require_provider_key("groq")  # no MissingSettingError: read from Colab Secrets on demand
+    assert fake_colab.calls == ["GROQ_API_KEY"]
+
+
+def test_setup_cells_list_their_secrets() -> None:
+    """colab_patch writes each lesson's own key list into its setup cell, and only names it uses."""
+    import json
+
+    pattern = re.compile(r'prepare_runtime\(REPO_ROOT, secrets=\(([^)]*)\),\s*notebook="([^"]+)"\)')
+    checked = 0
+    for path in sorted(p for p in (REPO / "modules").glob("**/*.ipynb") if ".ipynb_checkpoints" not in p.parts):
+        cells = json.loads(path.read_text(encoding="utf-8"))["cells"]
+        setup = [c for c in cells if "prepare_runtime(REPO_ROOT" in "".join(c["source"])]
+        if not setup:
+            continue
+        match = pattern.search("".join(setup[0]["source"]))
+        assert match, f"{path.name}: setup cell has no secrets=(...) list (run colab_patch.py)"
+        assert match.group(2) == path.name, f"{path.name}: setup cell names another notebook"
+        rest = "".join("".join(c["source"]) for c in cells if c is not setup[0])
+        for name in re.findall(r'"([A-Z_]+)"', match.group(1)):
+            assert name in config.COLAB_SECRET_NAMES and re.search(rf"\b{name}\b", rest), (path.name, name)
+        checked += 1
+    assert checked > 100
+
+
+# --- Opened from GitHub or from Drive -------------------------------------------------------------------
+
+
+@pytest.mark.parametrize(
+    ("path", "expected"),
+    [
+        ("fileId=1AbCdEfGhIjKlMnOpQrStUvWxYz012345", "drive"),
+        ("fileId=https%3A%2F%2Fgithub.com%2Fdiego28e%2Frepo%2Fblob%2Fmain%2Fx.ipynb", "github"),
+        ("fileId=/v2/external/notebooks/intro.ipynb", "other"),
+    ],
+)
+def test_notebook_source(monkeypatch, path: str, expected: str) -> None:
+    import io
+    import json
+    import urllib.request
+
+    body = json.dumps([{"path": path}]).encode()
+    monkeypatch.setattr(urllib.request, "urlopen", lambda url, timeout=1.0: io.BytesIO(body))
+    monkeypatch.setattr("socket.gethostbyname", lambda host: "127.0.0.1")
+    assert colab.notebook_source() == expected
+
+
+def test_notebook_source_unknown_on_error(monkeypatch) -> None:
+    import urllib.request
+
+    def boom(*args, **kwargs):
+        raise OSError("no server")
+
+    monkeypatch.setattr(urllib.request, "urlopen", boom)
+    assert colab.notebook_source() == ""
+
+
+@pytest.mark.parametrize(("source", "tip"), [("github", True), ("other", True), ("drive", False), ("", False)])
+def test_prepare_runtime_github_tip(colab_runtime, monkeypatch, capsys, source: str, tip: bool) -> None:
+    monkeypatch.setattr(colab, "_versions", lambda: {})
+    monkeypatch.setattr(colab, "notebook_source", lambda timeout=1.0: source)
+    colab.prepare_runtime(REPO, runner=lambda cmd: 0, load_secrets=False)
+    out = capsys.readouterr().out
+    assert ("Opened from GitHub: your edits won't be saved; open it from Drive" in out) is tip
+
+
+def test_drive_folder_url_falls_back_to_my_drive(tmp_path: Path) -> None:
+    assert colab.drive_folder_url(tmp_path).startswith("https://drive.google.com/drive/")
+
+
+# --- Links between notebooks: relative links open as a Drive file id on Colab ("file missing") -----------
+LESSON = "01-02-messages-and-content-blocks.ipynb"
+
+
+def fake_xattr(monkeypatch: pytest.MonkeyPatch, ids: dict[str, str] | None = None) -> None:
+    """os.getxattr as Colab's Drive mount answers it: an id per file name (``ids``), else ENODATA."""
+
+    def getxattr(path: str, attribute: str) -> bytes:
+        assert attribute == "user.drive.id"
+        name = Path(path).name
+        if ids is None or name not in ids:
+            raise OSError(61, "No data available")
+        return ids[name].encode()
+
+    monkeypatch.setattr(colab.os, "getxattr", getxattr, raising=False)
+    monkeypatch.setattr(colab.shutil, "which", lambda _: None)
+
+
+def test_drive_file_id_reads_the_drive_xattr(monkeypatch, tmp_path: Path) -> None:
+    fake_xattr(monkeypatch, {"a.ipynb": "1AbCdEfGhIjKlMnOp_-x"})
+    assert colab.drive_file_id(tmp_path / "a.ipynb") == "1AbCdEfGhIjKlMnOp_-x"
+    assert colab.drive_file_id(tmp_path / "b.ipynb") is None  # not on Drive: no id, no error
+    assert colab.drive_folder_url(tmp_path / "a.ipynb").endswith("/folders/1AbCdEfGhIjKlMnOp_-x")
+
+
+def test_drive_file_id_falls_back_to_the_xattr_tool(monkeypatch, tmp_path: Path) -> None:
+    def no_getxattr(path: str, attribute: str) -> bytes:
+        raise OSError(95, "Operation not supported")
+
+    monkeypatch.setattr(colab.os, "getxattr", no_getxattr, raising=False)
+    monkeypatch.setattr(colab.shutil, "which", lambda tool: "/usr/bin/xattr" if tool == "xattr" else None)
+    ran: list[list[str]] = []
+
+    def run(cmd, **kwargs):
+        ran.append(cmd)
+        return types.SimpleNamespace(stdout=b"1ZyXwVuTsRqPoNmLk\n")
+
+    monkeypatch.setattr(colab.subprocess, "run", run)
+    assert colab.drive_file_id(tmp_path / "x.ipynb") == "1ZyXwVuTsRqPoNmLk"
+    assert ran[0][:3] == ["/usr/bin/xattr", "-p", "user.drive.id"]
+
+    def fails(cmd, **kwargs):
+        raise colab.subprocess.CalledProcessError(1, cmd)
+
+    monkeypatch.setattr(colab.subprocess, "run", fails)
+    assert colab.drive_file_id(tmp_path / "x.ipynb") is None
+
+
+def test_lesson_links_open_the_drive_copies(monkeypatch) -> None:
+    ids = {"01-01-chat-models.ipynb": "1PrevPrevPrevPrevPrev", "01-03-prompting-fundamentals.ipynb": "1NextNextNextNext",
+           "README.md": "1ReadmeReadmeReadme"}
+    fake_xattr(monkeypatch, ids)
+    links = colab.lesson_links(REPO, LESSON)
+    urls = [url for _, url, _ in links]
+    assert links[0][0].startswith("Previous lesson: 01-01")
+    assert urls[0] == "https://colab.research.google.com/drive/1PrevPrevPrevPrevPrev"
+    nxt = "https://colab.research.google.com/drive/1NextNextNextNext"
+    assert ("Next lesson: 01-03-prompting-fundamentals.ipynb", nxt, True) in links
+    assert "https://drive.google.com/file/d/1ReadmeReadmeReadme/view" in urls  # the module README, in Drive's viewer
+    assert not any("file/u/0/d/" in url or url.endswith((".ipynb/edit", "/edit")) for url in urls)
+    assert len(urls) == len(set(urls))
+
+
+def test_lesson_links_fall_back_to_github_and_say_it_does_not_save(monkeypatch, capsys) -> None:
+    fake_xattr(monkeypatch)  # clone not on Drive (or no id exposed)
+    links = colab.lesson_links(REPO, f"modules/01-models-messages-prompts/{LESSON}")
+    nxt = next(link for link in links if link[0].startswith("Next lesson"))
+    assert nxt[1].startswith("https://colab.research.google.com/github/")
+    assert nxt[1].endswith("/blob/main/modules/01-models-messages-prompts/01-03-prompting-fundamentals.ipynb")
+    assert nxt[2] is False
+    monkeypatch.setitem(sys.modules, "IPython.display", None)  # no IPython: plain text
+    assert colab.show_lesson_links(REPO, LESSON) == len(links)
+    out = capsys.readouterr().out
+    assert "On Colab, open other lessons with these links" in out and "GitHub copy: edits won't be saved" in out
+
+
+def test_show_lesson_links_renders_html_and_never_raises(monkeypatch) -> None:
+    fake_xattr(monkeypatch, {"01-03-prompting-fundamentals.ipynb": "1NextNextNextNextNext"})
+    shown: list[str] = []
+    display_module = types.ModuleType("IPython.display")
+    display_module.HTML = lambda html: html  # type: ignore[attr-defined]
+    display_module.display = shown.append  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "IPython.display", display_module)
+    assert colab.show_lesson_links(REPO, LESSON) > 0
+    assert '<a href="https://colab.research.google.com/drive/1NextNextNextNextNext" target="_blank">' in shown[0]
+    assert colab.show_lesson_links(REPO, "no-such-notebook.ipynb") == 0
+    monkeypatch.setattr(colab, "lesson_links", lambda *a: 1 / 0)
+    assert colab.show_lesson_links(REPO, LESSON) == 0
+
+
+def test_prepare_runtime_shows_the_links_for_its_notebook(colab_runtime, monkeypatch) -> None:
+    monkeypatch.setattr(colab, "_versions", lambda: {})
+    shown: list[tuple] = []
+    monkeypatch.setattr(colab, "show_lesson_links", lambda root, notebook: shown.append((root, notebook)) or 1)
+    colab.prepare_runtime(REPO, runner=lambda cmd: 0, load_secrets=False, notebook=LESSON)
+    assert shown == [(REPO, LESSON)]
+
+
+def test_notebook_names_are_unique_so_the_setup_cell_can_pass_just_the_name() -> None:
+    names = [p.name for p in (REPO / "modules").rglob("*.ipynb") if ".ipynb_checkpoints" not in p.parts]
+    assert len(names) == len(set(names))
+
+
+def test_whats_next_cells_point_colab_learners_to_the_printed_links() -> None:
+    import json
+
+    checked = 0
+    for path in sorted(p for p in (REPO / "modules").glob("**/*.ipynb") if ".ipynb_checkpoints" not in p.parts):
+        cells = json.loads(path.read_text(encoding="utf-8"))["cells"]
+        has_setup = any("prepare_runtime(REPO_ROOT" in "".join(c["source"]) for c in cells)
+        for cell in cells:
+            src = "".join(cell["source"])
+            if cell["cell_type"] == "markdown" and "## ➡️ What's next" in src:
+                notes = [line for line in src.splitlines() if line.endswith("the links below work on PC/GitHub.")]
+                assert len(notes) == 1, path.name
+                assert ("links the setup cell printed" in notes[0]) is has_setup, path.name
+                checked += 1
+    assert checked > 100
+
+
+def test_start_here_says_nothing_to_upload_and_how_to_open_lessons() -> None:
+    text = (REPO / "colab" / "START_HERE.ipynb").read_text(encoding="utf-8")
+    for phrase in (
+        "You do NOT upload anything",
+        "My Drive/langchain-langgraph-mastery",
+        "Open with",
+        "Google Colaboratory",
+        "Save in GitHub",
+        "File → Open notebook → Recent",
+        "only lists notebooks you opened recently",
+        "drive_folder_url",
+        "drive_file_id",
+    ):
+        assert phrase in text, phrase
+
+
+def test_header_rows_carry_the_github_tip() -> None:
+    import json
+
+    rows = 0
+    for path in sorted(p for p in (REPO / "modules").glob("**/*.ipynb") if ".ipynb_checkpoints" not in p.parts):
+        first = "".join(json.loads(path.read_text(encoding="utf-8"))["cells"][0]["source"])
+        for line in first.splitlines():
+            if line.startswith("| ☁️ Google Colab |") and "colab-badge" in line:
+                assert "Save in GitHub" in line and "#open-lessons" in line, path.name
+                rows += 1
+    assert rows > 100

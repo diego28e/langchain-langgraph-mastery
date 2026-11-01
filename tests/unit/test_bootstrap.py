@@ -104,8 +104,8 @@ def test_setup_cell_runs_before_the_first_mastery_import(path: Path) -> None:
 
 
 def test_modules_01_onward_share_one_setup_cell() -> None:
-    programs = {
-        ast.dump(ast.parse(source))
+    programs = {  # Only prepare_runtime's arguments differ: each lesson's own keys and file name (colab_patch.py).
+        ast.dump(ast.parse(re.sub(r", secrets=\([^)]*\),\s*notebook=\"[^\"]*\"", "", source)))
         for path, source in SETUP_CELLS.items()
         if not path.relative_to(REPO_ROOT / "modules").parts[0].startswith("00-")
     }
@@ -156,7 +156,7 @@ _colab = types.ModuleType("google.colab")
 _colab.drive = types.SimpleNamespace(mount=lambda path: print("MOUNTED", path))
 sys.modules["google.colab"] = _google.colab = _colab
 _fake = types.ModuleType("mastery.colab")
-_fake.prepare_runtime = lambda root: print("PREPARED", root)
+_fake.prepare_runtime = lambda root, **kwargs: print("PREPARED", root)
 sys.modules["mastery.colab"] = _fake
 '''
 COLAB_CLONES = [Path(d) / "langchain-langgraph-mastery" for d in ("/content/drive/MyDrive", "/content")]

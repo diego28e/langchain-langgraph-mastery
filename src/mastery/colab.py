@@ -24,7 +24,7 @@ import shutil
 import subprocess
 import sys
 import warnings
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Sequence
 from pathlib import Path
 
 __all__ = [
@@ -39,8 +39,13 @@ __all__ = [
     "colab_note",
     "colab_repo_root",
     "in_colab",
+    "drive_file_id",
+    "drive_folder_url",
     "install_command",
+    "lesson_links",
+    "notebook_source",
     "prepare_runtime",
+    "show_lesson_links",
 ]
 
 REPO_NAME = "langchain-langgraph-mastery"
@@ -74,6 +79,156 @@ def colab_repo_root() -> Path | None:
         if (folder / "pyproject.toml").is_file() and (folder / "src" / "mastery").is_dir():
             return folder
     return None
+
+
+def notebook_source(timeout: float = 1.0) -> str:
+    """Where Colab opened this notebook from: ``"drive"``, ``"github"``, ``"other"``, or ``""`` (unknown).
+
+    A heuristic: Colab's local Jupyter server lists the session with a ``fileId=...`` path, a Drive file id
+    for a notebook opened from Drive and a GitHub address otherwise. Any error means ``""`` (no tip shown).
+    """
+    try:
+        import json
+        import socket
+        import urllib.request
+        from urllib.parse import unquote
+
+        host = socket.gethostbyname(socket.gethostname())
+        with urllib.request.urlopen(f"http://{host}:9000/api/sessions", timeout=timeout) as response:  # noqa: S310
+            sessions = json.load(response)
+        path = unquote(str(sessions[0].get("path", "")))
+    except Exception:  # noqa: BLE001 (not Colab, no session, an internal change: just don't guess)
+        return ""
+    file_id = path.split("=", 1)[1] if path.startswith("fileId=") else path
+    if "github" in file_id.lower():
+        return "github"
+    if re.fullmatch(r"[A-Za-z0-9_-]{20,}", file_id):
+        return "drive"
+    return "other" if file_id else ""
+
+
+_DRIVE_ID = re.compile(r"[A-Za-z0-9_-]{10,}")
+
+
+def drive_file_id(path: str | Path) -> str | None:
+    """The Drive id of a file or folder on Colab's Drive mount, or ``None`` (not on Drive, or not exposed).
+
+    Colab's Drive mount (drivefs) exposes it as the extended attribute ``user.drive.id``: read it with
+    ``os.getxattr``, else the ``xattr`` / ``getfattr`` tools (UNVERIFIED on every runtime: any failure is ``None``).
+    """
+    path = str(path)
+    readers: list[Callable[[], object]] = [lambda: os.getxattr(path, "user.drive.id")]
+    tools = (("xattr", ["-p", "user.drive.id", path]), ("getfattr", ["--only-values", "-n", "user.drive.id", path]))
+    for tool, args in tools:
+        exe = shutil.which(tool)
+        if exe:
+            readers.append(lambda exe=exe, args=args: subprocess.run(
+                [exe, *args], capture_output=True, timeout=5, check=True).stdout)
+    for read in readers:
+        try:
+            value = read()
+        except (AttributeError, OSError, ValueError, subprocess.SubprocessError):
+            continue
+        text = (value.decode(errors="replace") if isinstance(value, bytes) else str(value)).strip().strip("\x00")
+        if _DRIVE_ID.fullmatch(text):
+            return text
+    return None
+
+
+def drive_folder_url(folder: str | Path) -> str:
+    """A clickable Drive link for a folder of the mounted Drive (its own page if Colab exposes its id)."""
+    folder_id = drive_file_id(folder)
+    return f"https://drive.google.com/drive/folders/{folder_id}" if folder_id else "https://drive.google.com/drive/my-drive"
+
+
+# A Markdown link to another file of the course: [text](relative/path.ipynb#anchor). Not http(s) links.
+_MD_LINK = re.compile(r"\[([^\]]+)\]\((?!https?:|#)([^)\s#]+\.(?:ipynb|md))(#[^)\s]*)?\)")
+
+
+def _label(text: str) -> str:
+    return re.sub(r"[`*_]|!\[[^\]]*\]", "", text).strip() or text
+
+
+def lesson_links(repo_root: str | Path, notebook: str | Path) -> list[tuple[str, str, bool]]:
+    """``(label, url, saves)`` for each course file this notebook's Markdown links to, in order.
+
+    On Colab a relative link such as ``(00-05-first-groq-call.ipynb)`` opens as a Drive file *id* and lands
+    on "file missing", so each target gets a real URL instead: its Drive copy
+    (``colab.research.google.com/drive/<id>`` for a notebook, Drive's viewer for a ``.md``) when the
+    clone is on Drive, otherwise the GitHub copy. ``saves`` is False only for a notebook's GitHub copy
+    (edits there are not saved). Notebooks come first.
+
+    Args:
+        repo_root: The course clone.
+        notebook: The notebook, relative to ``repo_root`` (``modules/...``) or just its file name.
+    """
+    root = Path(repo_root)
+    path = root / notebook
+    if not path.is_file():
+        path = next((p for p in sorted((root / "modules").rglob(Path(notebook).name))
+                     if ".ipynb_checkpoints" not in p.parts), path)
+    try:
+        import json
+
+        cells = json.loads(path.read_text(encoding="utf-8"))["cells"]
+    except (OSError, ValueError, KeyError):
+        return []
+    text = "\n".join("".join(c.get("source", "")) for c in cells if c.get("cell_type") == "markdown")
+    targets = _MD_LINK.findall(text)
+    lessons = sorted(p.name for p in path.parent.glob("[0-9][0-9]-[0-9][0-9]-*.ipynb"))
+    if path.name in lessons and lessons.index(path.name) > 0:  # Lessons link forward only: add the previous one.
+        previous = lessons[lessons.index(path.name) - 1]
+        targets.insert(0, (f"Previous lesson: {previous}", previous, ""))
+    links: list[tuple[str, str, bool]] = []
+    seen: set[Path] = set()
+    for label, target, anchor in targets:
+        file = (path.parent / target).resolve()
+        if file in seen or not file.is_file() or not file.is_relative_to(root.resolve()):
+            continue
+        seen.add(file)
+        rel = file.relative_to(root.resolve()).as_posix()
+        file_id = drive_file_id(file)
+        if file_id:
+            url = (f"https://colab.research.google.com/drive/{file_id}{anchor}" if rel.endswith(".ipynb")
+                   else f"https://drive.google.com/file/d/{file_id}/view")
+        elif rel.endswith(".ipynb"):
+            url = f"https://colab.research.google.com/github/{REPO_URL.split('github.com/')[1]}/blob/main/{rel}{anchor}"
+        else:
+            url = f"{REPO_URL}/blob/main/{rel}{anchor}"
+        name, text = rel.rsplit("/", 1)[-1], _label(label)
+        following = lessons[lessons.index(path.name) + 1:][:1] if path.name in lessons else []
+        if file.parent == path.parent.resolve() and name in following:
+            text = f"Next lesson: {text}"
+        links.append((text if name in text else f"{text} ({name})", url, bool(file_id) or not rel.endswith(".ipynb")))
+    return sorted(links, key=lambda link: ".ipynb" not in link[1] and "/drive/" not in link[1])  # Notebooks first.
+
+
+def show_lesson_links(repo_root: str | Path, notebook: str | Path) -> int:
+    """Print clickable links for this notebook's links to other course files (see :func:`lesson_links`).
+
+    Returns how many links were shown. Never raises: a navigation aid must not break the setup cell.
+    """
+    try:
+        links = lesson_links(repo_root, notebook)
+    except Exception:  # noqa: BLE001 - never break the setup cell over links.
+        return 0
+    if not links:
+        return 0
+    head = "🔗 On Colab, open other lessons with these links (the Markdown links in this notebook only work on PC/GitHub):"
+    readonly = " (GitHub copy: edits won't be saved)"
+    try:
+        from html import escape
+
+        from IPython.display import HTML, display
+
+        items = "".join(f'<li><a href="{escape(url)}" target="_blank">{escape(label)}</a>{"" if saves else readonly}'
+                        "</li>" for label, url, saves in links)
+        display(HTML(f"<p>{escape(head)}</p><ul>{items}</ul>"))
+    except Exception:  # noqa: BLE001 - no IPython: plain text links (Colab makes them clickable too).
+        print(head)
+        for label, url, saves in links:
+            print(f"   {label}: {url}{'' if saves else readonly}")
+    return len(links)
 
 
 def colab_note(feature: str, anchor: str = "") -> str:
@@ -174,6 +329,7 @@ RUNTIME_NOTE = (
     "ℹ️ Colab: Python 3 is the right runtime here. The 'Unrecognized runtime lc-mastery' notice when"
     " opening a notebook is expected (it's the PC kernel name)."
 )
+GITHUB_TIP = f"💡 Opened from GitHub: your edits won't be saved; open it from Drive (see {COLAB_DOCS_URL}#open-lessons)."
 
 
 def prepare_runtime(
@@ -183,6 +339,8 @@ def prepare_runtime(
     runner: Runner | None = None,
     load_secrets: bool = True,
     force: bool = False,
+    secrets: Iterable[str] | None = None,
+    notebook: str | None = None,
 ) -> list[str]:
     """Install the course into this Colab runtime (once) and load Colab Secrets. No-op outside Colab.
 
@@ -193,6 +351,11 @@ def prepare_runtime(
         runner: Runs the install command and returns its exit code (tests pass a fake).
         load_secrets: Also copy Colab Secrets into ``os.environ`` (never overwriting a set variable).
         force: Install even if this runtime already did.
+        secrets: The Colab Secrets this notebook uses (its setup cell lists them). Only those are read now,
+            so Colab asks for access to those alone; ``require_env`` reads any other one when a cell needs it.
+            ``None`` reads every name in :data:`mastery.config.COLAB_SECRET_NAMES`.
+        notebook: This notebook's file name (its setup cell passes it): prints Colab-friendly links to the
+            files its Markdown links to, because relative links don't open on Colab (:func:`show_lesson_links`).
 
     Returns:
         The names of the secrets that were loaded (never their values).
@@ -205,6 +368,10 @@ def prepare_runtime(
     if not in_colab():
         return []
     print(RUNTIME_NOTE)
+    if notebook_source() in ("github", "other"):
+        print(GITHUB_TIP)
+    if notebook:
+        show_lesson_links(repo_root, notebook)
     root = Path(repo_root).resolve()
     before = _versions()
     extras = extras or _extras_for(before)
@@ -247,8 +414,10 @@ def prepare_runtime(
         )
     if outdated:
         print("⚠️ Colab: still old in memory:", ", ".join(outdated[:5]), "(Runtime → Restart session fixes it).")
+    from mastery.config import load_colab_secrets, use_colab_secrets
+
+    if secrets is not None:
+        use_colab_secrets(secrets)
     if not load_secrets:
         return []
-    from mastery.config import load_colab_secrets
-
     return load_colab_secrets()
