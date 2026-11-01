@@ -5,6 +5,7 @@ This checks our wiring against BaseSandbox (its file tools are shell/python scri
 from __future__ import annotations
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -14,6 +15,11 @@ import pytest
 pytest.importorskip("deepagents")
 
 from mastery.deep.sandbox import DockerSandbox, docker_available  # noqa: E402
+
+needs_sh = pytest.mark.skipif(
+    shutil.which("sh") is None,
+    reason="the fake container runs `sh -c`: needs a POSIX sh (Linux, macOS, devcontainer, or Git Bash on PATH)",
+)
 
 
 def fake_runner(tmp_path):
@@ -53,6 +59,7 @@ def test_run_args_are_locked_down():
     assert "--network" not in DockerSandbox(network=True).run_args()
 
 
+@needs_sh
 def test_sandbox_round_trip_through_base_sandbox(tmp_path):
     run, seen = fake_runner(tmp_path)
     work = str(tmp_path)
@@ -67,6 +74,7 @@ def test_sandbox_round_trip_through_base_sandbox(tmp_path):
     assert seen[-1][:3] == ["docker", "rm", "-f"]
 
 
+@needs_sh
 def test_output_is_truncated(tmp_path):
     run, _ = fake_runner(tmp_path)
     box = DockerSandbox(workdir=str(tmp_path), runner=run, max_output_chars=10)
