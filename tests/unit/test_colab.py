@@ -250,3 +250,44 @@ def test_outdated_imports_finds_a_version_mismatch(monkeypatch: pytest.MonkeyPat
     fake.__version__ = "0.0.1"  # type: ignore[attr-defined]
     monkeypatch.setitem(sys.modules, "pytest", fake)
     assert any(item.startswith("pytest 0.0.1") for item in colab._outdated_imports())
+
+
+def _start_here() -> list[dict]:
+    import json
+
+    return json.loads((REPO / "colab" / "START_HERE.ipynb").read_text(encoding="utf-8"))["cells"]
+
+
+def test_start_here_explains_the_drive_permissions() -> None:
+    text = "".join("".join(cell["source"]) for cell in _start_here() if cell["cell_type"] == "markdown")
+    for phrase in ("Select all", "same Google account", "Continue", "colab.research.google.com"):
+        assert phrase in text, phrase
+
+
+@pytest.mark.skipif(Path("/content/drive/MyDrive").is_dir(), reason="a real Drive is mounted here")
+def test_start_here_drive_mount_failure_prints_the_fix(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    class MessageError(Exception):
+        pass
+
+    def mount(path: str) -> None:
+        raise MessageError("Error: credential propagation was unsuccessful")
+
+    google = types.ModuleType("google")
+    google_colab = types.ModuleType("google.colab")
+    google_colab.drive = types.SimpleNamespace(mount=mount)
+    google.colab = google_colab
+    monkeypatch.setitem(sys.modules, "google", google)
+    monkeypatch.setitem(sys.modules, "google.colab", google_colab)
+    code = [cell for cell in _start_here() if cell["cell_type"] == "code"]
+    namespace: dict[str, object] = {}
+    exec("".join(code[0]["source"]), namespace)  # Step 1: settings
+    assert namespace["USE_DRIVE"] is True
+    with pytest.raises(RuntimeError, match="Drive did not mount") as caught:
+        exec("".join(code[1]["source"]), namespace)  # Step 2: mount and clone
+    assert caught.value.__suppress_context__  # `from None`: no long MessageError traceback
+    out = capsys.readouterr().out
+    for phrase in ("credential propagation", "Disconnect and delete runtime", "Select all",
+                   "myaccount.google.com/connections", "USE_DRIVE = False"):
+        assert phrase in out, phrase

@@ -13,7 +13,7 @@ You can take **most of the course on Google Colab**, with nothing installed on y
 <a id="setup"></a>
 ## Colab in three steps
 
-1. Open [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) and choose **Runtime → Run all**. Allow Google Drive access when Colab asks. It clones the course into your Drive (or updates it later), installs it with the Colab-tested versions, and shows a ✅ table.
+1. Open [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) and choose **Runtime → Run all**. When Google asks for Drive access, choose the account you use for Colab, tick **Select all**, then **Continue** (ticking only some permissions makes the mount fail; allow pop-ups for `colab.research.google.com` if no window opens). It clones the course into your Drive (or updates it later), installs it with the Colab-tested versions, and shows a ✅ table.
 2. If it stops with **"Restart once"**: **Runtime → Restart session**, then **Runtime → Run all** again. The second run skips the install.
 3. Add your keys as **Colab Secrets** ([below](#secrets)). Then open any lesson with its **Open in Colab** badge (in the table at the top of every notebook) and run it from the top.
 
@@ -128,6 +128,7 @@ On Colab, the lessons' **Step 0** installs the CLI and the server cells run insi
 | Symptom | Fix |
 |---|---|
 | A lesson says **"Could not find the course repo ... run colab/START_HERE.ipynb first"** | Run START_HERE (once per account), or check the clone is in `MyDrive/langchain-langgraph-mastery` |
+| **`MessageError: Error: credential propagation was unsuccessful`** (or START_HERE's *"Google Drive did not mount"*) | Only some Drive permissions were ticked, or another account was chosen. **Runtime → Disconnect and delete runtime**, then **Run all** and, in the Google window, choose your Colab account, tick **Select all**, **Continue**. Still failing: at [myaccount.google.com/connections](https://myaccount.google.com/connections) remove **Google Drive for desktop**'s access and try again. Last resort: `USE_DRIVE = False` in START_HERE's Step 1 clones into `/content`, which works only in that runtime (deleted when it resets, and lessons, in their own runtimes, won't find it) |
 | **"Restart once: ..."** | Runtime → Restart session, then Run all. It's asked at most once per runtime |
 | **"Unrecognized runtime lc-mastery"** / Colab switches to Python 3 | Normal: the notebooks are saved with the PC kernel name. Colab's Python 3 is correct |
 | START_HERE: **"Could not update the course"** | `git pull --ff-only` refused because you changed course files. Your clone still works. To get the update: keep your work in `workspace/`, then in a cell `!git -C /content/drive/MyDrive/langchain-langgraph-mastery stash` and run START_HERE again (`git stash pop` brings your edits back) |

@@ -60,7 +60,7 @@ You can take the course on your PC or on Google Colab, and switch between them w
 | | 💻 Your PC (or a devcontainer) | ☁️ Google Colab |
 |---|---|---|
 | Best for | The whole course, including Docker, Ollama and LangSmith Studio lessons | Starting fast with nothing installed; most of the course |
-| Setup | Once, 20–40 min: steps 0–2 below | Once, 3–5 min: open [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) → **Runtime → Run all**, then add your keys as **Colab Secrets** |
+| Setup | Once, 20–40 min: steps 0–2 below | Once, 3–5 min: open [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) → **Runtime → Run all**; when Google asks for Drive access, choose your Colab account and tick **Select all** (only some boxes makes the mount fail); then add your keys as **Colab Secrets** |
 | Then | Open a notebook in the `Python (lc-mastery)` kernel | Click a lesson's **Open in Colab** badge and run it from the top |
 
 A few lessons need your PC (Docker, Ollama, Studio). They say so at the top and link to the setup they need. The lesson-by-lesson table, the secrets list and troubleshooting are in [docs/COLAB.md](docs/COLAB.md). **On Colab, skip steps 1–2 below** (START_HERE does them for you).
