@@ -172,7 +172,8 @@ def test_m07_app_config_and_import() -> None:
     code = ("import os, runpy; os.environ['MASTERY_OFFLINE']='1'; "
             "g = runpy.run_path('pipeline.py')['graph']; "
             "print(sorted(n for n in g.get_graph().nodes if not n.startswith('__')))")
-    out = subprocess.run([sys.executable, "-c", code], cwd=app, capture_output=True, text=True, timeout=120, check=True)
+    out = subprocess.run([sys.executable, "-X", "utf8", "-c", code], cwd=app, capture_output=True, text=True,
+                         encoding="utf-8", timeout=120, check=True)
     assert "critique" in out.stdout and "research_section" in out.stdout
 
 

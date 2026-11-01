@@ -390,7 +390,7 @@ def _run_git(args: list[str], cwd: str | os.PathLike[str] | None) -> str | None:
         return None
     try:
         result = subprocess.run(  # noqa: S603 - fixed argument list, no shell
-            [git, *args], cwd=cwd, capture_output=True, text=True, timeout=GIT_TIMEOUT_S, check=False
+            [git, *args], cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=GIT_TIMEOUT_S, check=False
         )
     except (OSError, subprocess.SubprocessError):
         return None

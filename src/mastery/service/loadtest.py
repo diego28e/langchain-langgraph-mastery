@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import sys
 import time
 from typing import Any
 
@@ -92,4 +93,6 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):   # UTF-8 through a pipe on Windows too (cp1252 there)
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     main()

@@ -111,4 +111,6 @@ def main(argv: list[str] | None = None) -> int:
 
 
 if __name__ == "__main__":
+    if hasattr(sys.stdout, "reconfigure"):   # the ✅/❌ report through a pipe on Windows too (cp1252 there)
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     sys.exit(main())

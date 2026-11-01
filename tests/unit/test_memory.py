@@ -70,7 +70,8 @@ def test_sqlite_checkpointer_survives_a_new_process(tmp_path: Path) -> None:
         "print(len(a.get_state(thread_config('t')).values['messages']))\n"
         "close(s)\n"
     ) % (str(Path(__file__).resolve().parents[2] / "src"), str(db))
-    result = subprocess.run([sys.executable, "-c", script], capture_output=True, text=True, check=True)
+    result = subprocess.run([sys.executable, "-X", "utf8", "-c", script], capture_output=True, text=True, encoding="utf-8",
+                            check=True)
     assert result.stdout.strip().splitlines()[-1] == "2"
 
 

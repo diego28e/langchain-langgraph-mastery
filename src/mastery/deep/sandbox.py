@@ -63,7 +63,7 @@ class DockerSandbox(BaseSandbox):
 
     def start(self) -> DockerSandbox:
         if not self._started:
-            done = self._run(self.run_args(), capture_output=True, text=True, timeout=300)
+            done = self._run(self.run_args(), capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=300)
             if done.returncode != 0:
                 raise RuntimeError(f"docker run failed: {done.stderr.strip()[:300]}")
             self._started = True
@@ -72,7 +72,7 @@ class DockerSandbox(BaseSandbox):
 
     def stop(self) -> None:
         if self._started:
-            self._run(["docker", "rm", "-f", self._name], capture_output=True, text=True, timeout=60)
+            self._run(["docker", "rm", "-f", self._name], capture_output=True, text=True, encoding="utf-8", errors="replace", timeout=60)
             self._started = False
 
     def __enter__(self) -> DockerSandbox:
@@ -92,7 +92,8 @@ class DockerSandbox(BaseSandbox):
         limit = timeout or self.timeout
         try:
             done = self._run(["docker", "exec", "-w", self.workdir, self._name, "sh", "-c", command],
-                             capture_output=True, text=True, timeout=limit)
+                             capture_output=True, text=True, encoding="utf-8", errors="replace",
+                             timeout=limit)
         except subprocess.TimeoutExpired:
             return ExecuteResponse(output=f"Error: command timed out after {limit} s", exit_code=124, truncated=False)
         output = (done.stdout or "") + (done.stderr or "")
