@@ -189,6 +189,18 @@ dev = [
     "mastery[decisions]",
 ]
 
+# Google Colab (colab/START_HERE.ipynb and every lesson's setup cell on Colab): everything in [dev] except
+# [studio]. `langgraph dev` is a local server (Lessons 02.07 and 07.06 run on your PC), and langgraph-api would
+# downgrade Colab's own grpcio. Installed with constraints/colab-2026-10.txt, which pins only the course libraries
+# to the tested versions and leaves the rest of Colab's preinstalled stack alone.
+colab = [
+    "pytest>=9.1.1,<10",
+    "nbformat>=5.11.1,<6",
+    "nbconvert>=7.17.2,<8",
+    "markdown-it-py>=4.2.0,<5",
+    "mastery[llm,memory,mcp,rag,notebooks,evals,deep,gemini,service,local,decisions]",
+]
+
 # CI and notebook QA: what `python -m pytest -m notebooks` needs to run every notebook headless
 # (the %pip cells install these in a learner's kernel; CI installs them up front).
 # VERIFIED 2026-10-14: floors are the versions the course's notebooks were last run with.

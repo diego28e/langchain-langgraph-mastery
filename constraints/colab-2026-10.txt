@@ -1,0 +1,93 @@
+# Google Colab constraints (used by colab/START_HERE.ipynb and every lesson's setup cell on Colab).
+# Pins ONLY the course libraries, at the tested versions of constraints-2026-10-19.txt, and leaves the rest of
+# Colab's preinstalled stack (numpy, torch, requests, ipykernel, ...) as it is. Checked 2026-11-01 with a
+# resolver dry-run for ".[colab]" on Python 3.13 against Colab's published package list (googlecolab/backend-info,
+# 2026-10-30): 62 packages are added and 12 preinstalled ones change: the LangChain family (to the tested
+# versions), google-genai and google-auth (google-genai>=2.25 needs google-auth>=2.56), beautifulsoup4, pytest
+# and urllib3 (chromadb's kubernetes client needs >=2.8). pip may warn that google-colab pins google-auth==2.49.0;
+# the lessons only use google.colab's drive and userdata, which work with the newer google-auth.
+# Also pins [embeddings] (fastembed; Modules 03 and 06 install it on Colab with the line in the lesson) and
+# [studio] (langgraph dev: the lessons that install it on Colab get it with these versions; it downgrades
+# Colab's grpcio to 1.81, which is why [colab] leaves it out).
+# Use (Colab does this for you): pip install -e ".[colab]" -c constraints/colab-2026-10.txt
+agentevals==0.0.9
+aiofile==3.12.3
+aiohttp-retry==2.9.1
+anthropic==1.15.0
+bcrypt==5.0.0
+beautifulsoup4==4.15.0
+bracex==3.1
+build==1.6.1
+caio==0.12.9
+chromadb==1.5.9
+cyclopts==5.2.0
+deepagents==0.7.26
+dnspython==2.9.0
+durationpy==0.11
+email-validator==2.3.0
+exceptiongroup==1.3.1
+fastembed==0.9.0
+fastmcp==4.1.0
+fastmcp-slim==4.1.0
+filetype==1.2.0
+google-auth==2.62.0
+google-genai==2.31.0
+griffelib==2.3.2
+groq==0.37.1
+importlib-resources==7.1.0
+jsonref==1.1.0
+jsonschema-path==0.5.0
+kubernetes==37.0.1
+langchain==1.4.6
+langchain-anthropic==1.7.6
+langchain-chroma==1.1.0
+langchain-core==1.6.11
+langchain-google-genai==4.4.2
+langchain-groq==1.1.3
+langchain-ollama==1.1.0
+langchain-openai==1.7.2
+langchain-protocol==0.0.19
+langchain-tavily==0.2.18
+langchain-text-splitters==1.1.3
+langchain-typesafe==0.0.1a3
+langgraph==1.2.15
+langgraph-api==0.16.1
+langgraph-checkpoint==4.3.0
+langgraph-checkpoint-postgres==3.2.0
+langgraph-checkpoint-sqlite==3.1.2
+langgraph-cli==0.4.35
+langgraph-prebuilt==1.1.1
+langgraph-runtime-inmem==0.36.1
+langgraph-sdk==0.4.7
+langsmith==0.14.9
+loguru==0.7.3
+mcp==2.3.0
+mcp-types==2.3.0
+ollama==0.6.3
+onnxruntime==1.31.0
+openapi-pydantic==0.6.0
+openevals==0.2.0
+opentelemetry-exporter-otlp==1.42.1
+opentelemetry-exporter-otlp-proto-common==1.42.1
+opentelemetry-exporter-otlp-proto-grpc==1.42.1
+opentelemetry-exporter-otlp-proto-http==1.42.1
+opentelemetry-proto==1.42.1
+overrides==7.7.0
+pathable==0.6.0
+psycopg==3.3.6
+psycopg-binary==3.3.6
+psycopg-pool==3.3.3
+py-key-value-aio==0.4.6
+py-rust-stemmers==0.1.8
+pybase64==1.5.1
+pydantic-settings==2.16.0
+pypdf==6.20.1
+pypika==0.51.1
+pyproject-hooks==1.3.3
+pytest==9.1.1
+rich-rst==2.2.0
+sqlite-vec==0.1.9
+sse-starlette==3.5.0
+uncalled-for==0.4.1
+urllib3==2.8.0
+wcmatch==11.1

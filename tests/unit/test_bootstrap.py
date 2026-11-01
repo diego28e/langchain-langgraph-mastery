@@ -144,3 +144,65 @@ def test_setup_cell_asks_for_a_restart_when_another_mastery_is_already_loaded(
 
     assert "already imported" in output
     assert "restart" in output.lower()
+
+
+# --- Google Colab (docs/COLAB.md) ---------------------------------------------------------------
+# A fake ``google.colab`` records drive.mount(); a fake ``mastery.colab`` records prepare_runtime(),
+# so nothing is mounted or installed. COLAB_RELEASE_TAG is how the setup cell detects Colab.
+FAKE_COLAB = '''
+import sys, types
+_google = sys.modules.setdefault("google", types.ModuleType("google"))
+_colab = types.ModuleType("google.colab")
+_colab.drive = types.SimpleNamespace(mount=lambda path: print("MOUNTED", path))
+sys.modules["google.colab"] = _google.colab = _colab
+_fake = types.ModuleType("mastery.colab")
+_fake.prepare_runtime = lambda root: print("PREPARED", root)
+sys.modules["mastery.colab"] = _fake
+'''
+COLAB_CLONES = [Path(d) / "langchain-langgraph-mastery" for d in ("/content/drive/MyDrive", "/content")]
+
+
+def _run_on_fake_colab(source: str, cwd: Path, tmp_path: Path, **env: str) -> subprocess.CompletedProcess[str]:
+    script = tmp_path / "colab_setup_cell.py"
+    script.write_text(FAKE_COLAB + source, encoding="utf-8")
+    run_env = {k: v for k, v in os.environ.items() if k != "LC_MASTERY_ROOT"}
+    run_env.update(PYTHONPATH=str(SRC_DIR), PYTHONIOENCODING="utf-8", COLAB_RELEASE_TAG="test", **env)
+    return subprocess.run(
+        [sys.executable, str(script)], cwd=cwd, env=run_env,
+        capture_output=True, text=True, encoding="utf-8", timeout=120,
+    )
+
+
+@pytest.mark.parametrize(("notebook", "source"), SAMPLES, ids=_sample_ids())
+def test_on_colab_without_a_clone_it_mounts_drive_and_points_to_start_here(
+    notebook: Path, source: str, tmp_path: Path
+) -> None:
+    if any(p.is_dir() for p in COLAB_CLONES):
+        pytest.skip("a real Colab clone exists on this machine")
+    result = _run_on_fake_colab(source, cwd=tmp_path, tmp_path=tmp_path)
+
+    assert result.returncode != 0
+    assert "MOUNTED /content/drive" in result.stdout
+    assert "FileNotFoundError" in result.stderr and "colab/START_HERE.ipynb" in result.stderr
+
+
+@pytest.mark.parametrize(("notebook", "source"), SAMPLES, ids=_sample_ids())
+def test_on_colab_with_a_clone_it_prepares_the_runtime(notebook: Path, source: str, tmp_path: Path) -> None:
+    result = _run_on_fake_colab(source, cwd=notebook.parent, tmp_path=tmp_path)
+
+    assert result.returncode == 0, result.stderr
+    assert f"PREPARED {REPO_ROOT}" in result.stdout
+    assert "⚠️" not in result.stdout
+
+
+@pytest.mark.parametrize(("notebook", "source"), SAMPLES, ids=_sample_ids())
+def test_off_colab_the_setup_cell_never_touches_colab(notebook: Path, source: str, tmp_path: Path) -> None:
+    script = tmp_path / "local_setup_cell.py"
+    script.write_text(FAKE_COLAB.replace('sys.modules["google.colab"] = _google.colab = _colab', "") + source, encoding="utf-8")
+    env = {k: v for k, v in os.environ.items() if k not in ("COLAB_RELEASE_TAG", "LC_MASTERY_ROOT")}
+    env.update(PYTHONPATH=str(SRC_DIR), PYTHONIOENCODING="utf-8")
+    result = subprocess.run([sys.executable, str(script)], cwd=notebook.parent, env=env,
+                            capture_output=True, text=True, encoding="utf-8", timeout=120)
+
+    assert result.returncode == 0, result.stderr
+    assert "MOUNTED" not in result.stdout and "PREPARED" not in result.stdout

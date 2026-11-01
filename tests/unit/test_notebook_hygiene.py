@@ -15,7 +15,8 @@ import pytest
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 NOTEBOOKS = sorted(
-    p for p in REPO_ROOT.glob("modules/**/*.ipynb") if ".ipynb_checkpoints" not in p.parts
+    p for p in [*REPO_ROOT.glob("modules/**/*.ipynb"), *REPO_ROOT.glob("colab/*.ipynb")]
+    if ".ipynb_checkpoints" not in p.parts
 )
 
 # Shapes of real provider keys. Fake keys in the course always contain "FAKE".

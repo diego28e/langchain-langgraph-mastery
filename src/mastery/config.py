@@ -2,7 +2,8 @@
 
 Introduced in Module 00, Lesson 00.04 ("Secrets and .env hygiene").
 Extended in Module 01, Lesson 01.01: vision and paid-benchmark model settings,
-read by ``mastery.models``.
+read by ``mastery.models``. On Google Colab, ``load_env`` also reads Colab Secrets
+(:func:`load_colab_secrets`, docs/COLAB.md).
 
 Why this module exists:
     Every notebook in the course needs the same three things before it can call
@@ -54,7 +55,9 @@ __all__ = [
     "MissingSettingError",
     "Settings",
     "env_status",
+    "COLAB_SECRET_NAMES",
     "find_repo_root",
+    "load_colab_secrets",
     "get_setting",
     "is_set",
     "load_env",
@@ -119,6 +122,30 @@ KEY_HELP_URLS: dict[str, str] = {
 # tutorial placeholders, never short substrings a real key could contain.
 _PLACEHOLDER_MARKERS = ("your-api-key", "your_api_key", "your-groq-api-key", "your api key")
 _PLACEHOLDER_VALUES = {"changeme", "change-me", "...", "todo"}
+
+# Names load_env copies from Colab Secrets (the key icon in Colab's left sidebar) into os.environ.
+# Same names as .env.example; a variable that is already set always wins.
+COLAB_SECRET_NAMES: tuple[str, ...] = (
+    "GROQ_API_KEY",
+    "GOOGLE_API_KEY",
+    "LANGSMITH_API_KEY",
+    "LANGSMITH_TRACING",
+    "LANGSMITH_PROJECT",
+    "LANGSMITH_ENDPOINT",
+    "TAVILY_API_KEY",
+    "MASTERY_WEB_SEARCH",
+    "OPENAI_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "HF_TOKEN",
+    "DAYTONA_API_KEY",
+    "TYPESAFE_API_KEY",
+    "TYPESAFE_BASE_URL",
+    "PINECONE_API_KEY",
+    "OLLAMA_BASE_URL",
+    "MASTERY_DEEP_MODEL",
+    "MASTERY_DEEP_SUBAGENT_MODEL",
+)
+_colab_secrets_done = False
 
 # Files that only exist at the root of this repository.
 _REPO_MARKERS = ("pyproject.toml", "COURSE_OUTLINE.md")
@@ -201,6 +228,12 @@ def find_repo_root(start: str | Path | None = None) -> Path:
     for folder in (here, *here.parents):
         if _is_repo_root(folder):
             return folder
+    if start is None:  # On Google Colab: the clone colab/START_HERE.ipynb made (Drive, then /content).
+        from mastery.colab import COLAB_REPO_DIRS, in_colab
+
+        for folder in COLAB_REPO_DIRS if in_colab() else ():
+            if _is_repo_root(folder):
+                return folder
     raise FileNotFoundError(
         f"Could not find the course repository root above {here}. "
         "Start Jupyter from inside your clone of langchain-langgraph-mastery."
@@ -240,8 +273,11 @@ def load_env(dotenv_path: str | Path | None = None, *, override: bool = False) -
         from the real environment instead.
 
     In Jupyter it also installs a friendly message for Groq rate-limit errors (429), see
-    :func:`mastery.models.install_notebook_error_hints`.
+    :func:`mastery.models.install_notebook_error_hints`. On Google Colab it first copies
+    Colab Secrets into the environment (:func:`load_colab_secrets`) and, when no ``.env`` is
+    found from the working directory, uses the one at the root of your Colab clone (if any).
     """
+    load_colab_secrets()
     try:  # Never let the hint machinery break loading .env.
         from mastery.models import install_notebook_error_hints
 
@@ -255,6 +291,11 @@ def load_env(dotenv_path: str | Path | None = None, *, override: bool = False) -
         # working directory is what the learner expects.
         found = find_dotenv(usecwd=True)
         if not found:
+            from mastery.colab import colab_repo_root, in_colab
+
+            root = colab_repo_root() if in_colab() else None
+            found = str(root / ".env") if root and (root / ".env").is_file() else ""
+        if not found:
             return None
         path = Path(found)
     else:
@@ -263,6 +304,47 @@ def load_env(dotenv_path: str | Path | None = None, *, override: bool = False) -
             return None
     load_dotenv(dotenv_path=path, override=override)
     return path.resolve()
+
+
+def load_colab_secrets(names: Iterable[str] | None = None, *, force: bool = False) -> list[str]:
+    """Copy Google Colab Secrets into ``os.environ``. Does nothing outside Colab.
+
+    Add a secret in Colab with the key icon in the left sidebar, using the same name as in
+    ``.env.example`` (for example ``GROQ_API_KEY``), and switch on **Notebook access**.
+
+    Args:
+        names: Secret names to look up. Defaults to :data:`COLAB_SECRET_NAMES`.
+        force: Look them up again (by default this runs once per kernel).
+
+    Returns:
+        The names that were copied (never their values). A variable that is already set
+        is never overwritten; a secret that is missing, or that this notebook may not read,
+        is skipped silently.
+    """
+    global _colab_secrets_done
+    from mastery.colab import in_colab
+
+    if not in_colab() or (_colab_secrets_done and not force):
+        return []
+    _colab_secrets_done = True
+    try:
+        from google.colab import userdata
+    except Exception:  # noqa: BLE001 (google.colab missing or broken: nothing to load)
+        return []
+    loaded: list[str] = []
+    for name in COLAB_SECRET_NAMES if names is None else tuple(names):
+        if is_set(name):
+            continue
+        try:
+            value = userdata.get(name)
+        except Exception as exc:  # noqa: BLE001 (SecretNotFoundError, NotebookAccessError, ...)
+            if type(exc).__name__ == "TimeoutException":
+                break  # Not running in the Colab UI (no one to answer): stop asking.
+            continue
+        if isinstance(value, str) and value.strip():
+            os.environ[name] = value.strip()
+            loaded.append(name)
+    return loaded
 
 
 def _looks_like_placeholder(value: str) -> bool:
