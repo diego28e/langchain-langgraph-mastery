@@ -14,6 +14,8 @@ langchain-langgraph-mastery/
 ├── requirements.txt          # Minimum versions, verified on PyPI (see RESOURCES §20)
 ├── .env.example              # Template. Copy to .env (never commit .env)
 ├── .gitignore
+├── colab/
+│   └── START_HERE.ipynb      # One-time Google Colab setup: clone to Drive, install, check secrets
 ├── setup/
 │   ├── VERIFY_ENVIRONMENT.md # Verification-only commands (now)
 │   ├── PYTHON_ENVIRONMENTS_COMPARED.md # pip, venv, conda, uv, Poetry… in plain English
@@ -22,6 +24,7 @@ langchain-langgraph-mastery/
 │   ├── research-log.md       # Research checkpoints (one entry per module)
 │   ├── decision-log.md       # Model & provider decisions
 │   ├── production-notes.md   # Index of course shortcuts and their production best practice
+│   ├── COLAB.md              # Taking the course on Colab: setup, what runs where, PC setup for the rest
 │   ├── paid-benchmark-openai-vs-gemini.md
 │   ├── web-search-groq-vs-tavily.md
 │   ├── glossary.md           # (later)
@@ -106,7 +109,7 @@ Every lesson notebook follows the same order, so learners (and video viewers) al
 | 1 | **Title** (Markdown) | `# 03.02 · Short-term memory with checkpointers`, plus module, est. time, prerequisites, "Docs verified: YYYY-MM-DD" |
 | 2 | **Learning objectives** | 3–5 bullets starting with a verb |
 | 3 | **Official reading** | Links from COURSE_OUTLINE.md for this lesson |
-| 4 | **Setup** (code) | Imports → `load_env()` / `require_env()` from `mastery.config` → key check (never print keys) → print versions of key packages → model IDs from config (`mastery.config.load_settings()` in Module 00, `mastery.models` from Module 01) |
+| 4 | **Setup** (code) | Imports → `load_env()` / `require_env()` from `mastery.config` → key check (never print keys) → print versions of key packages → model IDs from config (`mastery.config.load_settings()` in Module 00, `mastery.models` from Module 01). The first code cell (*Setup 1*) also finds the repo on Google Colab and calls `mastery.colab.prepare_runtime()` there (see the Colab rules below) |
 | 5 | **Concept sections** | Repeat: Markdown explanation → small code cell(s) → **"What just happened?"** Markdown recap |
 | 6 | **Pitfalls** | Common errors and how to read them |
 | 7 | **Exercises** | 2–4 exercises, from easy to stretch. Solutions in a collapsed cell or in `solutions/` |
@@ -118,6 +121,7 @@ Every lesson notebook follows the same order, so learners (and video viewers) al
 
 **Notebook rules**
 - **Restart & Run All must pass** before every commit (with only the keys listed in the setup cell).
+- **Google Colab ([docs/COLAB.md](docs/COLAB.md)):** the title table has a `☁️ Google Colab` row with the **Open in Colab** badge (`https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/<path>`). A lesson that needs Docker, Ollama or Studio says so in that row (`⚠️ partly` or `❌ Not available on Colab`) and in a callout under the table. Its detection cell prints `mastery.colab.colab_note(feature, anchor)` on Colab, so the skip explains where to run it. The *Setup 1* cell keeps its Colab block (`IN_COLAB`, the Drive mount, `prepare_runtime`); on a PC that block does nothing. Copy the setup cell from an existing lesson when you add one.
 - One idea per code cell. Keep cells under ~25 lines. Move longer code to `src/mastery`.
 - No hidden state: don't rely on cells executed out of order or deleted cells.
 - Every cell that costs money or calls a network API starts with a comment: `# 💸 Calls Groq (openai/gpt-oss-20b), ~1k tokens`. Free network calls use `# 🌐`, cells that run a local model (Ollama, Module 14) use `# 🖥️`, and cells that need nothing (fake models, local stand-ins) use `# 🧪 Offline`.
@@ -197,12 +201,13 @@ except MissingSettingError as error:
     print("⚠️", error)
 ```
 
+- On Google Colab, keys come from **Colab Secrets** with the same names: `load_env()` copies them into the environment first (`load_colab_secrets()`, never overwriting a variable that is already set), then reads a `.env` in the clone if there is one ([docs/COLAB.md#secrets](docs/COLAB.md#secrets)).
 - Fallback for one-off sessions: `getpass.getpass()` (input is never echoed).
 - If a key ever reaches a commit, **rotate it immediately** in the provider console. Deleting the commit is not enough.
 
 ## 6. Clearing outputs and keeping notebooks diff-friendly
 
-- **Before every commit:** in Jupyter, *Kernel → Restart Kernel and Run All Cells…* (does it work?), then *Edit → Clear Outputs of All Cells* (Notebook 7 and JupyterLab), then save. From the terminal instead: `jupyter nbconvert --clear-output --inplace path/to/notebook.ipynb` (`nbconvert` comes with the course's `[dev]` install (`python -m pip install -e ".[dev]"`); if you see `Jupyter command jupyter-nbconvert not found`, install it in the active env with `python -m pip install nbconvert`). `python -m pytest tests/unit/test_notebook_hygiene.py` fails if any notebook under `modules/` still has outputs.
+- **Before every commit:** in Jupyter, *Kernel → Restart Kernel and Run All Cells…* (does it work?), then *Edit → Clear Outputs of All Cells* (Notebook 7 and JupyterLab), then save. From the terminal instead: `jupyter nbconvert --clear-output --inplace path/to/notebook.ipynb` (`nbconvert` comes with the course's `[dev]` install (`python -m pip install -e ".[dev]"`); if you see `Jupyter command jupyter-nbconvert not found`, install it in the active env with `python -m pip install nbconvert`). `python -m pytest tests/unit/test_notebook_hygiene.py` fails if any notebook under `modules/` or `colab/` still has outputs.
 - **Recommended automation** (Lesson 00.03 bonus, formalized in Module 10): install `nbstripout` in the course env and run `nbstripout --install` in the repo. It strips outputs automatically when you `git add`, and `nbstripout --status` shows whether it's active.
 - Exception: notebooks meant to be read on GitHub *with* outputs (e.g., a final project report) are exported to `docs/reports/*.html` or `*.md` instead of committing outputs.
 - Optional (Module 09): pair notebooks with `.py` files via Jupytext for readable diffs.

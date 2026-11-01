@@ -22,6 +22,7 @@ Step-by-step with troubleshooting: [Lesson 00.02 guide](../modules/00-foundation
 |---|---|---|
 | 00 | `mastery/config.py` | Load `.env`, validate required keys, friendly errors, course settings (model IDs) |
 | 00 | `mastery/doctor.py` | `check_ssl_env()` / `require_valid_ssl_env()`: a missing `SSL_CERT_FILE`/`SSL_CERT_DIR` raises `CertificateSettingError` with the fix (called by `load_settings` and `get_model`; Lesson 00.02, Step 4b) |
+| 00 | `mastery/colab.py` | Google Colab support (standard library only): `in_colab()`, `colab_repo_root()` (Drive clone, then `/content`), `prepare_runtime()` (installs `[colab]` with `constraints/colab-2026-10.txt` once per runtime, asks for one restart when needed, loads Colab Secrets), `colab_note()` (the skip message for Docker/Ollama/Studio cells). `config.load_colab_secrets()` copies Colab Secrets into `os.environ` ([docs/COLAB.md](../docs/COLAB.md)) |
 | 00 | `mastery/groq_catalog.py` | List live Groq models via the Models API; friendly HTTP errors |
 | 01 | `mastery/models.py` | `get_model(role, provider)`: model IDs from config, never hard-coded; `provider="benchmark"` for the paid benchmark (OpenAI by default, Gemini optional). `PreviewModelWarning`, `explain_model_error()` (one classifier for SDK and `langchain_core` exceptions), `describe_model()` |
 | 01 | `mastery/pricing.py` | Dated price table and `estimate_cost()` / `cost_report()` from `usage_metadata` |
@@ -57,6 +58,7 @@ Notebooks import it after the editable install above (packaging is defined in [`
 | `[llm]` | `langchain`, `langchain-core`, `langchain-groq` | `models`, `pricing`, `display` import LangChain **lazily**, so `import mastery` works without it |
 | `[studio]` | `langgraph-cli[inmem]` | `langgraph dev` for LangSmith Studio (Lesson 02.07); pulls the local Agent Server (Python ≥ 3.11) |
 | `[dev]` | `pytest`, `nbformat`, `nbconvert` + `[llm]` + `[studio]` | Every unit test runs, offline; notebook tooling; `langgraph dev` |
+| `[colab]` | Everything in `[dev]` except `[studio]` | Google Colab (`colab/START_HERE.ipynb` and each lesson's setup cell on Colab), with `-c constraints/colab-2026-10.txt`, which pins only the course libraries and leaves Colab's own packages alone |
 | `[local]` | `langchain-ollama`, `huggingface-hub` (<2) | Module 14: Ollama and the Hub API (in `[dev]`) |
 | `[transformers]` | `transformers`, `torch`, `langchain-huggingface` | Lesson 14.02 stretch: run Hub models in-process on the CPU; PyTorch is large, so never in `[dev]` |
 

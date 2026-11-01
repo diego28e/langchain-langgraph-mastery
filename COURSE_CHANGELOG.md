@@ -2,6 +2,15 @@
 
 What changed in the course, newest first. After you pull an update ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)), skim the latest entry: it says which lessons changed and whether you need to re-run anything.
 
+## 2026-11-01 · Take the course on Google Colab or on your PC
+
+**Re-run after pulling:** nothing on your PC: the setup cells' new Colab part does nothing there (re-run a notebook from the top if you keep it open). On Colab: run [colab/START_HERE.ipynb](colab/START_HERE.ipynb) once.
+
+- **Google Colab:** [colab/START_HERE.ipynb](colab/START_HERE.ipynb) clones the course into your Google Drive (or updates it with `git pull --ff-only`), installs it with the Colab-tested versions (`pip install -e ".[colab]" -c constraints/colab-2026-10.txt`) and checks your Colab Secrets. Every notebook has an **Open in Colab** badge, and its first code cell finds the clone and installs the course once per runtime (`mastery.colab.prepare_runtime`).
+- **Keys on Colab:** `load_env()` reads Colab Secrets with the same names as `.env.example` (`mastery.config.load_colab_secrets`).
+- **What runs where:** [docs/COLAB.md](docs/COLAB.md) lists every module. Lessons that need your PC say so at the top: 02.07 (Studio), 12.06 (Docker) and 14.01 (Ollama) entirely; 07.06, Project 07, 11.09, 12.04–12.05, 12.07–12.08, 14.02–14.04 and Project 14 in part. Their Docker/Ollama/Studio cells explain where to run them instead of just skipping. The page also has the PC/devcontainer, Docker and Ollama setup with checks.
+- **Docs:** "Choose your setup" in the READMEs, a Colab note in the 00.02 guide, and the Colab rules in `CONVENTIONS.md`.
+
 ## 2026-10-19 · A fresh install works again, Windows fixes, re-asking through the graph, Module 15 evidence
 
 **Re-run after pulling:** reinstall once with `python -m pip install -e ".[dev]"` (it now includes Deep Agents and Gemini, and pins OpenTelemetry; with the lock, add `-c constraints/constraints-2026-10-19.txt`). Re-run Lessons 08.03 and 09.05 and Project 08 if you have them open: the approval node changed.

@@ -3,6 +3,7 @@
 > Full syllabus: modules, lessons, notebooks, reading lists, Jupyter skills, research checkpoints, and project specs.
 > **Docs verified:** October 11, 2026, against LangChain v1 (`langchain` 1.4.x), LangGraph v1 (`langgraph` 1.2.x), Deep Agents 0.7.x (`deepagents` 0.7.23), LangSmith, and GroqCloud docs.
 > **Two parts:** [Part 1 — Core](#part-1--core-modules-0008) (Modules 00–08) and [Part 2 — Pro](#part-2--pro-modules-0915) (Modules 09–15).
+> **Where to take it:** on your PC, or most of it on Google Colab with no install ([docs/COLAB.md](docs/COLAB.md): setup in three steps and a lesson-by-lesson table of what runs where).
 
 ---
 

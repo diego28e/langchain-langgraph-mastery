@@ -55,6 +55,18 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 - No necesitas experiencia previa con LangChain, LangGraph ni machine learning.
 - Equipo: Windows, macOS o Linux. El curso se desarrolla en **Windows + Anaconda + Jupyter Notebook**.
 
+## Elige dónde tomar el curso
+
+Puedes tomar el curso en tu PC o en Google Colab, y cambiar cuando quieras: cada lección funciona igual en ambos.
+
+| | 💻 Tu PC (o un devcontainer) | ☁️ Google Colab |
+|---|---|---|
+| Ideal para | Todo el curso, incluidas las lecciones con Docker, Ollama y LangSmith Studio | Empezar rápido sin instalar nada; la mayor parte del curso |
+| Configuración | Una vez, 20–40 min: pasos 0–2 abajo | Una vez, 3–5 min: abre [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) → **Entorno de ejecución → Ejecutar todas**, y agrega tus claves como **Secrets de Colab** (🔑) |
+| Después | Abre un notebook con el kernel `Python (lc-mastery)` | Haz clic en el botón **Open in Colab** de la lección y ejecútala desde el principio |
+
+Algunas lecciones necesitan tu PC (Docker, Ollama, Studio). Lo indican al inicio y enlazan la configuración que requieren. La tabla lección por lección, la lista de secrets y la solución de problemas están en [docs/COLAB.md](docs/COLAB.md) (en inglés). **En Colab, omite los pasos 1–2 de abajo** (START_HERE los hace por ti).
+
 ## Cómo usar este repositorio
 
 0. **Obtén el repositorio de la forma correcta:** clónalo, no modifiques `main` y haz tu trabajo en una carpeta `workspace/` ignorada por git, para que las actualizaciones del curso nunca choquen con tus notebooks ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md), en inglés).
@@ -140,6 +152,7 @@ Consulta [RESOURCES.md](RESOURCES.md) para la lista completa de recursos.
 ├── setup/                    # Verificación del entorno, comparación de herramientas, (luego) instalación completa
 ├── docs/                     # Bitácoras de investigación y decisiones, notas de producción, guías comparativas
 ├── modules/                  # Una carpeta por módulo con los notebooks de cada lección
+├── colab/                    # START_HERE.ipynb: configuración única para Google Colab
 ├── capstones/                # Especificaciones y proyectos finales
 ├── src/                      # El paquete reutilizable `mastery`, que crece módulo a módulo
 ├── tests/                    # Pruebas con pytest (unitarias y de integración)

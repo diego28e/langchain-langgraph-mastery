@@ -5,6 +5,8 @@
 > **Shell:** Git Bash on Windows (Terminal on macOS/Linux). Anaconda Prompt works as a fallback; the differences are noted.
 > **Docs verified:** 2026-10-11.
 
+> ☁️ **Taking the course on Google Colab?** Skip this page. Instead, open [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb), choose **Runtime → Run all**, and add your keys as Colab Secrets (3–5 minutes, once). Come back here only for the lessons that need your PC (Docker, Ollama, Studio); see [docs/COLAB.md](../../docs/COLAB.md#per-module).
+
 This is the **only install step in Module 00**. You will create one isolated environment for the whole course, so nothing you install can break Anaconda's `base` environment (or the other way round). The full, explained setup guide comes at the end of the course in [FULL_SETUP_APPENDIX.md](../../setup/FULL_SETUP_APPENDIX.md); this page is the minimum you need now.
 
 **What you will have at the end**
