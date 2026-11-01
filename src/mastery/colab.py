@@ -169,6 +169,13 @@ def _extras_for(versions: dict[str, str]) -> str:
     return ",".join([COLAB_EXTRA, *(extra for extra, dist in _OPTIONAL_EXTRAS.items() if dist in versions)])
 
 
+# Colab reads the PC kernel name saved in each notebook (lc-mastery), can't find it, and falls back to Python 3.
+RUNTIME_NOTE = (
+    "ℹ️ Colab: Python 3 is the right runtime here. The 'Unrecognized runtime lc-mastery' notice when"
+    " opening a notebook is expected (it's the PC kernel name)."
+)
+
+
 def prepare_runtime(
     repo_root: str | Path,
     *,
@@ -197,6 +204,7 @@ def prepare_runtime(
     """
     if not in_colab():
         return []
+    print(RUNTIME_NOTE)
     root = Path(repo_root).resolve()
     before = _versions()
     extras = extras or _extras_for(before)

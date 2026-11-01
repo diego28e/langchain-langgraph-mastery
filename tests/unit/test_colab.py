@@ -291,3 +291,62 @@ def test_start_here_drive_mount_failure_prints_the_fix(
     for phrase in ("credential propagation", "Disconnect and delete runtime", "Select all",
                    "myaccount.google.com/connections", "USE_DRIVE = False"):
         assert phrase in out, phrase
+
+
+def _cell(notebook: str, marker: str) -> str:
+    import json
+
+    path = next(REPO.glob(f"modules/*/{notebook}.ipynb"))
+    cells = json.loads(path.read_text(encoding="utf-8"))["cells"]
+    return next("".join(c["source"]) for c in cells if c["cell_type"] == "code" and marker in "".join(c["source"]))
+
+
+KERNEL_CHECKS = [
+    ("00-02-verify-environment", "def describe_environment("),
+    ("00-03-jupyter-fundamentals", "Kernel Python:"),
+    ("00-05-first-groq-call", "Kernel Python:"),
+    ("02-01-defining-tools", "course env?"),
+]
+
+
+@pytest.mark.parametrize(("notebook", "marker"), KERNEL_CHECKS)
+def test_kernel_checks_accept_colab_python(
+    notebook: str, marker: str, fake_colab, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """On Colab, /usr/bin/python3 is correct: no ⚠️/❌ and no "Change Kernel" advice."""
+    import os
+
+    exec(_cell(notebook, marker), {"sys": sys, "os": os, "Path": Path})
+    out = capsys.readouterr().out
+    assert "Colab" in out
+    for bad in ("⚠️", "❌", "Change Kernel", "not managed by conda"):
+        assert bad not in out, bad
+
+
+@pytest.mark.parametrize(("notebook", "marker"), KERNEL_CHECKS)
+def test_kernel_checks_unchanged_off_colab(
+    notebook: str, marker: str, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    import os
+
+    monkeypatch.delitem(sys.modules, "google.colab", raising=False)
+    monkeypatch.delenv("COLAB_RELEASE_TAG", raising=False)
+    exec(_cell(notebook, marker), {"sys": sys, "os": os, "Path": Path})
+    assert "Colab" not in capsys.readouterr().out
+
+
+def test_verify_environment_kernelspec_list_on_colab(fake_colab, capsys: pytest.CaptureFixture[str]) -> None:
+    pytest.importorskip("jupyter_client")
+    import os
+
+    exec(_cell("00-02-verify-environment", "find_kernel_specs()"), {"sys": sys, "os": os, "Path": Path})
+    out = capsys.readouterr().out
+    assert "none is needed" in out and "You will create it" not in out
+
+
+def test_prepare_runtime_explains_the_runtime_notice(
+    colab_runtime, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(colab, "_versions", lambda: {"langchain": "1.4.6"})
+    colab.prepare_runtime(REPO, runner=lambda cmd: 0, load_secrets=False)
+    assert "Unrecognized runtime lc-mastery" in capsys.readouterr().out
