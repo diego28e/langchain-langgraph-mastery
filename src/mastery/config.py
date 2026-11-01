@@ -58,6 +58,7 @@ __all__ = [
     "COLAB_SECRET_NAMES",
     "find_repo_root",
     "load_colab_secrets",
+    "use_colab_secrets",
     "get_setting",
     "is_set",
     "load_env",
@@ -145,7 +146,10 @@ COLAB_SECRET_NAMES: tuple[str, ...] = (
     "MASTERY_DEEP_MODEL",
     "MASTERY_DEEP_SUBAGENT_MODEL",
 )
-_colab_secrets_done = False
+# Secrets already looked up in this kernel (each is asked at most once), and the ones this notebook uses.
+_colab_asked: set[str] = set()
+_colab_wanted: tuple[str, ...] | None = None  # None: every name in COLAB_SECRET_NAMES.
+_colab_no_ui = False  # True after a timeout: not in the Colab UI, so stop asking.
 
 # Files that only exist at the root of this repository.
 _REPO_MARKERS = ("pyproject.toml", "COURSE_OUTLINE.md")
@@ -306,6 +310,15 @@ def load_env(dotenv_path: str | Path | None = None, *, override: bool = False) -
     return path.resolve()
 
 
+def use_colab_secrets(names: Iterable[str]) -> None:
+    """Limit what :func:`load_env` reads from Colab Secrets to ``names`` (the keys this notebook uses).
+
+    Colab asks for access to each secret the first time a notebook reads it, so a lesson reads only its own.
+    """
+    global _colab_wanted
+    _colab_wanted = tuple(names)
+
+
 def load_colab_secrets(names: Iterable[str] | None = None, *, force: bool = False) -> list[str]:
     """Copy Google Colab Secrets into ``os.environ``. Does nothing outside Colab.
 
@@ -313,33 +326,40 @@ def load_colab_secrets(names: Iterable[str] | None = None, *, force: bool = Fals
     ``.env.example`` (for example ``GROQ_API_KEY``), and switch on **Notebook access**.
 
     Args:
-        names: Secret names to look up. Defaults to :data:`COLAB_SECRET_NAMES`.
-        force: Look them up again (by default this runs once per kernel).
+        names: Secret names to look up. Defaults to the notebook's own list (:func:`use_colab_secrets`,
+            set by the setup cell), else :data:`COLAB_SECRET_NAMES`.
+        force: Look them up again (by default each name is looked up once per kernel).
 
     Returns:
         The names that were copied (never their values). A variable that is already set
         is never overwritten; a secret that is missing, or that this notebook may not read,
         is skipped silently.
     """
-    global _colab_secrets_done
+    global _colab_no_ui
     from mastery.colab import in_colab
 
-    if not in_colab() or (_colab_secrets_done and not force):
+    if not in_colab() or _colab_no_ui:
         return []
-    _colab_secrets_done = True
+    if names is None:
+        names = COLAB_SECRET_NAMES if _colab_wanted is None else _colab_wanted
+    todo = [name for name in dict.fromkeys(names) if force or name not in _colab_asked]
+    if not todo:
+        return []
     try:
         from google.colab import userdata
     except Exception:  # noqa: BLE001 (google.colab missing or broken: nothing to load)
         return []
     loaded: list[str] = []
-    for name in COLAB_SECRET_NAMES if names is None else tuple(names):
+    for name in todo:
+        _colab_asked.add(name)
         if is_set(name):
             continue
         try:
             value = userdata.get(name)
         except Exception as exc:  # noqa: BLE001 (SecretNotFoundError, NotebookAccessError, ...)
             if type(exc).__name__ == "TimeoutException":
-                break  # Not running in the Colab UI (no one to answer): stop asking.
+                _colab_no_ui = True  # Not running in the Colab UI (no one to answer): stop asking.
+                break
             continue
         if isinstance(value, str) and value.strip():
             os.environ[name] = value.strip()
@@ -384,6 +404,8 @@ def require_env(*names: str, dotenv_path: Path | None = None) -> None:
         MissingSettingError: If one or more variables are missing, blank, or
             still contain a placeholder such as ``<your-api-key-here>``.
     """
+    if any(not is_set(name) for name in names):  # On Colab: read just these from Colab Secrets (once each).
+        load_colab_secrets([name for name in names if name in COLAB_SECRET_NAMES and not is_set(name)])
     missing = [name for name in names if not is_set(name)]
     if missing:
         raise MissingSettingError(missing, dotenv_path)

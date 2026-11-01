@@ -40,7 +40,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Literal
 
-from mastery.config import MissingSettingError, Settings, is_set, load_settings
+from mastery.config import MissingSettingError, Settings, is_set, load_colab_secrets, load_settings
 from mastery.doctor import require_valid_ssl_env
 
 if TYPE_CHECKING:  # Imported only for type checkers, so importing mastery stays fast.
@@ -179,6 +179,8 @@ def _require_provider_key(provider: str) -> None:
     names = PROVIDER_KEY_ENV.get(provider)
     if not names:  # Unknown provider or no key needed: let LangChain decide.
         return
+    if not any(is_set(name) for name in names):
+        load_colab_secrets(names)  # On Colab: read the provider key from Colab Secrets now (once per kernel).
     if not any(is_set(name) for name in names):
         raise MissingSettingError([names[0]])
 
