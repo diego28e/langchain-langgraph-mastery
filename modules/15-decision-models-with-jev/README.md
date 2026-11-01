@@ -2,7 +2,7 @@
 
 > **Part 2 — Pro** · optional, after Module 14 · Lessons 15.01–15.07 and two projects (support triage with escalation, agent safety gate).
 
-**Goals:** Know when a *decision model* beats an LLM. Jev, TypeSafe's System One model, answers typed questions (yes/no, choice, score) with calibrated probabilities and writes no text. Learn to put it at the branches of LangChain and LangGraph apps: **cheap by default, frontier on exception**. Thresholds should be chosen from measurements, not guesses.
+**Goals:** Know when a *decision model* beats an LLM. Jev, TypeSafe's System One model, answers typed questions (yes/no, choice, score) with probabilities and writes no text. The probabilities are trained to be calibrated; independent tests found that this holds on some tasks and not on others, so you will measure it on yours. Learn to put it at the branches of LangChain and LangGraph apps: **cheap by default, frontier on exception**. Thresholds should be chosen from measurements, not guesses.
 
 **Estimated time:** 1–1.5 weeks.
 
@@ -13,6 +13,8 @@
 - **Without a key, everything still runs.** The notebooks use **replay mode**: recorded Jev answers served through the real client, with no network and $0. Replayed answers are marked `synthetic` while they are hand-written from the documented schema. They teach the API and the decision logic, **not** Jev's accuracy.
 - **Alternative endpoints:** [OpenRouter](https://openrouter.ai/docs/guides/community/typesafe-sdk) (`TYPESAFE_BASE_URL=https://openrouter.ai/api`, an OpenRouter key, model `typesafe/jev-1.13`) or Vercel AI Gateway. See `.env.example`.
 - **Package:** `langchain-typesafe[experimental]==0.0.1a3`, an **alpha** pinned exactly. `mastery.decisions` wraps it so an API change is fixed in one place.
+- **Independent evidence** (checked 2026-10-19): on `jev-1.13.0`, an independent evaluation found the best calibration of twelve systems on one task and the worst on another, and a community audit found confident answers when the right option was missing. Lesson 15.02 (end of Part 3) has the numbers, the sources and what to do about them.
+- **One vendor, a way out:** everything here goes through `mastery.decisions` and Jev's response shape. `llm_decider` (Lesson 15.03) already answers in that shape with any chat model, and Module 14's local router with thresholds chosen from calibration (Lesson 14.03) is the vendor-free baseline: same method, your own model.
 
 **Keys:** optional `TYPESAFE_API_KEY` (live Jev), and `GROQ_API_KEY` for the LLM comparisons.
 
