@@ -672,7 +672,7 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 
 ## Part 2 — Pro (Modules 09–15)
 
-> You can build agents, RAG systems, and LangGraph workflows. Part 2 makes them **coordinated, measured, long-running, and deployed**: multi-agent systems, testing and evaluation, a full module on Deep Agents, and a self-hosted production service, plus two electives (multimodal and voice; local models and fine-tuning).
+> You can build agents, RAG systems, and LangGraph workflows. Part 2 makes them **coordinated, measured, long-running, and deployed**: multi-agent systems, testing and evaluation, a full module on Deep Agents, and a self-hosted production service, plus two electives (multimodal and voice; local models and fine-tuning) and an optional module on decision models with Jev (15).
 
 ---
 

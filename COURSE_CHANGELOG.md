@@ -38,7 +38,7 @@ What changed in the course, newest first. After you pull an update ([setup/LEARN
 
 - Every project README now has a **Rubric (self-assessment)** table: what "meets" and what "exceeds" looks like.
 - Module 07 notebooks send traces to one LangSmith project per lesson (`m07-<lesson>`, Project 07: `m07-project-content-pipeline`), unless your `.env` sets `LANGSMITH_PROJECT`.
-- New: `.devcontainer/` (GitHub Codespaces or VS Code Dev Containers) and `constraints/constraints-2026-10-16.txt`, the versions the course last passed with. Opt in with `python -m pip install -e ".[dev]" -c constraints/constraints-2026-10-16.txt`.
+- New: `.devcontainer/` (GitHub Codespaces or VS Code Dev Containers) and `constraints/constraints-2026-10-16.txt`, the versions the course last passed with. That lock was replaced on 2026-10-19 by [`constraints/constraints-2026-10-19.txt`](constraints/constraints-2026-10-19.txt): opt in with `python -m pip install -e ".[dev]" -c constraints/constraints-2026-10-19.txt`.
 - Setup-cell comments are labelled `Setup 1–4`, so they no longer clash with the projects' `Step` headings.
 - Lesson 00.03 mentions autosave. The 00.02 guide explains that `nbstripout` cleans what you commit, not the file on disk.
 

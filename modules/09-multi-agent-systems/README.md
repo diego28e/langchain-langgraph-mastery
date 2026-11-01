@@ -8,7 +8,7 @@
 
 ## Welcome to Part 2 — Pro
 
-Part 1 taught you to build agents, RAG systems and production-grade LangGraph workflows. **Part 2 makes them coordinated, measured, long-running and deployed**: multi-agent systems (this module), testing and evaluation (10), Deep Agents (11), a self-hosted production service (12) and two electives: multimodal and voice (13), local models and fine-tuning (14). See the [Part 2 overview](../../COURSE_OUTLINE.md#part-2--pro-modules-0915).
+Part 1 taught you to build agents, RAG systems and production-grade LangGraph workflows. **Part 2 makes them coordinated, measured, long-running and deployed**: multi-agent systems (this module), testing and evaluation (10), Deep Agents (11), a self-hosted production service (12), two electives: multimodal and voice (13), local models and fine-tuning (14), and an optional module on decision models with Jev (15). See the [Part 2 overview](../../COURSE_OUTLINE.md#part-2--pro-modules-0915).
 
 What changes in Part 2:
 
