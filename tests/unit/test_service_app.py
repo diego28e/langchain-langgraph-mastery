@@ -80,3 +80,32 @@ def test_disconnect_then_resume_with_last_event_id(service):
     rest = stream_events(c, rid, "demo-customer", last_event_id=first[-1].id)
     ids = [int(e.id) for e in first + rest]
     assert ids == list(range(len(ids))) and rest[-1].event == "end"
+
+
+def test_serve_in_background_windows_uses_a_selector_loop(monkeypatch):
+    """On Windows the server thread must not use ProactorEventLoop (psycopg async can't run on it)."""
+    import asyncio
+    import sys
+
+    import mastery.service.app as service_app
+
+    seen = {}
+    app = create_app(support_manager, ServiceSettings())
+
+    @app.get("/loop-kind")
+    async def loop_kind():
+        seen["loop"] = type(asyncio.get_running_loop()).__name__
+        return {"ok": True}
+
+    monkeypatch.setattr(service_app, "_server_loop", lambda: "asyncio:SelectorEventLoop")  # what Windows gets
+    base, stop = serve_in_background(app)
+    try:
+        assert httpx.get(base + "/loop-kind", timeout=10).json() == {"ok": True}
+    finally:
+        stop()
+    assert "Selector" in seen["loop"]
+    monkeypatch.undo()
+    monkeypatch.setattr(sys, "platform", "win32")
+    assert service_app._server_loop() == "asyncio:SelectorEventLoop"
+    monkeypatch.setattr(sys, "platform", "linux")
+    assert service_app._server_loop() == "auto"

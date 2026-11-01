@@ -28,7 +28,9 @@ python -m mastery.service.loadtest --users 20
 ```
 
 **State:** in memory unless `MASTERY_SERVICE_DATABASE_URL` is set: `sqlite:///data/outputs/m12/service.db`
-(one process) or `postgresql://agent:agent@localhost:5432/agent` (Lesson 12.05). **Tokens:** set
+(one process) or `postgresql://agent:agent@localhost:5432/agent` (Lesson 12.05). On Windows, Postgres needs
+`--loop asyncio:SelectorEventLoop` on the `uvicorn` command (psycopg's async mode can't use Windows' default
+event loop). **Tokens:** set
 `MASTERY_SERVICE_JWT_SECRET` (demo) or `MASTERY_SERVICE_JWKS_URL` + issuer + audience (an identity provider).
 
 ## Docker (Lesson 12.06)

@@ -349,6 +349,18 @@ def create_app(build_manager: Callable[[ServiceSettings], Any], settings: Servic
     return app
 
 
+def _server_loop() -> str:
+    """uvicorn's ``loop`` setting for :func:`serve_in_background`.
+
+    Windows defaults to ``ProactorEventLoop``, which psycopg's async mode (the Postgres checkpointer and
+    store) can't use, so on Windows the server gets a ``SelectorEventLoop``. SQLite and in-memory work on either.
+    The command-line equivalent: ``uvicorn apps.m12_service.main:app --loop asyncio:SelectorEventLoop``.
+    """
+    import sys
+
+    return "asyncio:SelectorEventLoop" if sys.platform == "win32" else "auto"
+
+
 def serve_in_background(app: FastAPI, host: str = "127.0.0.1", port: int = 0) -> tuple[str, Callable[[], None]]:
     """Run ``app`` with uvicorn in a daemon thread (notebooks, tests). Returns ``(base_url, stop)``.
 
@@ -359,7 +371,8 @@ def serve_in_background(app: FastAPI, host: str = "127.0.0.1", port: int = 0) ->
 
     import uvicorn
 
-    server = uvicorn.Server(uvicorn.Config(app, host=host, port=port, log_level="warning", lifespan="on"))
+    config = uvicorn.Config(app, host=host, port=port, log_level="warning", lifespan="on", loop=_server_loop())
+    server = uvicorn.Server(config)
     thread = threading.Thread(target=server.run, daemon=True)
     thread.start()
     deadline = time.monotonic() + 15

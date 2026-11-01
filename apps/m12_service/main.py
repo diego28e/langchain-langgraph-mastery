@@ -13,5 +13,6 @@ from mastery.service.app import create_app
 from mastery.service.desk import durable_support_manager
 
 # State: MASTERY_SERVICE_DATABASE_URL (sqlite:///… or postgresql://…); in memory when unset.
+# Postgres on Windows: add --loop asyncio:SelectorEventLoop (psycopg's async mode can't use the default loop).
 # The browser UI (Lesson 12.09) is served at /ui/ from apps/m12_service/ui.
 app = create_app(durable_support_manager, title="Orbita Cloud support desk", ui_dir=Path(__file__).parent / "ui")
