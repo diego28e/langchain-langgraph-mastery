@@ -65,8 +65,9 @@ Puedes tomar el curso en tu PC o en Google Colab, y cambiar cuando quieras: cada
 2. **NO tienes que subir nada.** START_HERE copia el curso en tu Drive: **Mi unidad/langchain-langgraph-mastery**.
 3. **Abre cada lección desde Drive:** [drive.google.com](https://drive.google.com/drive/my-drive) → Mi unidad → langchain-langgraph-mastery → modules → un módulo → clic derecho en el `.ipynb` → **Abrir con → Google Colaboratory**.
 4. **Revisa que la barra del título muestre el ícono de Drive, no "Guardar en GitHub"** ("Save in GitHub"): esa es la copia de GitHub, de solo lectura, y tus cambios no se guardan.
-5. **La próxima vez: Archivo → Abrir cuaderno → Recientes.** La pestaña *Google Drive* de Colab solo muestra los notebooks que abriste hace poco, así que no la uses para buscar carpetas.
-6. **Agrega tus claves como Secrets de Colab (🔑).** Cada lección pide solo las claves que usa.
+5. **Trabaja directamente en la lección.** Abre las lecciones desde Drive y trabaja en ellas (agrega celdas, escribe código): tu trabajo se guarda solo y las actualizaciones lo conservan.
+6. **La próxima vez: Archivo → Abrir cuaderno → Recientes.** La pestaña *Google Drive* de Colab solo muestra los notebooks que abriste hace poco, así que no la uses para buscar carpetas.
+7. **Agrega tus claves como Secrets de Colab (🔑).** Cada lección pide solo las claves que usa.
 
 | | 💻 Tu PC (o un devcontainer) | ☁️ Google Colab |
 |---|---|---|

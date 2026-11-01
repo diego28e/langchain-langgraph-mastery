@@ -5,6 +5,7 @@ google.colab is faked with a module in sys.modules: nothing here needs Colab, th
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 import types
@@ -638,7 +639,8 @@ class FakeGit:
             self.target = Path(command[-1])
         if command[1] == "-C" and not Path(command[2]).is_dir():
             return subprocess.CompletedProcess(command, 128, "", f"fatal: cannot change to '{command[2]}'")
-        return subprocess.CompletedProcess(command, 0, "", "")
+        empty = "" if kwargs.get("text") else b""
+        return subprocess.CompletedProcess(command, 0, empty, empty)
 
     def sleep(self, seconds: float) -> None:
         self.sleeps += 1
@@ -695,9 +697,243 @@ def test_start_here_updates_an_existing_clone_with_git_c(monkeypatch: pytest.Mon
     (root / ".git").mkdir(parents=True)
     fake = FakeGit(show_after=None)
     _run_step2(monkeypatch, tmp_path, fake)
-    assert fake.calls == [["-C", str(root), "pull", "--ff-only", "origin", "main"],
+    assert fake.calls == [["-C", str(root), "config", "core.fileMode", "false"],
+                          ["-C", str(root), "fetch", "origin", "main"],
+                          ["-C", str(root), "rev-parse", "HEAD"],
+                          ["-C", str(root), "rev-parse", "FETCH_HEAD"],  # nothing fetched: nothing touched
                           ["-C", str(root), "config", "core.fileMode", "false"]]
     assert fake.sleeps == 0
+
+
+# --- Updating a clone Colab (or the learner) changed: a real git repo, no network -----------------------------
+def _nb(*sources: str, outputs: bool = False) -> str:
+    cells = []
+    for source in sources:
+        cell = {"cell_type": "code", "execution_count": None, "metadata": {}, "outputs": [], "source": source}
+        if outputs:
+            cell.update(execution_count=3, metadata={"colab": {"base_uri": "https://localhost:8080/"}},
+                        outputs=[{"name": "stdout", "output_type": "stream", "text": ["hi\n"]}])
+        cells.append(cell)
+    metadata = {"colab": {"provenance": []}, "kernelspec": {"name": "python3"}} if outputs else {}
+    return json.dumps({"cells": cells, "metadata": metadata, "nbformat": 4, "nbformat_minor": 5}, indent=1)
+
+
+def _git(repo: Path, *args: str) -> str:
+    import subprocess
+
+    result = subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, text=True, encoding="utf-8")
+    return result.stdout.strip()
+
+
+@pytest.fixture
+def drive_clone(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> tuple[Path, Path, Path]:
+    """origin (a local repo standing in for GitHub), a clone in a fake My Drive, and the fake My Drive."""
+    import os
+    import shutil
+
+    if shutil.which("git") is None:
+        pytest.skip("git is not installed")
+    for name, value in {"GIT_CONFIG_GLOBAL": os.devnull, "GIT_CONFIG_NOSYSTEM": "1", "GIT_AUTHOR_NAME": "t",
+                        "GIT_AUTHOR_EMAIL": "t@example.com", "GIT_COMMITTER_NAME": "t",
+                        "GIT_COMMITTER_EMAIL": "t@example.com"}.items():
+        monkeypatch.setenv(name, value)
+    origin, drive = tmp_path / "origin", tmp_path / "My Drive"
+    (origin / "modules" / "project").mkdir(parents=True)
+    _git(origin, "init", "-q")
+    _git(origin, "checkout", "-q", "-b", "main")
+    (origin / "modules" / "lesson.ipynb").write_text(_nb("print('v1')"), encoding="utf-8")
+    (origin / "modules" / "project" / "exercise.ipynb").write_text(_nb("# TODO: your code"), encoding="utf-8")
+    (origin / "notes.md").write_text("course notes\n", encoding="utf-8")
+    _git(origin, "add", ".")
+    _git(origin, "commit", "-q", "-m", "v1")
+    drive.mkdir()
+    _git(drive, "clone", "-q", str(origin), "langchain-langgraph-mastery")
+    (origin / "modules" / "lesson.ipynb").write_text(_nb("print('v2')"), encoding="utf-8")
+    (origin / "notes.md").write_text("course notes v2\n", encoding="utf-8")
+    _git(origin, "commit", "-q", "-am", "v2")
+    return origin, drive / "langchain-langgraph-mastery", drive
+
+
+def _run_update(monkeypatch: pytest.MonkeyPatch, drive: Path, **settings: object) -> None:
+    monkeypatch.setenv("COLAB_RELEASE_TAG", "test")
+    code = [cell for cell in _start_here() if cell["cell_type"] == "code"]
+    namespace: dict[str, object] = {}
+    exec("".join(code[0]["source"]), namespace)
+    assert namespace["UPDATE_MY_EDITED_LESSONS"] is False  # default: your edited lessons are never replaced
+    namespace.update(settings)
+    exec("".join(code[1]["source"]).replace('"/content/drive/MyDrive"', repr(str(drive))), namespace)
+
+
+def _backups(drive: Path) -> list[Path]:
+    edits = drive / "langchain-langgraph-mastery-my-edits"
+    return sorted(p.relative_to(edits) for p in edits.glob("*/**/*") if p.is_file()) if edits.exists() else []
+
+
+def _read(path: Path) -> str:
+    return path.read_text(encoding="utf-8")
+
+
+def _same_head(clone: Path, origin: Path) -> bool:
+    return _git(clone, "rev-parse", "HEAD") == _git(origin, "rev-parse", "HEAD")
+
+
+def test_start_here_resets_notebooks_colab_only_saved_and_updates(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    origin, clone, drive = drive_clone
+    (clone / "modules" / "lesson.ipynb").write_text(_nb("print('v1')", outputs=True), encoding="utf-8")  # Colab ran it
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert _same_head(clone, origin)
+    assert "print('v2')" in _read(clone / "modules" / "lesson.ipynb")
+    assert _git(clone, "status", "--porcelain") == ""
+    assert _backups(drive) == []
+    assert "✅ Course updated." in out and "Kept your work" not in out and "❌" not in out
+
+
+def test_start_here_keeps_an_edited_lesson_in_place_while_the_rest_updates(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    origin, clone, drive = drive_clone
+    exercise = clone / "modules" / "project" / "exercise.ipynb"
+    mine = _nb("# TODO: your code", "answer = 42  # my new cell", outputs=True)
+    exercise.write_text(mine, encoding="utf-8")
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert _same_head(clone, origin)
+    assert _read(exercise) == mine  # in place, byte for byte
+    assert "print('v2')" in _read(clone / "modules" / "lesson.ipynb") and _read(clone / "notes.md") == "course notes v2\n"
+    assert _git(clone, "status", "--porcelain") == "M modules/project/exercise.ipynb"  # (stripped " M")
+    [safety] = _backups(drive)  # the silent safety net
+    assert Path(*safety.parts[1:]).as_posix() == "modules/project/exercise.ipynb" and safety.parts[0].endswith("_UTC")
+    assert _read(drive / "langchain-langgraph-mastery-my-edits" / safety) == mine
+    assert "✅ Course updated." in out and "📝 Kept your work in 1 lesson(s): modules/project/exercise.ipynb" in out
+    assert "newer version" not in out and "my-edits" not in out
+
+
+def test_start_here_keeps_an_edited_lesson_the_course_changed_and_says_so(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    origin, clone, drive = drive_clone
+    lesson = clone / "modules" / "lesson.ipynb"
+    mine = _nb("print('v1')", "print('my experiment')")
+    lesson.write_text(mine, encoding="utf-8")
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert _same_head(clone, origin) and _read(lesson) == mine and _read(clone / "notes.md") == "course notes v2\n"
+    assert "✅ Course updated." in out and "Kept your work in 1 lesson(s): modules/lesson.ipynb" in out
+    assert "A newer version of modules/lesson.ipynb exists" in out and "UPDATE_MY_EDITED_LESSONS = True" in out
+    # The next update is not blocked by the kept lesson, and keeps it again.
+    (origin / "notes.md").write_text("course notes v3\n", encoding="utf-8")
+    (origin / "modules" / "lesson.ipynb").write_text(_nb("print('v3')"), encoding="utf-8")
+    _git(origin, "commit", "-q", "-am", "v3")
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert _same_head(clone, origin) and _read(lesson) == mine and _read(clone / "notes.md") == "course notes v3\n"
+    assert "✅ Course updated." in out and "A newer version of modules/lesson.ipynb exists" in out
+
+
+def test_start_here_can_replace_edited_lessons_when_asked(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    origin, clone, drive = drive_clone
+    lesson, exercise = clone / "modules" / "lesson.ipynb", clone / "modules" / "project" / "exercise.ipynb"
+    mine, my_exercise = _nb("print('v1')", "print('mine')"), _nb("answer = 1")
+    lesson.write_text(mine, encoding="utf-8")
+    exercise.write_text(my_exercise, encoding="utf-8")
+    _run_update(monkeypatch, drive, UPDATE_MY_EDITED_LESSONS=True)
+    out = capsys.readouterr().out
+    assert _same_head(clone, origin) and "print('v2')" in _read(lesson)  # the course changed it: replaced
+    assert _read(exercise) == my_exercise  # the course didn't change it: still kept
+    [stamp] = {p.parts[0] for p in _backups(drive)}
+    assert _read(drive / "langchain-langgraph-mastery-my-edits" / stamp / "modules" / "lesson.ipynb") == mine
+    assert f"🔄 Updated modules/lesson.ipynb to the newer version. Your version: My Drive/langchain-langgraph-mastery-my-edits/{stamp}/modules/lesson.ipynb" in out
+    assert "Kept your work in 1 lesson(s): modules/project/exercise.ipynb" in out
+
+
+def test_start_here_treats_an_older_course_copy_colab_saved_back_as_not_an_edit(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    origin, clone, drive = drive_clone
+    _run_update(monkeypatch, drive)  # updated to v2
+    (clone / "modules" / "lesson.ipynb").write_text(_nb("print('v1')", outputs=True), encoding="utf-8")  # old tab saved
+    (origin / "notes.md").write_text("course notes v3\n", encoding="utf-8")
+    _git(origin, "commit", "-q", "-am", "v3")
+    capsys.readouterr()
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert _backups(drive) == [] and "Kept your work" not in out and "✅ Course updated." in out
+    assert _same_head(clone, origin) and "print('v2')" in _read(clone / "modules" / "lesson.ipynb")
+
+
+def test_start_here_touches_nothing_when_already_up_to_date(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    origin, clone, drive = drive_clone
+    _run_update(monkeypatch, drive)
+    saved = _nb("print('v2')", outputs=True)
+    (clone / "modules" / "lesson.ipynb").write_text(saved, encoding="utf-8")
+    capsys.readouterr()
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert "✅ Course is up to date" in out and _read(clone / "modules" / "lesson.ipynb") == saved  # outputs stay
+    assert _backups(drive) == []
+
+
+def test_start_here_explains_a_diverged_clone_and_changes_nothing(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    origin, clone, drive = drive_clone
+    (clone / "notes.md").write_text("committed by me\n", encoding="utf-8")
+    _git(clone, "commit", "-q", "-am", "mine")
+    head = _git(clone, "rev-parse", "HEAD")
+    exercise = clone / "modules" / "project" / "exercise.ipynb"
+    exercise.write_text(_nb("answer = 1"), encoding="utf-8")
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert _git(clone, "rev-parse", "HEAD") == head and _read(exercise) == _nb("answer = 1")
+    assert _backups(drive) == []
+    for phrase in ("❌ Could not update the course", "commits of its own", "Nothing was changed",
+                   "langchain-langgraph-mastery-old", "Run all"):
+        assert phrase in out, phrase
+
+
+def test_start_here_puts_your_work_back_when_the_update_fails(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    origin, clone, drive = drive_clone
+    (origin / "modules" / "extra.ipynb").write_text(_nb("print('course')"), encoding="utf-8")
+    _git(origin, "add", ".")
+    _git(origin, "commit", "-q", "-m", "v3 adds extra")
+    (clone / "modules" / "extra.ipynb").write_text(_nb("print('my own file')"), encoding="utf-8")  # same name
+    exercise = clone / "modules" / "project" / "exercise.ipynb"
+    exercise.write_text(_nb("answer = 1"), encoding="utf-8")
+    head = _git(clone, "rev-parse", "HEAD")
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert _git(clone, "rev-parse", "HEAD") == head
+    assert _read(exercise) == _nb("answer = 1") and "my own file" in _read(clone / "modules" / "extra.ipynb")
+    assert "❌ Could not update the course" in out and "same names as new course files" in out
+    assert "Kept your work in 1 lesson(s)" in out and "✅" not in out
+
+
+def test_start_here_changes_nothing_when_the_safety_copy_fails(
+    monkeypatch: pytest.MonkeyPatch, drive_clone: tuple[Path, Path, Path], capsys: pytest.CaptureFixture[str]
+) -> None:
+    import shutil
+
+    origin, clone, drive = drive_clone
+    (clone / "notes.md").write_text("my notes\n", encoding="utf-8")
+    before = _git(clone, "rev-parse", "HEAD")
+
+    def broken_copy(*args: object, **kwargs: object) -> None:
+        raise OSError("Drive is full")
+
+    monkeypatch.setattr(shutil, "copy2", broken_copy)
+    _run_update(monkeypatch, drive)
+    out = capsys.readouterr().out
+    assert _read(clone / "notes.md") == "my notes\n" and _git(clone, "rev-parse", "HEAD") == before
+    assert "Drive is full" in out and "nothing was changed or updated" in out and "✅" not in out
 
 
 def test_wait_for_path_waits_for_drive(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:

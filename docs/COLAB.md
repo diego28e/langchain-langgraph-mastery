@@ -8,8 +8,9 @@ You can take **most of the course on Google Colab**, with nothing installed on y
 2. **You do NOT upload anything.** START_HERE copies the course into your Drive: **My Drive/langchain-langgraph-mastery**.
 3. **Open every lesson from Drive:** [drive.google.com](https://drive.google.com/drive/my-drive) → My Drive → langchain-langgraph-mastery → modules → a module → right-click the `.ipynb` → **Open with → Google Colaboratory**.
 4. **Check the title bar shows the Drive icon, not "Save in GitHub"** (that is the read-only GitHub copy: your edits won't be saved).
-5. **Next time: File → Open notebook → Recent.** Colab's *Google Drive* tab only lists notebooks you opened recently, so don't use it to browse.
-6. **Add your keys as [Colab Secrets](#secrets) (🔑).** Each lesson asks only for the keys it uses.
+5. **Work right in the lesson.** Open lessons from Drive and work right in them (add cells, write code): your work saves automatically and updates keep it.
+6. **Next time: File → Open notebook → Recent.** Colab's *Google Drive* tab only lists notebooks you opened recently, so don't use it to browse.
+7. **Add your keys as [Colab Secrets](#secrets) (🔑).** Each lesson asks only for the keys it uses.
 
 | | 💻 Your PC (or the devcontainer) | ☁️ Google Colab |
 |---|---|---|
@@ -90,7 +91,7 @@ Without a key, 💸 cells print `⏭️ Skipped` and everything else runs, exact
 - **Your PC:** follow [00-02-create-course-env.md](../modules/00-foundations/00-02-create-course-env.md) (conda env `lc-mastery`, `pip install -e ".[dev]"`, the `Python (lc-mastery)` kernel). Check it with Lesson 00.02.
 - **Devcontainer (no local Python):** open the repo in **GitHub Codespaces** or **VS Code → Dev Containers: Reopen in Container**. `.devcontainer/devcontainer.json` installs the same stack with the tested pins and registers the `Python (lc-mastery)` kernel. Docker lessons need Docker *inside* the container: in Codespaces, add the [docker-in-docker feature](https://github.com/devcontainers/features/tree/main/src/docker-in-docker); with VS Code locally, Docker Desktop is already there.
 
-Your Drive clone and your PC clone are separate git clones of the same course. Keep your own work in `workspace/` ([setup/LEARNER_WORKFLOW.md](../setup/LEARNER_WORKFLOW.md)) and both stay easy to update.
+Your Drive clone and your PC clone are separate git clones of the same course: work you do in one is not in the other. On Colab you just work in the lessons themselves (START_HERE keeps your work when it updates); on your PC, [setup/LEARNER_WORKFLOW.md](../setup/LEARNER_WORKFLOW.md) explains how to update.
 
 <a id="docker"></a>
 ### Docker (11.09, Lab 11B, 12.05–12.07, the pgvector stretch)
@@ -147,7 +148,11 @@ On Colab, the lessons' **Step 0** installs the CLI and the server cells run insi
 | A link in a lesson (e.g. *Next: `00-05-first-groq-call.ipynb`*) opens **"Sorry, the file you have requested does not exist"** at `drive.google.com/file/u/0/d/00-05-first-groq-call.ipynb/edit` | Colab reads a relative link as a Drive file **id**, so links between notebooks can't work there (they do on your PC and GitHub). Use the **🔗 links the setup cell printed** instead: they open the Drive copies (`colab.research.google.com/drive/<id>`, read from Drive's `user.drive.id` attribute), so your work saves. If Drive doesn't expose an id, the link opens the read-only GitHub copy and says so. Or open the file [from Drive](#open-lessons), or use **File → Open notebook → Recent** |
 | **"Restart once: ..."** | Runtime → Restart session, then Run all. It's asked at most once per runtime |
 | **"Unrecognized runtime lc-mastery"** / Colab switches to Python 3 | Normal: the notebooks are saved with the PC kernel name. Colab's Python 3 is correct (the setup cell prints a line saying so, and the kernel checks in 00.02, 00.03, 00.05 and 02.01 print ✅ on Colab) |
-| START_HERE: **"Could not update the course"** | `git pull --ff-only` refused because you changed course files. Your clone still works. To get the update: keep your work in `workspace/`, then in a cell `!git -C /content/drive/MyDrive/langchain-langgraph-mastery stash` and run START_HERE again (`git stash pop` brings your edits back) |
+| START_HERE: **`error: Your local changes to the following files would be overwritten by merge`** (an older START_HERE) | Colab saves every notebook you run from Drive, so the old update saw "changes". Open START_HERE **from its GitHub badge** ([this link](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb)), not from Drive, and **Runtime → Run all**: since 2026-11-01 it updates by itself and keeps your work. Don't `git stash` or delete anything |
+| START_HERE: **"📝 Kept your work in N lesson(s)"** | Normal, nothing to do. Lessons you edited stay exactly as you left them; everything else was updated. Lessons you only ran (Colab saved their outputs) are updated too |
+| START_HERE: **"A newer version of ... exists"** | The course changed a lesson you edited, and your version was kept. To get the new one too: in Drive, rename your copy (for example add `-mine`), then run START_HERE again: the lesson comes back new, next to yours. Or set `UPDATE_MY_EDITED_LESSONS = True` in START_HERE's Step 1 (a copy of your version goes to **My Drive/langchain-langgraph-mastery-my-edits/**, and START_HERE prints where) |
+| START_HERE: **"❌ Could not update the course"** | Your copy and your work still work as they are. *"commits of its own"*: someone ran `git commit` in the Drive clone; nothing was changed. The fix: in [Drive](https://drive.google.com/drive/my-drive) rename `langchain-langgraph-mastery` to `langchain-langgraph-mastery-old` (it keeps everything), then **Runtime → Run all** in START_HERE for a fresh copy. *"same names as new course files"*: rename the files you created, then run START_HERE again. *"Could not make a safety copy"* or *"Could not reach GitHub"*: nothing was changed; run START_HERE again later |
+| A folder **langchain-langgraph-mastery-my-edits** in My Drive | START_HERE's safety net: before each update it copies the lessons you edited there (by date, same folders), then puts your work back in place. You never need it; delete it whenever you like |
 | pip prints dependency warnings about `google-auth`, `pandas` or other Colab packages | Expected: the course pins its own versions; Colab tools you don't use in the course may complain |
 | The install happens again in every lesson | Each notebook gets its own runtime, and runtimes are recycled after a while. 1–3 min each first run is normal |
 | `No module named 'mastery'` | The first code cell (Setup 1) didn't run: run the notebook from the top |
