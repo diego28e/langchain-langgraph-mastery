@@ -59,11 +59,20 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 
 Puedes tomar el curso en tu PC o en Google Colab, y cambiar cuando quieras: cada lección funciona igual en ambos.
 
+**En Colab, estos son los pasos clave:**
+
+1. **Ejecuta [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) una vez: Entorno de ejecución → Ejecutar todas.** Cuando Google pida acceso a Drive, marca **Seleccionar todo**.
+2. **NO tienes que subir nada.** START_HERE copia el curso en tu Drive: **Mi unidad/langchain-langgraph-mastery**.
+3. **Abre cada lección desde Drive:** [drive.google.com](https://drive.google.com/drive/my-drive) → Mi unidad → langchain-langgraph-mastery → modules → un módulo → clic derecho en el `.ipynb` → **Abrir con → Google Colaboratory**.
+4. **Revisa que la barra del título muestre el ícono de Drive, no "Guardar en GitHub"** ("Save in GitHub"): esa es la copia de GitHub, de solo lectura, y tus cambios no se guardan.
+5. **La próxima vez: Archivo → Abrir cuaderno → Recientes.** La pestaña *Google Drive* de Colab solo muestra los notebooks que abriste hace poco, así que no la uses para buscar carpetas.
+6. **Agrega tus claves como Secrets de Colab (🔑).** Cada lección pide solo las claves que usa.
+
 | | 💻 Tu PC (o un devcontainer) | ☁️ Google Colab |
 |---|---|---|
 | Ideal para | Todo el curso, incluidas las lecciones con Docker, Ollama y LangSmith Studio | Empezar rápido sin instalar nada; la mayor parte del curso |
 | Configuración | Una vez, 20–40 min: pasos 0–2 abajo | Una vez, 3–5 min: abre [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) → **Entorno de ejecución → Ejecutar todas**; cuando Google pida acceso a Drive, elige tu cuenta de Colab y marca **Seleccionar todo** (marcar solo algunas casillas hace fallar el montaje); luego agrega tus claves como **Secrets de Colab** (🔑) |
-| Después | Abre un notebook con el kernel `Python (lc-mastery)` | Haz clic en el botón **Open in Colab** de la lección y ejecútala desde el principio |
+| Después | Abre un notebook con el kernel `Python (lc-mastery)` | Abre la lección **desde Drive** (paso 3 de arriba) y ejecútala desde el principio. El botón **Open in Colab** de una lección abre la copia de GitHub, de solo lectura |
 
 Algunas lecciones necesitan tu PC (Docker, Ollama, Studio). Lo indican al inicio y enlazan la configuración que requieren. La tabla lección por lección, la lista de secrets y la solución de problemas están en [docs/COLAB.md](docs/COLAB.md) (en inglés). **En Colab, omite los pasos 1–2 de abajo** (START_HERE los hace por ti).
 

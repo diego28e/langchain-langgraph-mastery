@@ -2,6 +2,15 @@
 
 You can take **most of the course on Google Colab**, with nothing installed on your computer, or **on your own PC** (the setup the course is developed on). You can also mix them: a lesson runs the same way in both places, so you can move between them at any time. A few lessons need things a Colab runtime doesn't have (Docker, Ollama, a server your browser can reach). Those say so at the top and link to the PC setup below.
 
+**On Colab, these are the core steps:**
+
+1. **Run [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) once: Runtime → Run all.** When Google asks for Drive access, tick **Select all** ([details](#setup)).
+2. **You do NOT upload anything.** START_HERE copies the course into your Drive: **My Drive/langchain-langgraph-mastery**.
+3. **Open every lesson from Drive:** [drive.google.com](https://drive.google.com/drive/my-drive) → My Drive → langchain-langgraph-mastery → modules → a module → right-click the `.ipynb` → **Open with → Google Colaboratory**.
+4. **Check the title bar shows the Drive icon, not "Save in GitHub"** (that is the read-only GitHub copy: your edits won't be saved).
+5. **Next time: File → Open notebook → Recent.** Colab's *Google Drive* tab only lists notebooks you opened recently, so don't use it to browse.
+6. **Add your keys as [Colab Secrets](#secrets) (🔑).** Each lesson asks only for the keys it uses.
+
 | | 💻 Your PC (or the devcontainer) | ☁️ Google Colab |
 |---|---|---|
 | Setup | 20–40 min once: [00-02-create-course-env.md](../modules/00-foundations/00-02-create-course-env.md) | 3–5 min once: run [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) |
@@ -11,26 +20,30 @@ You can take **most of the course on Google Colab**, with nothing installed on y
 | Lessons | All of them | All except the few marked ❌ ([the table](#per-module)) |
 
 <a id="setup"></a>
-## Colab in three steps
+## Setting up Colab, in detail
 
 1. Open [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) and choose **Runtime → Run all**. When Google asks for Drive access, choose the account you use for Colab, tick **Select all**, then **Continue** (ticking only some permissions makes the mount fail; allow pop-ups for `colab.research.google.com` if no window opens). It clones the course into your Drive (or updates it later), installs it with the Colab-tested versions, and shows a ✅ table.
 2. If it stops with **"Restart once"**: **Runtime → Restart session**, then **Runtime → Run all** again. The second run skips the install.
-3. Add your keys as **Colab Secrets** ([below](#secrets)). Then open any lesson with its **Open in Colab** badge (in the table at the top of every notebook) and run it from the top.
+3. Add your keys as **Colab Secrets** ([below](#secrets)). Then open each lesson **from Drive** ([how](#open-lessons)) and run it from the top.
 
 **How a lesson finds the course on Colab.** Every notebook's first code cell (*Setup 1*) detects Colab, mounts Drive if needed, and uses the clone START_HERE made: `MyDrive/langchain-langgraph-mastery` first, then `/content/langchain-langgraph-mastery`. It then calls `mastery.colab.prepare_runtime()`, which:
 - installs the course (`pip install -e ".[colab]" -c constraints/colab-2026-10.txt`) **once per runtime** (a stamp file in `/tmp` survives *Restart session*, so it isn't repeated);
 - also installs `[studio]` or `[embeddings]` at the tested versions when the lesson's *Step 0* `%pip` cell already brought `langgraph-cli` or `fastembed`;
 - asks you to **restart once** only if it upgraded a package the kernel had already imported;
-- copies your Colab Secrets into the environment (never overwriting a variable that is already set).
+- copies **only the Colab Secrets this lesson uses** into the environment (the setup cell lists them; a key a cell needs later is read when `require_env` or `get_model` asks for it), never overwriting a variable that is already set. Each secret you read the first time in a notebook shows Colab's access prompt, so fewer names means fewer prompts; a key you never added is just skipped;
+- prints **🔗 links to the notebooks and docs this lesson links to** (the previous and next lesson, the module README...). They open the Drive copies, because a lesson's own Markdown links don't work on Colab (see the troubleshooting table below).
 
 On your PC none of this runs: the same cell behaves exactly as before.
 
-**Open from Drive to keep your edits.** A notebook opened with a GitHub badge is a read-only copy (**File → Save a copy in Drive** keeps it). Opening it from Drive instead (**File → Open notebook → Google Drive** → `langchain-langgraph-mastery/modules/...`) edits your clone directly, and everything the lessons write (`data/outputs/`) lands in your Drive.
+<a id="open-lessons"></a>
+**Open lessons from Drive to keep your edits.** You do NOT upload anything: START_HERE already put the course in **My Drive/langchain-langgraph-mastery**. In [drive.google.com](https://drive.google.com/drive/my-drive) go to **My Drive → langchain-langgraph-mastery → modules →** a module, right-click the lesson's `.ipynb` → **Open with → Google Colaboratory**. The title bar then shows the Drive icon; afterwards **File → Open notebook → Recent** finds it again. That edits your clone directly, everything the lessons write (`data/outputs/`) lands in your Drive, and Colab remembers the Secrets access you grant each notebook.
+- **Title bar says "Save in GitHub"?** You opened the read-only GitHub copy (an **Open in Colab** badge does that): your edits won't be saved. Close it and open the lesson from Drive. The setup cell prints *"Opened from GitHub: ..."* when it can tell.
+- **Don't browse with File → Open notebook → Google Drive:** that tab only lists notebooks you opened recently (at first just "Untitled"), not your folders.
 
 <a id="secrets"></a>
 ## Keys: Colab Secrets
 
-Click **🔑 Secrets** in Colab's left sidebar → **Add new secret**. Use the names below (the same as in `.env.example`) and switch **Notebook access** on for each one. `mastery.config.load_env()` (which every lesson calls) reads them; `load_colab_secrets()` is the helper behind it.
+Click **🔑 Secrets** in Colab's left sidebar → **Add new secret**. Use the names below (the same as in `.env.example`) and switch **Notebook access** on for each one. `mastery.config.load_env()` (which every lesson calls) reads the ones that lesson uses (its setup cell lists them); `load_colab_secrets()` is the helper behind it.
 
 | Secret | When |
 |---|---|
@@ -129,6 +142,7 @@ On Colab, the lessons' **Step 0** installs the CLI and the server cells run insi
 |---|---|
 | A lesson says **"Could not find the course repo ... run colab/START_HERE.ipynb first"** | Run START_HERE (once per account), or check the clone is in `MyDrive/langchain-langgraph-mastery` |
 | **`MessageError: Error: credential propagation was unsuccessful`** (or START_HERE's *"Google Drive did not mount"*) | Only some Drive permissions were ticked, or another account was chosen. **Runtime → Disconnect and delete runtime**, then **Run all** and, in the Google window, choose your Colab account, tick **Select all**, **Continue**. Still failing: at [myaccount.google.com/connections](https://myaccount.google.com/connections) remove **Google Drive for desktop**'s access and try again. Last resort: `USE_DRIVE = False` in START_HERE's Step 1 clones into `/content`, which works only in that runtime (deleted when it resets, and lessons, in their own runtimes, won't find it) |
+| A link in a lesson (e.g. *Next: `00-05-first-groq-call.ipynb`*) opens **"Sorry, the file you have requested does not exist"** at `drive.google.com/file/u/0/d/00-05-first-groq-call.ipynb/edit` | Colab reads a relative link as a Drive file **id**, so links between notebooks can't work there (they do on your PC and GitHub). Use the **🔗 links the setup cell printed** instead: they open the Drive copies (`colab.research.google.com/drive/<id>`, read from Drive's `user.drive.id` attribute), so your work saves. If Drive doesn't expose an id, the link opens the read-only GitHub copy and says so. Or open the file [from Drive](#open-lessons), or use **File → Open notebook → Recent** |
 | **"Restart once: ..."** | Runtime → Restart session, then Run all. It's asked at most once per runtime |
 | **"Unrecognized runtime lc-mastery"** / Colab switches to Python 3 | Normal: the notebooks are saved with the PC kernel name. Colab's Python 3 is correct (the setup cell prints a line saying so, and the kernel checks in 00.02, 00.03, 00.05 and 02.01 print ✅ on Colab) |
 | START_HERE: **"Could not update the course"** | `git pull --ff-only` refused because you changed course files. Your clone still works. To get the update: keep your work in `workspace/`, then in a cell `!git -C /content/drive/MyDrive/langchain-langgraph-mastery stash` and run START_HERE again (`git stash pop` brings your edits back) |

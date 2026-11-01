@@ -57,11 +57,20 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 
 You can take the course on your PC or on Google Colab, and switch between them whenever you like: every lesson runs the same way in both places.
 
+**On Colab, these are the core steps:**
+
+1. **Run [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) once: Runtime → Run all.** When Google asks for Drive access, tick **Select all**.
+2. **You do NOT upload anything.** START_HERE copies the course into your Drive: **My Drive/langchain-langgraph-mastery**.
+3. **Open every lesson from Drive:** [drive.google.com](https://drive.google.com/drive/my-drive) → My Drive → langchain-langgraph-mastery → modules → a module → right-click the `.ipynb` → **Open with → Google Colaboratory**.
+4. **Check the title bar shows the Drive icon, not "Save in GitHub"** (that is the read-only GitHub copy: your edits won't be saved).
+5. **Next time: File → Open notebook → Recent.** Colab's *Google Drive* tab only lists notebooks you opened recently, so don't use it to browse.
+6. **Add your keys as Colab Secrets (🔑).** Each lesson asks only for the keys it uses.
+
 | | 💻 Your PC (or a devcontainer) | ☁️ Google Colab |
 |---|---|---|
 | Best for | The whole course, including Docker, Ollama and LangSmith Studio lessons | Starting fast with nothing installed; most of the course |
 | Setup | Once, 20–40 min: steps 0–2 below | Once, 3–5 min: open [colab/START_HERE.ipynb](https://colab.research.google.com/github/diego28e/langchain-langgraph-mastery/blob/main/colab/START_HERE.ipynb) → **Runtime → Run all**; when Google asks for Drive access, choose your Colab account and tick **Select all** (only some boxes makes the mount fail); then add your keys as **Colab Secrets** |
-| Then | Open a notebook in the `Python (lc-mastery)` kernel | Click a lesson's **Open in Colab** badge and run it from the top |
+| Then | Open a notebook in the `Python (lc-mastery)` kernel | Open the lesson **from Drive** (step 3 above) and run it from the top. A lesson's **Open in Colab** badge opens the read-only GitHub copy |
 
 A few lessons need your PC (Docker, Ollama, Studio). They say so at the top and link to the setup they need. The lesson-by-lesson table, the secrets list and troubleshooting are in [docs/COLAB.md](docs/COLAB.md). **On Colab, skip steps 1–2 below** (START_HERE does them for you).
 
