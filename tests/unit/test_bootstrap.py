@@ -157,7 +157,10 @@ _colab.drive = types.SimpleNamespace(mount=lambda path: print("MOUNTED", path))
 sys.modules["google.colab"] = _google.colab = _colab
 _fake = types.ModuleType("mastery.colab")
 _fake.prepare_runtime = lambda root, **kwargs: print("PREPARED", root)
+_fake.API_LEVEL = 99  # as new as any setup cell asks for
 sys.modules["mastery.colab"] = _fake
+import time
+time.sleep = lambda seconds: print("WAITED", seconds)  # The Drive-lag retry: no real waiting in tests.
 '''
 COLAB_CLONES = [Path(d) / "langchain-langgraph-mastery" for d in ("/content/drive/MyDrive", "/content")]
 
@@ -183,7 +186,36 @@ def test_on_colab_without_a_clone_it_mounts_drive_and_points_to_start_here(
 
     assert result.returncode != 0
     assert "MOUNTED /content/drive" in result.stdout
+    assert result.stdout.count("WAITED") == 30  # gave Drive ~30 s to show the clone before giving up
     assert "FileNotFoundError" in result.stderr and "colab/START_HERE.ipynb" in result.stderr
+    assert "wait a minute" in result.stderr
+
+
+@pytest.mark.parametrize(("notebook", "source"), SAMPLES[:3], ids=_sample_ids()[:3])
+def test_on_colab_it_waits_for_a_clone_drive_shows_late(notebook: Path, source: str, tmp_path: Path) -> None:
+    """Drive lag: the clone appears in MyDrive only after a few seconds; the setup cell waits for it."""
+    drive = tmp_path / "MyDrive"
+    drive.mkdir()
+    late = f"""
+_sleeps = []
+def _sleep(seconds):
+    _sleeps.append(seconds)
+    if len(_sleeps) == 3:
+        import os
+        os.symlink({str(REPO_ROOT)!r}, {str(drive / "langchain-langgraph-mastery")!r}, target_is_directory=True)
+time.sleep = _sleep
+"""
+    work = tmp_path / "work"
+    work.mkdir()
+    try:
+        (tmp_path / "probe").symlink_to(REPO_ROOT, target_is_directory=True)
+    except OSError:
+        pytest.skip("symlinks are not allowed here (Windows without developer mode)")
+    result = _run_on_fake_colab(late + source.replace('"/content/drive/MyDrive"', repr(str(drive)).replace("'", '"')),
+                                cwd=work, tmp_path=tmp_path)
+
+    assert result.returncode == 0, result.stderr
+    assert f"PREPARED {drive / 'langchain-langgraph-mastery'}" in result.stdout
 
 
 @pytest.mark.parametrize(("notebook", "source"), SAMPLES, ids=_sample_ids())
@@ -206,3 +238,74 @@ def test_off_colab_the_setup_cell_never_touches_colab(notebook: Path, source: st
 
     assert result.returncode == 0, result.stderr
     assert "MOUNTED" not in result.stdout and "PREPARED" not in result.stdout
+
+
+# --- An older mastery on Colab ("prepare_runtime() got an unexpected keyword argument 'secrets'") --------
+# No fake mastery.colab here: the setup cell imports a tiny fake clone's own src/mastery/colab.py.
+COLAB_ONLY = FAKE_COLAB.split("_fake = ")[0] + FAKE_COLAB[FAKE_COLAB.index("import time"):]
+NEW_COLAB = 'API_LEVEL = 99\ndef prepare_runtime(repo_root, **options):\n    print("NEW PREPARED", sorted(options))\n'
+OLD_COLAB = 'def prepare_runtime(repo_root):\n    print("OLD PREPARED", repo_root)\n'
+
+
+def _fake_clone(folder: Path, colab_py: str) -> Path:
+    (folder / "src" / "mastery").mkdir(parents=True)
+    (folder / "pyproject.toml").write_text("[project]\nname = 'mastery'\n", encoding="utf-8")
+    (folder / "src" / "mastery" / "__init__.py").write_text('__version__ = "0.0.1"\n', encoding="utf-8")
+    (folder / "src" / "mastery" / "colab.py").write_text(colab_py, encoding="utf-8")
+    return folder
+
+
+def _run_with_clone(source: str, clone: Path, tmp_path: Path, before: str = "") -> subprocess.CompletedProcess[str]:
+    script = tmp_path / "colab_old_mastery.py"
+    script.write_text(COLAB_ONLY + before + source, encoding="utf-8")
+    env = {k: v for k, v in os.environ.items() if k not in ("PYTHONPATH", "LC_MASTERY_ROOT")}
+    env.update(PYTHONIOENCODING="utf-8", PYTHONDONTWRITEBYTECODE="1", COLAB_RELEASE_TAG="test", LC_MASTERY_ROOT=str(clone))
+    return subprocess.run([sys.executable, str(script)], cwd=tmp_path, env=env,
+                          capture_output=True, text=True, encoding="utf-8", timeout=120)
+
+
+@pytest.mark.parametrize(("notebook", "source"), SAMPLES, ids=_sample_ids())
+def test_on_colab_an_older_clone_still_runs_and_says_how_to_update(notebook: Path, source: str, tmp_path: Path) -> None:
+    """An old Drive clone + a newer notebook (opened from GitHub): no TypeError, a clear fix instead."""
+    clone = _fake_clone(tmp_path / "clone", OLD_COLAB)
+    result = _run_with_clone(source, clone, tmp_path)
+
+    assert result.returncode == 0, result.stderr
+    assert "TypeError" not in result.stderr
+    assert f"OLD PREPARED {clone}" in result.stdout  # its prepare_runtime ran, without the newer arguments
+    assert "older than this notebook" in result.stdout and "START_HERE" in result.stdout
+    assert "Disconnect and delete runtime" in result.stdout
+    assert result.stdout.count("WAITED") == 10  # gave Drive a few seconds to show a newer copy first
+
+
+@pytest.mark.parametrize(("notebook", "source"), SAMPLES, ids=_sample_ids())
+def test_on_colab_an_older_mastery_imported_earlier_is_replaced(notebook: Path, source: str, tmp_path: Path) -> None:
+    """A stale mastery already in sys.modules (another folder) is dropped: this clone's code runs."""
+    clone = _fake_clone(tmp_path / "clone", NEW_COLAB)
+    stale = _fake_clone(tmp_path / "stale", OLD_COLAB)
+    before = f"sys.path.insert(0, {str(stale / 'src')!r})\nimport mastery.colab\nsys.path.pop(0)\n"
+    result = _run_with_clone(source, clone, tmp_path, before=before)
+
+    assert result.returncode == 0, result.stderr
+    assert "NEW PREPARED ['notebook', 'secrets']" in result.stdout  # the newer arguments reach the newer code
+    assert "OLD PREPARED" not in result.stdout and "older than this notebook" not in result.stdout
+    assert "WAITED" not in result.stdout
+    assert f"from {clone / 'src' / 'mastery' / '__init__.py'}" in result.stdout
+
+
+@pytest.mark.parametrize(("notebook", "source"), SAMPLES[:3], ids=_sample_ids()[:3])
+def test_on_colab_it_reloads_a_clone_drive_updates_late(notebook: Path, source: str, tmp_path: Path) -> None:
+    """The same clone, imported while Drive still showed the old colab.py: reloaded once Drive catches up."""
+    clone = _fake_clone(tmp_path / "clone", OLD_COLAB)
+    before = f"""sys.path.insert(0, {str(clone / 'src')!r})
+import mastery.colab
+def _sleep(seconds):
+    print("WAITED", seconds)
+    open({str(clone / 'src' / 'mastery' / 'colab.py')!r}, "w").write({NEW_COLAB!r})
+time.sleep = _sleep
+"""
+    result = _run_with_clone(source, clone, tmp_path, before=before)
+
+    assert result.returncode == 0, result.stderr
+    assert "NEW PREPARED" in result.stdout and "OLD PREPARED" not in result.stdout
+    assert result.stdout.count("WAITED") == 1

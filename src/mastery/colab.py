@@ -23,11 +23,13 @@ import re
 import shutil
 import subprocess
 import sys
+import time
 import warnings
 from collections.abc import Callable, Iterable, Sequence
 from pathlib import Path
 
 __all__ = [
+    "API_LEVEL",
     "COLAB_CONSTRAINTS",
     "COLAB_DOCS_URL",
     "COLAB_EXTRA",
@@ -42,12 +44,19 @@ __all__ = [
     "drive_file_id",
     "drive_folder_url",
     "install_command",
+    "installed_root",
     "lesson_links",
     "notebook_source",
     "prepare_runtime",
     "show_lesson_links",
+    "wait_for_path",
 ]
 
+# The setup-cell API this module offers. Each lesson's setup cell checks it before calling prepare_runtime and
+# falls back (with a clear fix) when Colab loaded an older copy of the course. Raise it whenever setup cells
+# start passing a new prepare_runtime argument, then run _maintainer/tools/qa/colab_patch.py.
+#   1: prepare_runtime(repo_root)   2: + secrets= and notebook=   3: + checks where the course is installed from
+API_LEVEL = 3
 REPO_NAME = "langchain-langgraph-mastery"
 DRIVE_MYDRIVE = Path("/content/drive/MyDrive")
 # Where colab/START_HERE.ipynb puts the clone: Drive (kept between sessions) first, then /content (temporary).
@@ -73,12 +82,46 @@ def in_colab() -> bool:
     return "google.colab" in sys.modules or "COLAB_RELEASE_TAG" in os.environ
 
 
-def colab_repo_root() -> Path | None:
-    """The clone made by ``colab/START_HERE.ipynb`` (Drive first, then /content), or ``None``."""
-    for folder in COLAB_REPO_DIRS:
-        if (folder / "pyproject.toml").is_file() and (folder / "src" / "mastery").is_dir():
-            return folder
+# Drive (FUSE) can take a few seconds to show files another process (git, or START_HERE's runtime) just wrote.
+DRIVE_LAG_SECONDS = 30
+
+
+def wait_for_path(path: str | Path, seconds: float = DRIVE_LAG_SECONDS, *, interval: float = 1.0) -> bool:
+    """Wait up to ``seconds`` for ``path`` to exist (Drive lag); ``True`` as soon as it does. Never raises."""
+    path = Path(path)
+    for _ in range(max(0, round(seconds / interval))):
+        if path.exists():
+            return True
+        try:
+            os.listdir(path.parent)  # Re-read the folder from Drive.
+        except OSError:
+            pass
+        time.sleep(interval)
+    return path.exists()
+
+
+def _is_clone(folder: Path) -> bool:
+    return (folder / "pyproject.toml").is_file() and (folder / "src" / "mastery").is_dir()
+
+
+def colab_repo_root(wait: float = 0) -> Path | None:
+    """The clone made by ``colab/START_HERE.ipynb`` (Drive first, then /content), or ``None``.
+
+    ``wait``: seconds to keep looking while Drive catches up (a fresh mount, or a clone still uploading).
+    """
+    for attempt in range(max(0, round(wait)) + 1):
+        for folder in COLAB_REPO_DIRS:
+            if _is_clone(folder):
+                return folder
+        if attempt < round(wait):
+            time.sleep(1)
     return None
+
+
+CLONE_MISSING = (
+    "The course clone at {root} has no {missing} (yet). If you just ran colab/START_HERE.ipynb, Drive may still be"
+    " showing or uploading it: wait a minute, then run this cell again. Otherwise run START_HERE again ({docs})."
+)
 
 
 def notebook_source(timeout: float = 1.0) -> str:
@@ -307,6 +350,26 @@ def _outdated_imports() -> list[str]:
     return sorted(outdated)
 
 
+def installed_root() -> Path | None:
+    """The folder the ``mastery`` distribution was installed from (``pip install -e``), or ``None``.
+
+    Read from its PEP 610 ``direct_url.json``; ``None`` when mastery isn't installed or wasn't installed from a folder.
+    """
+    import json
+    from urllib.parse import urlparse
+    from urllib.request import url2pathname
+
+    try:
+        text = metadata.distribution("mastery").read_text("direct_url.json")
+        url = urlparse(json.loads(text or "{}").get("url", ""))
+    except (metadata.PackageNotFoundError, ValueError, AttributeError, OSError):
+        return None
+    if url.scheme != "file" or not url.path:
+        return None
+    netloc = f"//{url.netloc}" if url.netloc not in ("", "localhost") else ""
+    return Path(url2pathname(netloc + url.path)).resolve()  # file:///C:/x is C:\x on Windows
+
+
 def _default_runner(command: Sequence[str]) -> int:
     return subprocess.run(list(command), check=False).returncode
 
@@ -364,18 +427,31 @@ def prepare_runtime(
         RestartRequired: The install changed a package this kernel had already imported. Restart the
             session once (Runtime → Restart session) and run the notebook again: the install is skipped.
         RuntimeError: The install failed (the pip output above says why).
+        FileNotFoundError: ``repo_root`` still has no pyproject.toml or src/mastery after
+            :data:`DRIVE_LAG_SECONDS` (a clone Drive doesn't show yet); the message says what to do.
     """
     if not in_colab():
         return []
+    root = Path(repo_root)
+    for missing in ("pyproject.toml", "src/mastery"):
+        if not wait_for_path(root / missing):  # Drive lag: never a pip or subprocess traceback.
+            raise FileNotFoundError(CLONE_MISSING.format(root=root, missing=missing, docs=COLAB_DOCS_URL))
     print(RUNTIME_NOTE)
     if notebook_source() in ("github", "other"):
         print(GITHUB_TIP)
     if notebook:
         show_lesson_links(repo_root, notebook)
     root = Path(repo_root).resolve()
+    src = str(root / "src")
+    if sys.path[:1] != [src]:  # This clone's code first, even if an older setup cell called us.
+        sys.path[:] = [src, *(p for p in sys.path if p != src)]
     before = _versions()
     extras = extras or _extras_for(before)
     stamp = _stamp(root, extras)
+    elsewhere = installed_root()
+    if elsewhere is not None and elsewhere != root:  # e.g. a /content clone, or a renamed Drive folder.
+        print(f"ℹ️ Colab: the course was installed from {elsewhere}; reinstalling it from {root}.")
+        force = True
     if force or not stamp.exists():
         print(f"⏳ Colab: installing the course [{extras}] into this runtime (once per runtime, 1-3 minutes)...")
         run = runner or _default_runner

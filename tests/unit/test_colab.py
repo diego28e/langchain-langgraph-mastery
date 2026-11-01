@@ -181,6 +181,7 @@ def colab_runtime(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     reset_secrets(monkeypatch)
     monkeypatch.setattr(colab, "_outdated_imports", list)
     monkeypatch.setattr(colab, "notebook_source", lambda timeout=1.0: "")  # no local server in tests
+    monkeypatch.setattr(colab, "installed_root", lambda: None)  # not this test env's own install
     return tmp_path
 
 
@@ -618,3 +619,196 @@ def test_header_rows_carry_the_github_tip() -> None:
                 assert "Save in GitHub" in line and "#open-lessons" in line, path.name
                 rows += 1
     assert rows > 100
+
+
+# --- Drive lag: a folder git (or another runtime) just wrote can take seconds to show on the Drive mount ---------
+class FakeGit:
+    """Fakes subprocess.run for START_HERE's Step 2: `git clone` "succeeds" but Drive shows the folder only after
+    `show_after` one-second waits (never if None). `git -C <missing folder>` fails like real git, no traceback."""
+
+    def __init__(self, show_after: int | None) -> None:
+        self.show_after, self.calls, self.sleeps, self.target = show_after, [], 0, None
+
+    def run(self, command, **kwargs):
+        import subprocess
+
+        assert "cwd" not in kwargs or kwargs["cwd"] is None  # git -C instead: a missing cwd is a traceback
+        self.calls.append(command[1:])
+        if command[1] == "clone":
+            self.target = Path(command[-1])
+        if command[1] == "-C" and not Path(command[2]).is_dir():
+            return subprocess.CompletedProcess(command, 128, "", f"fatal: cannot change to '{command[2]}'")
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    def sleep(self, seconds: float) -> None:
+        self.sleeps += 1
+        if self.target is not None and self.sleeps == self.show_after:
+            (self.target / ".git").mkdir(parents=True)
+
+
+def _run_step2(monkeypatch: pytest.MonkeyPatch, drive: Path, fake: FakeGit) -> dict:
+    import subprocess
+    import time
+
+    monkeypatch.setenv("COLAB_RELEASE_TAG", "test")
+    monkeypatch.setattr(subprocess, "run", fake.run)
+    monkeypatch.setattr(time, "sleep", fake.sleep)
+    code = [cell for cell in _start_here() if cell["cell_type"] == "code"]
+    namespace: dict[str, object] = {}
+    exec("".join(code[0]["source"]), namespace)  # Step 1: settings
+    exec("".join(code[1]["source"]).replace('"/content/drive/MyDrive"', repr(str(drive))), namespace)
+    return namespace
+
+
+def test_start_here_waits_for_a_clone_drive_shows_late(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    fake = FakeGit(show_after=3)
+    namespace = _run_step2(monkeypatch, tmp_path, fake)
+    root = tmp_path / "langchain-langgraph-mastery"
+    assert namespace["REPO_ROOT"] == root
+    assert fake.calls[0][:3] == ["clone", "--branch", "main"] and fake.calls[0][-1] == str(root)  # the exact REPO_ROOT
+    assert fake.calls[1] == ["-C", str(root), "config", "core.fileMode", "false"]  # only once .git exists
+    assert fake.sleeps == 3
+    out = capsys.readouterr().out
+    assert "✅ Course cloned" in out and "⚠️" not in out
+
+
+def test_start_here_explains_a_clone_drive_never_shows(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    fake = FakeGit(show_after=None)
+    with pytest.raises(RuntimeError, match="not visible") as caught:
+        _run_step2(monkeypatch, tmp_path, fake)
+    assert caught.value.__suppress_context__
+    assert [call[0] for call in fake.calls] == ["clone"]  # git config never ran without .git
+    assert fake.sleeps == 30
+    out = capsys.readouterr().out
+    assert "✅ Course cloned" not in out
+    for phrase in (str(tmp_path / "langchain-langgraph-mastery" / ".git"), "Wait a minute", "drive.google.com",
+                   "Disconnect and delete runtime"):
+        assert phrase in out, phrase
+
+
+def test_start_here_updates_an_existing_clone_with_git_c(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    root = tmp_path / "langchain-langgraph-mastery"
+    (root / ".git").mkdir(parents=True)
+    fake = FakeGit(show_after=None)
+    _run_step2(monkeypatch, tmp_path, fake)
+    assert fake.calls == [["-C", str(root), "pull", "--ff-only", "origin", "main"],
+                          ["-C", str(root), "config", "core.fileMode", "false"]]
+    assert fake.sleeps == 0
+
+
+def test_wait_for_path_waits_for_drive(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    target, sleeps = tmp_path / "late", []
+
+    def sleep(seconds: float) -> None:
+        sleeps.append(seconds)
+        if len(sleeps) == 2:
+            target.mkdir(exist_ok=True)
+
+    monkeypatch.setattr(colab.time, "sleep", sleep)
+    assert colab.wait_for_path(target) is True and len(sleeps) == 2
+    sleeps.clear()
+    assert colab.wait_for_path(tmp_path / "never", seconds=5) is False and len(sleeps) == 5  # never raises
+
+
+def test_colab_repo_root_can_wait_for_a_late_clone(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    clone = tmp_path / colab.REPO_NAME
+
+    def sleep(seconds: float) -> None:
+        (clone / "src" / "mastery").mkdir(parents=True, exist_ok=True)
+        (clone / "pyproject.toml").write_text("", encoding="utf-8")
+
+    monkeypatch.setattr(colab, "COLAB_REPO_DIRS", (clone,))
+    monkeypatch.setattr(colab.time, "sleep", sleep)
+    assert colab.colab_repo_root() is None  # no wait by default
+    assert colab.colab_repo_root(wait=10) == clone
+
+
+def test_prepare_runtime_explains_a_clone_drive_does_not_show(
+    fake_colab, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setattr(colab.time, "sleep", lambda seconds: None)
+    with pytest.raises(FileNotFoundError, match="wait a minute") as caught:
+        colab.prepare_runtime(tmp_path, runner=lambda cmd: pytest.fail("pip must not run"), load_secrets=False)
+    assert "pyproject.toml" in str(caught.value) and str(tmp_path) in str(caught.value)
+
+
+# --- An older mastery in the runtime: "prepare_runtime() got an unexpected keyword argument 'secrets'" ---
+def test_every_setup_cell_asks_for_the_current_api_level() -> None:
+    notebooks = [p for p in REPO.glob("modules/**/*.ipynb") if ".ipynb_checkpoints" not in p.parts]
+    import json
+
+    for path in notebooks:
+        cells = json.loads(path.read_text(encoding="utf-8"))["cells"]
+        setup = ["".join(c["source"]) for c in cells if "prepare_runtime(REPO_ROOT" in "".join(c["source"])]
+        for source in setup:
+            assert f'getattr(_course, "API_LEVEL", 1) >= {colab.API_LEVEL}' in source, path
+            assert "sys.path.insert(0, str((REPO_ROOT" not in source, path  # the old loader is gone
+
+
+def test_installed_root_reads_the_editable_install(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    clone = tmp_path / "My Drive clone"
+    dist = types.SimpleNamespace(read_text=lambda name: f'{{"url": "{clone.as_uri()}", "dir_info": {{"editable": true}}}}')
+    monkeypatch.setattr(colab.metadata, "distribution", lambda name: dist)
+    assert colab.installed_root() == clone.resolve()
+    monkeypatch.setattr(colab.metadata, "distribution", lambda name: types.SimpleNamespace(read_text=lambda n: None))
+    assert colab.installed_root() is None
+
+    def missing(name: str) -> object:
+        raise colab.metadata.PackageNotFoundError(name)
+
+    monkeypatch.setattr(colab.metadata, "distribution", missing)
+    assert colab.installed_root() is None
+
+
+def test_prepare_runtime_reinstalls_when_installed_from_another_folder(
+    colab_runtime, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr(colab, "_versions", lambda: {})
+    ran: list[list[str]] = []
+    run = lambda cmd: ran.append(list(cmd)) or 0  # noqa: E731
+    monkeypatch.setattr(colab, "installed_root", lambda: REPO.resolve())
+    colab.prepare_runtime(REPO, runner=run, load_secrets=False)
+    colab.prepare_runtime(REPO, runner=run, load_secrets=False)
+    assert len(ran) == 1  # installed from this clone: once per runtime
+    monkeypatch.setattr(colab, "installed_root", lambda: Path("/content/langchain-langgraph-mastery"))
+    colab.prepare_runtime(REPO, runner=run, load_secrets=False)
+    assert len(ran) == 2 and str(REPO.resolve()) in " ".join(ran[1])
+    assert "reinstalling it from" in capsys.readouterr().out
+
+
+def test_prepare_runtime_puts_this_clone_first_on_sys_path(colab_runtime, monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(colab, "_versions", lambda: {})
+    src = str(REPO.resolve() / "src")
+    monkeypatch.setattr(sys, "path", ["/somewhere/else", src, *sys.path])
+    colab.prepare_runtime(REPO, runner=lambda cmd: 0, load_secrets=False)
+    assert sys.path[0] == src and sys.path.count(src) == 1
+
+
+def test_start_here_step3_never_reuses_an_older_mastery(tmp_path: Path) -> None:
+    """Step 3 after Step 2 updated the clone: an older mastery imported earlier must not be the one called."""
+    import subprocess
+
+    old = tmp_path / "old" / "mastery"
+    old.mkdir(parents=True)
+    (old / "__init__.py").write_text("", encoding="utf-8")
+    (old / "colab.py").write_text("def prepare_runtime(repo_root):\n    print('OLD')\n", encoding="utf-8")
+    step3 = next("".join(c["source"]) for c in _start_here()
+                 if c["cell_type"] == "code" and "# Step 3" in "".join(c["source"]))
+    script = tmp_path / "step3.py"
+    script.write_text(
+        f"import sys\nfrom pathlib import Path\nsys.path.insert(0, {str(old.parent)!r})\nimport mastery.colab\n"
+        f"IN_COLAB = True\nREPO_ROOT = Path({str(REPO)!r})\n" + step3
+        + "\nimport mastery.colab as now\nprint('LOADED', Path(now.__file__).resolve())\n",
+        encoding="utf-8",
+    )
+    env = {k: v for k, v in __import__("os").environ.items() if k != "COLAB_RELEASE_TAG"}  # prepare_runtime: no-op
+    result = subprocess.run([sys.executable, str(script)], capture_output=True, text=True, encoding="utf-8",
+                            env={**env, "PYTHONIOENCODING": "utf-8"}, timeout=120)
+    assert result.returncode == 0, result.stderr
+    assert "OLD" not in result.stdout
+    assert f"LOADED {(REPO / 'src' / 'mastery' / 'colab.py').resolve()}" in result.stdout
+
