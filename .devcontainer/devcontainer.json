@@ -4,7 +4,7 @@
   // Keys: add GROQ_API_KEY (and optionally LANGSMITH_API_KEY) as Codespaces secrets, or create .env from .env.example.
   "name": "lc-mastery",
   "image": "mcr.microsoft.com/devcontainers/python:3.12",
-  "postCreateCommand": "python -m pip install -e \".[dev]\" -c constraints/constraints-2026-10-16.txt && python -m ipykernel install --user --name lc-mastery --display-name \"Python (lc-mastery)\"",
+  "postCreateCommand": "python -m pip install -e \".[dev]\" -c constraints/constraints-2026-10-19.txt && python -m ipykernel install --user --name lc-mastery --display-name \"Python (lc-mastery)\"",
   "containerEnv": { "PYTHONUTF8": "1" },
   "forwardPorts": [8888, 2024],
   "customizations": {

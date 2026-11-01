@@ -37,7 +37,7 @@ jobs:
           python-version: "3.13"
           cache: pip
       - name: Install the course stack
-        run: python -m pip install -e ".[dev]"
+        run: python -m pip install -e ".[dev]" -c constraints/constraints-2026-10-19.txt
       - name: Unit tests for the eval tooling
         run: python -m pytest -q tests/unit/test_evals_m10.py tests/unit/test_evals_m10_release.py
       - name: Run the release suite and apply the gates

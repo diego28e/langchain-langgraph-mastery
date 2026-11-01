@@ -14,7 +14,7 @@ WORKDIR /build
 COPY pyproject.toml ./
 COPY constraints/ constraints/
 COPY src/ src/
-RUN pip install -c constraints/constraints-2026-10-16.txt ".[llm,memory,service]"
+RUN pip install -c constraints/constraints-2026-10-19.txt ".[llm,memory,service]"
 
 # ---- runtime stage: the venv, the app and its sample data; no source tree, no compilers ----
 FROM python:3.12-slim

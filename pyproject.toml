@@ -87,12 +87,28 @@ notebooks = [
 ]
 # Testing, evaluation & observability (Module 10): judges (openevals), trajectory evals (agentevals)
 # and OpenTelemetry tracing. VERIFIED 2026-10-15: openevals 0.2.0, agentevals 0.0.9, opentelemetry 1.45.1 on PyPI.
+# OpenTelemetry stays on 1.42.x: langgraph-api 0.16.1 ([studio], still the latest release on 2026-10-19) pins
+# opentelemetry-exporter-prometheus<0.64, which needs sdk ~=1.42.1. With a wider range a fresh install starts
+# at 1.45, backtracks for a long time and then fails building an old importlib-resources (measured 2026-10-18).
 evals = [
     "langsmith[otel]>=0.14.7,<1",
     "openevals>=0.2.0,<1",
     "agentevals>=0.0.9,<1",
-    "opentelemetry-sdk>=1.42.1,<2",
-    "opentelemetry-exporter-otlp>=1.42.1,<2",
+    "opentelemetry-sdk>=1.42.1,<1.43",
+    "opentelemetry-exporter-otlp>=1.42.1,<1.43",
+]
+# Deep agents (Module 11): mastery.deep (harness, sandboxes, research agent, evals).
+# VERIFIED 2026-10-19 on PyPI: deepagents 0.7.28 (Module 11 was built and verified on 0.7.26, the version in
+# constraints/). deepagents pulls langchain-anthropic and langchain-google-genai (Module 11's default model).
+deep = [
+    "deepagents>=0.7.26,<0.8",
+]
+# Gemini (Modules 11 and 13): the default multimodal model ("google_genai:...") and Gemini TTS
+# (mastery.voice.tts imports google-genai directly). VERIFIED 2026-10-19 on PyPI: langchain-google-genai 4.4.2,
+# google-genai 2.31.0.
+gemini = [
+    "langchain-google-genai>=4.4.2,<5",
+    "google-genai>=2.25.0,<3",
 ]
 # Self-hosted agent service (Module 12): mastery.service.app (FastAPI, native SSE), uvicorn, settings.
 # VERIFIED 2026-10-16 on PyPI: fastapi 0.143.3, uvicorn 0.54.0, pydantic-settings 2.16.0.
@@ -161,6 +177,10 @@ dev = [
     "mastery[notebooks]",
     # Module 10: openevals, agentevals and OpenTelemetry, so every eval and tracing test runs offline.
     "mastery[evals]",
+    # Module 11: deepagents, so every deep-agent test runs offline (fake models, local sandboxes).
+    "mastery[deep]",
+    # Modules 11 and 13: Gemini (langchain-google-genai, google-genai); used only when you call it with a key.
+    "mastery[gemini]",
     # Module 12: FastAPI service, uvicorn and settings, so every service test runs offline.
     "mastery[service]",
     # Module 14: langchain-ollama and huggingface-hub (mastery.local tests run offline with fakes).

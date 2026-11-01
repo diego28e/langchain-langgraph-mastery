@@ -4,7 +4,10 @@ This checks our wiring against BaseSandbox (its file tools are shell/python scri
 """
 from __future__ import annotations
 
+import os
 import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
@@ -15,6 +18,15 @@ from mastery.deep.sandbox import DockerSandbox, docker_available  # noqa: E402
 
 def fake_runner(tmp_path):
     seen: list[list[str]] = []
+    # BaseSandbox's file tools run `python3 -c ...` inside the container. The fake container's shell gets a
+    # `python3` that is this interpreter: Windows has no python3 (only the Microsoft Store stub), and the
+    # host's python3 elsewhere may not be the one with the test's packages.
+    bin_dir = tmp_path / ".bin"
+    bin_dir.mkdir()
+    shim = bin_dir / "python3"
+    shim.write_text(f'#!/bin/sh\nexec "{Path(sys.executable).as_posix()}" "$@"\n', encoding="utf-8", newline="\n")
+    shim.chmod(0o755)
+    env = {**os.environ, "PATH": f"{bin_dir}{os.pathsep}{os.environ.get('PATH', '')}"}
 
     def run(args, **kw):
         seen.append(list(args))
@@ -28,7 +40,7 @@ def fake_runner(tmp_path):
             rest = rest[1:]
         cmd = rest[1:]                                  # drop the container name
         kw.pop("timeout", None)
-        return subprocess.run(cmd, cwd=tmp_path, timeout=30, **kw)
+        return subprocess.run(cmd, cwd=tmp_path, timeout=30, env=env, **kw)
 
     return run, seen
 

@@ -45,7 +45,7 @@ jobs:
           python-version: "3.12"          # the image's Python
           cache: pip
       - name: Install (same lock as the image)
-        run: python -m pip install -c constraints/constraints-2026-10-16.txt -e ".[dev,service]" "ruff==0.17.1"
+        run: python -m pip install -c constraints/constraints-2026-10-19.txt -e ".[dev,service]" "ruff==0.17.1"
       - name: Lint (syntax errors and pyflakes; the course's minimal gate)
         run: ruff check --select E9,F src/mastery/service apps/m12_service tests/unit/test_service_*.py
       - name: Service tests (auth, tenant isolation, runs, store, operations)

@@ -1,5 +1,7 @@
 # CI: unit tests on Linux and Windows, then every notebook run headless with no API keys.
 # Nothing here needs secrets: the course is offline-first (fake models, local stand-ins).
+# Both install the tested lock (constraints/), so a new upstream release can't turn pull requests red;
+# the "latest releases" job installs without it (what a learner's fresh install gets) and warns, never blocks.
 name: CI
 
 on:
@@ -14,6 +16,9 @@ permissions:
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  LOCK: constraints/constraints-2026-10-19.txt
 
 jobs:
   unit:
@@ -30,9 +35,36 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-      - name: Install the course stack
-        run: python -m pip install -e ".[dev]"
+      - name: Install the course stack (the tested versions)
+        run: python -m pip install -e ".[dev]" -c ${{ env.LOCK }}
       - name: Unit tests (offline; includes notebook hygiene, structure, Markdown and link checks)
+        run: python -m pytest -q
+
+  latest:
+    name: Unit tests with today's releases (early warning)
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Install the course stack without the lock (newest versions inside pyproject.toml's ranges)
+        run: python -m pip install -e ".[dev]"
+      - name: Versions that differ from the lock
+        run: |
+          python - <<'EOF'
+          import importlib.metadata as md, os, re
+          norm = lambda name: re.sub(r"[-_.]+", "-", name).lower()
+          pins = re.findall(r"(?m)^([A-Za-z0-9][\w.\-]*)==(\S+)$", open(os.environ["LOCK"], encoding="utf-8").read())
+          lock = {norm(name): version for name, version in pins}
+          today = {}
+          for d in md.distributions():                 # the first one found is the one Python imports
+              today.setdefault(norm(d.metadata["Name"]), d.version)
+          print("\n".join(f"{n}: {lock[n]} -> {v}" for n, v in sorted(today.items()) if lock.get(n, v) != v) or "none")
+          EOF
+      - name: Unit tests
         run: python -m pytest -q
 
   notebooks:
@@ -46,7 +78,7 @@ jobs:
         with:
           python-version: "3.13"
           cache: pip
-      - name: Install the course stack and the notebook runner
-        run: python -m pip install -e ".[ci]"
+      - name: Install the course stack and the notebook runner (the tested versions)
+        run: python -m pip install -e ".[ci]" -c ${{ env.LOCK }}
       - name: Restart & Run All, every notebook, headless
         run: python -m pytest -m notebooks -q
