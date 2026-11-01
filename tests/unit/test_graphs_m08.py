@@ -16,6 +16,7 @@ from langgraph.types import Command
 from typing_extensions import TypedDict
 
 from mastery.graphs.hitl import (
+    ApprovalFields,
     adrive,
     approval_node,
     drive,
@@ -47,11 +48,10 @@ REPO = Path(__file__).resolve().parents[2]
 QUESTION = "How do I keep the battery healthy in winter?"
 
 
-class Doc(TypedDict, total=False):
+class Doc(ApprovalFields, total=False):
     draft: str
     feedback: str
     rejections: int
-    approval: str
     final: str
 
 
@@ -61,7 +61,8 @@ def _doc_graph(checkpointer=None, **kw):
 
     b = StateGraph(Doc)
     b.add_node("write", write)
-    b.add_node("approval", approval_node(approved="publish", rejected="write", **kw), destinations=("publish", "write", END))
+    b.add_node("approval", approval_node(approved="publish", rejected="write", **kw),
+               destinations=("publish", "write", END, "approval"))
     b.add_node("publish", lambda s: {"final": s["draft"].upper()})
     b.add_edge(START, "write")
     b.add_edge("write", "approval")
@@ -93,14 +94,62 @@ def test_approval_node_approve_edit_reject_and_give_up() -> None:
     assert out["values"]["approval"] == "gave_up" and out["values"]["rejections"] == 2 and "final" not in out["values"]
 
 
-def test_invalid_answer_reasks_in_the_same_node() -> None:
+def test_invalid_answer_asks_again_with_the_error() -> None:
     g = _doc_graph()
     cfg = {"configurable": {"thread_id": "c"}}
     run_until_pause(g, {}, cfg, printer=None)
     r = resume(g, cfg, {"action": "reject"}, printer=None)          # missing feedback
     payload = r["interrupts"][0].value
     assert payload["attempt"] == 2 and "feedback" in payload["error"]
-    assert resume(g, cfg, "approve", printer=None)["values"]["final"] == "DRAFT V1"
+    assert r["values"]["approval"] == "invalid" and g.get_state(cfg).next == ("approval",)
+    done = resume(g, cfg, "approve", printer=None)["values"]
+    assert done["final"] == "DRAFT V1" and done["approval_attempt"] == 0 and done["approval_error"] == ""
+
+
+def test_each_resume_parses_one_answer(monkeypatch) -> None:
+    """Re-asking goes through the graph, so no resume replays earlier answers (Interrupts docs)."""
+    import mastery.graphs.hitl as hitl
+
+    seen = []
+    real = hitl.parse_decision
+    monkeypatch.setattr(hitl, "parse_decision", lambda value: seen.append(value) or real(value))
+    g = _doc_graph(max_invalid=5)
+    cfg = {"configurable": {"thread_id": "once"}}
+    run_until_pause(g, {}, cfg, printer=None)
+    for bad in ("ship it", {"action": "reject"}, 42):
+        assert resume(g, cfg, bad, printer=None)["interrupts"]
+    assert resume(g, cfg, "approve", printer=None)["done"]
+    assert seen == ["ship it", {"action": "reject"}, 42, "approve"]      # a loop inside the node would repeat them
+
+
+def test_too_many_invalid_answers_count_as_a_rejection() -> None:
+    g = _doc_graph(max_invalid=2)
+    cfg = {"configurable": {"thread_id": "inv"}}
+    run_until_pause(g, {}, cfg, printer=None)
+    resume(g, cfg, "ship it", printer=None)
+    again = resume(g, cfg, "ship it", printer=None)                # 2nd invalid answer → rejected, back to write
+    assert again["values"]["rejections"] == 1 and "no valid decision" in again["values"]["feedback"]
+    assert again["interrupts"][0].value["attempt"] == 1 and "error" not in again["interrupts"][0].value
+
+
+def test_a_state_without_the_approval_fields_fails_loudly() -> None:
+    class Bare(TypedDict, total=False):            # no approval_error / approval_attempt: LangGraph drops them
+        draft: str
+        approval: str
+        final: str
+
+    b = StateGraph(Bare)
+    b.add_node("write", lambda state: {"draft": "d"})
+    b.add_node("approval", approval_node(approved="publish", rejected="write"), destinations=("publish", "write", "approval"))
+    b.add_node("publish", lambda state: {"final": state["draft"]})
+    b.add_edge(START, "write")
+    b.add_edge("write", "approval")
+    b.add_edge("publish", END)
+    g = b.compile(checkpointer=memory_checkpointer())
+    cfg = {"configurable": {"thread_id": "bare"}}
+    run_until_pause(g, {}, cfg, printer=None)
+    with pytest.raises(ValueError, match="ApprovalFields"):
+        resume(g, cfg, "ship it", printer=None)
 
 
 def test_sqlite_checkpointer_survives_a_new_saver_and_prunes(tmp_path) -> None:
@@ -216,8 +265,9 @@ def test_search_web_timeout_is_handled() -> None:
 
 def test_killed_run_resumes_from_sqlite(tmp_path) -> None:
     db = tmp_path / "kill.sqlite"
-    proc = subprocess.Popen([sys.executable, "-u", "-m", "mastery.graphs.research", "--db", str(db), "--thread", "k",
-                             "--question", QUESTION, "--slow", "5"], cwd=REPO, stdout=subprocess.PIPE, text=True)
+    proc = subprocess.Popen([sys.executable, "-X", "utf8", "-u", "-m", "mastery.graphs.research", "--db", str(db), "--thread", "k",
+                             "--question", QUESTION, "--slow", "5"], cwd=REPO, stdout=subprocess.PIPE, text=True,
+                            encoding="utf-8")
     for line in proc.stdout:
         if "searching docs" in line:
             proc.kill()
@@ -246,7 +296,8 @@ def test_m08_app_config_and_import() -> None:
     assert json.loads((app / "langgraph.json").read_text(encoding="utf-8"))["graphs"] == {"research_agent": "./agent.py:graph"}
     code = ("import os, runpy; os.environ['MASTERY_OFFLINE']='1'; g = runpy.run_path('agent.py')['graph']; "
             "print(sorted(n for n in g.get_graph().nodes if not n.startswith('__')))")
-    out = subprocess.run([sys.executable, "-c", code], cwd=app, capture_output=True, text=True, timeout=120, check=True)
+    out = subprocess.run([sys.executable, "-X", "utf8", "-c", code], cwd=app, capture_output=True, text=True,
+                         encoding="utf-8", timeout=120, check=True)
     assert "['approval', 'clarify_question', 'draft', 'finalize', 'plan', 'research']" in out.stdout
 
 

@@ -2,22 +2,24 @@
 
 - :func:`approval_node` builds a node that pauses with ``interrupt()`` and routes on the
   human's decision: approve, edit (replace the draft), or reject with feedback.
-- :func:`parse_decision` validates what the human sent back; invalid answers re-ask
-  inside the same node (the documented validation-loop pattern), never crash.
+- :func:`parse_decision` validates what the human sent back. An invalid answer never crashes:
+  the node goes back to itself with the error in state and pauses again (the docs' pattern for
+  validating human input), so each run of the node calls ``interrupt()`` exactly once.
 - :func:`run_until_pause`, :func:`resume` and :func:`drive` run a graph up to its next
   interrupt, resume it with ``Command(resume=...)``, or answer every pause with a
   reviewer function (scripted humans for tests and keyless notebooks).
 
 Rules the node follows (from the Interrupts docs): no ``try/except`` around
-``interrupt()``, the same interrupt order on every run, and no side effects before
-the interrupt (the node re-runs from the top when it is resumed).
-Verified 2026-10-12 with langgraph 1.2.14.
+``interrupt()``, one ``interrupt()`` per run (re-asking loops through the graph, not inside
+the node, so a resume never replays earlier answers), and no side effects before the
+interrupt (the node re-runs from the top when it is resumed).
+Verified 2026-10-19 with langgraph 1.2.15 (docs: Interrupts → Validating human input).
 """
 
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable
-from typing import Any, Literal
+from typing import Any, Literal, TypedDict
 
 from langgraph.graph import END
 from langgraph.types import Command, interrupt
@@ -25,6 +27,7 @@ from pydantic import BaseModel, ValidationError, model_validator
 
 __all__ = [
     "ACTIONS",
+    "ApprovalFields",
     "Decision",
     "adrive",
     "approval_node",
@@ -40,6 +43,16 @@ __all__ = [
 ]
 
 ACTIONS = ("approve", "edit", "reject")
+
+
+class ApprovalFields(TypedDict, total=False):
+    """The state keys :func:`approval_node` reads and writes. Inherit them in your graph's state:
+    ``class Post(ApprovalFields, total=False): ...`` (LangGraph silently drops keys a state doesn't declare).
+    """
+
+    approval: str            # approved · edited · rejected · gave_up · invalid (asking again)
+    approval_error: str      # why the last answer was invalid, shown in the next pause ("" once it is valid)
+    approval_attempt: int    # invalid answers so far in this review round
 
 
 class Decision(BaseModel):
@@ -65,7 +78,7 @@ def parse_decision(value: Any) -> Decision:
     if isinstance(value, str):
         value = {"action": value.strip().lower()}
     if not isinstance(value, dict):
-        raise ValueError(f"expected a dict like {{'action': 'approve'}}, got {type(value).__name__}")  # noqa: TRY004 - the approval loop catches ValueError
+        raise ValueError(f"expected a dict like {{'action': 'approve'}}, got {type(value).__name__}")  # noqa: TRY004 - the approval node catches ValueError
     try:
         return Decision.model_validate(value)
     except ValidationError as exc:
@@ -86,37 +99,45 @@ def approval_request(draft: str, *, question: str = "Approve this draft?", error
 def approval_node(*, draft_key: str = "draft", approved: str = "finalize", rejected: str = "draft",
                   feedback_key: str = "feedback", count_key: str = "rejections",
                   max_rejections: int | None = 3, give_up: str = END, max_invalid: int = 3,
-                  question: str = "Approve this draft?") -> Callable[[dict], Command]:
-    """Build an approval node. Register it with ``destinations=(approved, rejected, give_up)``.
+                  question: str = "Approve this draft?", name: str = "approval") -> Callable[[dict], Command]:
+    """Build an approval node. Register it as ``name`` with ``destinations=(approved, rejected, give_up, name)``.
 
     approve → ``approved`` · edit → ``approved`` with ``state[draft_key] = text`` ·
     reject → ``rejected`` with ``state[feedback_key] = feedback`` and ``state[count_key] += 1``;
     after ``max_rejections`` rejections → ``give_up``. Sets ``state["approval"]``.
-    An invalid answer re-asks (up to ``max_invalid`` times, then counts as a rejection).
+
+    An invalid answer goes back to this node (``name``) with the error in ``state["approval_error"]``,
+    and the next pause shows it; after ``max_invalid`` invalid answers it counts as a rejection. Each run
+    calls ``interrupt()`` once (Interrupts docs, "Validating human input"), so resuming never replays
+    earlier answers. The state needs the :class:`ApprovalFields` keys.
     """
 
     def approval(state: dict) -> Command:
-        error, decision = None, None
-        for attempt in range(1, max_invalid + 1):
-            answer = interrupt(approval_request(state.get(draft_key, ""), question=question,
-                                                error=error, attempt=attempt))
-            try:
-                decision = parse_decision(answer)
-                break
-            except ValueError as exc:        # validating the *answer*; interrupt() itself is outside any try
-                error = str(exc)
-        if decision is None:
-            decision = Decision(action="reject", feedback=f"no valid decision after {max_invalid} tries ({error})")
+        if state.get("approval") == "invalid" and "approval_attempt" not in state:
+            raise ValueError("approval_node: the graph state has no 'approval_attempt' / 'approval_error' keys, so "
+                             "an invalid answer can't be asked again. Add them: inherit "
+                             "mastery.graphs.hitl.ApprovalFields in your state class.")
+        attempt = int(state.get("approval_attempt") or 0) + 1
+        answer = interrupt(approval_request(state.get(draft_key, ""), question=question,
+                                            error=state.get("approval_error") or None, attempt=attempt))
+        try:
+            decision = parse_decision(answer)
+        except ValueError as exc:            # validating the *answer*; interrupt() itself is outside any try
+            if attempt < max_invalid:        # ask again: back to this node, which pauses with the error
+                return Command(goto=name, update={"approval": "invalid", "approval_error": str(exc),
+                                                  "approval_attempt": attempt})
+            decision = Decision(action="reject", feedback=f"no valid decision after {max_invalid} tries ({exc})")
+        fresh = {"approval_error": "", "approval_attempt": 0}      # the next review round starts clean
         if decision.action == "approve":
-            return Command(goto=approved, update={"approval": "approved"})
+            return Command(goto=approved, update={"approval": "approved", **fresh})
         if decision.action == "edit":
-            return Command(goto=approved, update={draft_key: decision.text, "approval": "edited"})
+            return Command(goto=approved, update={draft_key: decision.text, "approval": "edited", **fresh})
         count = int(state.get(count_key, 0) or 0) + 1
         target = give_up if max_rejections is not None and count >= max_rejections else rejected
-        return Command(goto=target, update={feedback_key: decision.feedback, count_key: count,
+        return Command(goto=target, update={feedback_key: decision.feedback, count_key: count, **fresh,
                                             "approval": "rejected" if target == rejected else "gave_up"})
 
-    approval.__name__ = "approval"
+    approval.__name__ = name
     return approval
 
 

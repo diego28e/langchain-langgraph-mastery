@@ -73,8 +73,11 @@ __all__ = [
     "make_skills",
     "make_specialists",
     "make_support_tools",
+    "manager_review",
     "offline_model",
     "parse_refund",
+    "review_answer",
+    "review_request",
     "run_conversation",
     "score",
     "signed_in_customer",
@@ -222,35 +225,55 @@ def parse_amount(text: Any) -> float | None:
     return float(match.group(1).replace(",", "")) if match else None
 
 
-def manager_review(payload: dict[str, Any], *, max_amount: float, max_invalid: int = 3) -> tuple[str, float | None, str]:
-    """Ask a billing manager (``interrupt``) and validate the ANSWER before anything can raise.
+def review_answer(answer: Any, *, max_amount: float) -> tuple[str, float | None, str]:
+    """Validate a billing manager's answer: ``(action, amount, feedback)``, or ``ValueError`` with the text to show.
 
     An edit is a new amount, so it gets the same rule as the agent's request: ``0 < amount <= max_amount``.
-    An invalid answer ("yes", "$abc", "1990" on a $199 invoice) re-asks with a NEW interrupt that
-    carries an ``error``, instead of crashing the run (a crash would store the bad answer and replay
-    it on every resume: a poisoned thread, Lesson 08.03). ``interrupt()`` is never inside a ``try``.
-
-    Returns:
-        ``(action, amount, feedback)``: ``("approve", None, "")``, ``("edit", 150.0, "")`` or
-        ``("reject", None, feedback)``. After ``max_invalid`` invalid answers it rejects.
+    Returns ``("approve", None, "")``, ``("edit", 150.0, "")`` or ``("reject", None, feedback)``.
     """
     from mastery.graphs.hitl import parse_decision
 
+    try:
+        decision = parse_decision(answer)
+    except ValueError as exc:
+        raise ValueError(f"Not a valid decision ({exc}). Answer approve, reject, or edit with a new amount.") from None
+    if decision.action != "edit":
+        return decision.action, None, decision.feedback or ""
+    amount = parse_amount(decision.text)
+    if amount is None or not 0 < amount <= max_amount:
+        raise ValueError(f"An edit needs an amount between $0 and ${max_amount:.2f}; got {decision.text!r}.")
+    return "edit", amount, decision.feedback or ""
+
+
+def review_request(payload: dict[str, Any], *, max_amount: float, error: str = "", attempt: int = 1) -> dict[str, Any]:
+    """The pause payload a billing manager sees (with the last answer's ``error`` when asking again)."""
+    return {**payload, "max_amount": max_amount} | ({"error": error, "attempt": attempt} if error else {})
+
+
+def manager_review(payload: dict[str, Any], *, max_amount: float, max_invalid: int = 3) -> tuple[str, float | None, str]:
+    """Ask a billing manager (``interrupt``) from inside a **tool**, and validate the ANSWER before anything can raise.
+
+    An invalid answer ("yes", "$abc", "1990" on a $199 invoice) asks again with a NEW interrupt that
+    carries an ``error``, instead of crashing the run (a crash would store the bad answer and replay
+    it on every resume: a poisoned thread, Lesson 08.03). ``interrupt()`` is never inside a ``try``.
+
+    Why a loop here: a tool has no graph edge to loop back on. The Interrupts docs advise one
+    ``interrupt()`` per node run, looping back through an edge ("Validating human input"), because a
+    loop replays every earlier answer on each resume. This loop is the bounded exception: at most
+    ``max_invalid`` pauses, always in the same order, and nothing with side effects before the decision,
+    so the replay is cheap and safe. In a graph node, use the edge instead (the refund workflow's
+    ``approve`` node, :func:`mastery.graphs.hitl.approval_node`).
+
+    Returns:
+        ``(action, amount, feedback)`` as :func:`review_answer`. After ``max_invalid`` invalid answers it rejects.
+    """
     error = ""
     for attempt in range(1, max_invalid + 1):
-        answer = interrupt({**payload, "max_amount": max_amount} | ({"error": error, "attempt": attempt} if error else {}))
+        answer = interrupt(review_request(payload, max_amount=max_amount, error=error, attempt=attempt))
         try:
-            decision = parse_decision(answer)
-        except ValueError as exc:
-            error = f"Not a valid decision ({exc}). Answer approve, reject, or edit with a new amount."
-            continue
-        if decision.action != "edit":
-            return decision.action, None, decision.feedback or ""
-        amount = parse_amount(decision.text)
-        if amount is None or not 0 < amount <= max_amount:
-            error = f"An edit needs an amount between $0 and ${max_amount:.2f}; got {decision.text!r}."
-            continue
-        return "edit", amount, decision.feedback or ""
+            return review_answer(answer, max_amount=max_amount)
+        except ValueError as exc:          # validating the answer; interrupt() itself is outside any try
+            error = str(exc)
     return "reject", None, f"no valid decision after {max_invalid} tries"
 
 
@@ -647,6 +670,8 @@ class RefundState(MessagesState):
     problem: str
     approved_by: str
     result: str
+    review_error: str      # the manager's last answer was invalid: why (shown in the next pause)
+    review_attempt: int    # invalid answers so far for this request
 
 
 def parse_refund(messages: list) -> dict:
@@ -660,12 +685,14 @@ def parse_refund(messages: list) -> dict:
 
 
 def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = REFUND_THRESHOLD,
-                          checkpointer: Any = None) -> Any:
+                          checkpointer: Any = None, max_invalid: int = 3) -> Any:
     """Pattern C: the refund path as a custom graph (Lesson 09.05, Project 09 stretch).
 
     ``parse`` → ``validate`` → ``approve`` (``interrupt()`` only above ``threshold``) → ``issue``
     → ``reply``. Every step but ``reply`` is plain code: the policy cannot be talked around,
     and the model is used once, to write the customer reply (``writer`` = any chat model).
+    An invalid manager answer loops back to ``approve`` through its conditional edge, so each run
+    of ``approve`` calls ``interrupt()`` once (Interrupts docs, "Validating human input").
     """
     from langgraph.graph import END, START, StateGraph
     from langgraph.runtime import Runtime
@@ -681,7 +708,8 @@ def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = 
                 desk.denials.append({"tool": "refund_workflow", "asked_for": request["customer_id"],
                                      "signed_in": signed_in})
             request = {**request, "customer_id": signed_in}
-        return {"request": request, "problem": problem, "approved_by": "", "result": ""}
+        return {"request": request, "problem": problem, "approved_by": "", "result": "",
+                "review_error": "", "review_attempt": 0}
 
     def validate(state: RefundState) -> dict:
         r = state["request"]
@@ -702,24 +730,32 @@ def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = 
 
     def approve(state: RefundState) -> dict:
         r = state["request"]
-        # Logged here (after any interrupt, so once) whatever the decision: the attempt is what's audited.
+        # Logged here (after the interrupt, so once per decision) whatever it is: the attempt is what's audited.
         if r["amount"] <= threshold:
             desk.log("issue_refund", customer_id=r["customer_id"], invoice_id=r["invoice_id"], amount=r["amount"])
             return {"approved_by": "policy"}
         invoice = next(i for i in desk.customers[r["customer_id"]]["invoices"] if i["id"] == r["invoice_id"])
-        action, edited, feedback = manager_review({
+        attempt = state.get("review_attempt", 0) + 1
+        answer = interrupt(review_request({
             "type": "refund_approval", **{k: r[k] for k in ("customer_id", "invoice_id", "amount", "reason")},
             "threshold": threshold,
             "question": f"Approve a ${r['amount']:.2f} refund (over ${threshold:.0f})? approve / edit (new amount) / reject",
-        }, max_amount=invoice["amount"])
+        }, max_amount=invoice["amount"], error=state.get("review_error", ""), attempt=attempt))
+        try:
+            action, edited, feedback = review_answer(answer, max_amount=invoice["amount"])
+        except ValueError as exc:          # validating the answer; interrupt() itself is outside any try
+            if attempt < max_invalid:      # ask again: after_approve routes back here, which pauses once more
+                return {"review_error": str(exc), "review_attempt": attempt}
+            action, edited, feedback = "reject", None, f"no valid decision after {max_invalid} tries"
         final = edited if action == "edit" else r["amount"]
         desk.log("issue_refund", customer_id=r["customer_id"], invoice_id=r["invoice_id"],
                  amount=final, requested=r["amount"])
+        decided = {"review_error": "", "review_attempt": 0}
         if action == "reject":
-            return {"approved_by": "", "problem": f"not approved by a billing manager ({feedback})"}
+            return {"approved_by": "", "problem": f"not approved by a billing manager ({feedback})", **decided}
         if action == "edit":
-            return {"approved_by": "billing manager", "request": {**r, "amount": edited}}
-        return {"approved_by": "billing manager"}
+            return {"approved_by": "billing manager", "request": {**r, "amount": edited}, **decided}
+        return {"approved_by": "billing manager", **decided}
 
     def issue(state: RefundState) -> dict:
         r = state["request"]
@@ -747,6 +783,8 @@ def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = 
         return "reply" if state["problem"] else "approve"
 
     def after_approve(state: RefundState) -> str:
+        if state.get("review_error"):
+            return "approve"               # the manager's answer was invalid: pause again, with the error
         return "reply" if state["problem"] else "issue"
 
     builder = StateGraph(RefundState, context_schema=SupportContext)
@@ -756,7 +794,7 @@ def build_refund_workflow(desk: SupportDesk, writer: Any, *, threshold: float = 
     builder.add_edge(START, "parse")
     builder.add_edge("parse", "validate")
     builder.add_conditional_edges("validate", after_validate, ["approve", "reply"])
-    builder.add_conditional_edges("approve", after_approve, ["issue", "reply"])
+    builder.add_conditional_edges("approve", after_approve, ["approve", "issue", "reply"])
     builder.add_edge("issue", "reply")
     builder.add_edge("reply", END)
     return builder.compile(checkpointer=checkpointer, name="refund_workflow")

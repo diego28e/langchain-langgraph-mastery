@@ -341,6 +341,19 @@ def test_manager_edit_is_revalidated_workflow_path(desk):
     assert desk.events[-1]["args"]["amount"] == 60.0 and desk.events[-1]["args"]["requested"] == 199.0
 
 
+def test_refund_workflow_asks_again_through_its_edge_then_gives_up(desk):
+    """One interrupt() per run of approve: an invalid answer loops back through after_approve (Interrupts docs)."""
+    from mastery.agents.support import _echo_writer
+
+    app = build_refund_workflow(desk, _echo_writer(), checkpointer=InMemorySaver(), max_invalid=2)
+    config = cfg("wf-giveup")
+    app.invoke({"messages": [HumanMessage("C-1002 refund $199 for INV-2001")]}, config)
+    out = app.invoke(Command(resume="yes"), config)
+    assert out["__interrupt__"][0].value["attempt"] == 2 and app.get_state(config).next == ("approve",)
+    out = app.invoke(Command(resume="ok"), config)
+    assert "no valid decision after 2 tries" in out["messages"][-1].text and desk.refunds == []
+
+
 def test_refund_workflow_policy_in_code(desk):
     from mastery.agents.support import _echo_writer
 

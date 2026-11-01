@@ -35,7 +35,7 @@ from langgraph.runtime import Runtime
 from langgraph.types import RetryPolicy, TimeoutPolicy, interrupt
 from pydantic import BaseModel, Field
 
-from mastery.graphs.hitl import approval_node
+from mastery.graphs.hitl import ApprovalFields, approval_node
 from mastery.graphs.nodes import timed
 
 __all__ = [
@@ -73,7 +73,7 @@ class Plan(BaseModel):
     outline: list[str] = Field(min_length=1, max_length=5, description="Section headings for the answer")
 
 
-class ResearchState(TypedDict, total=False):
+class ResearchState(ApprovalFields, total=False):   # + approval, approval_error, approval_attempt
     question: str
     clarification: str
     plan: dict            # Plan.model_dump(): plain data checkpoints anywhere (no allow-list needed, D-030)
@@ -81,7 +81,6 @@ class ResearchState(TypedDict, total=False):
     draft: str
     feedback: str
     rejections: int
-    approval: str
     final: str
     run_log: Annotated[list[dict], operator.add]
 
@@ -211,7 +210,7 @@ def build_research_graph(models: dict[str, Any], *, web_search: WebSearch, docs_
     builder.add_node("research", research)
     builder.add_node("draft", draft)
     builder.add_node("approval", approval_node(approved="finalize", rejected="draft", max_rejections=max_rejections,
-                                               give_up="finalize"), destinations=("finalize", "draft"))
+                                               give_up="finalize"), destinations=("finalize", "draft", "approval"))
     builder.add_node("finalize", finalize)
     builder.add_edge(START, "clarify_question")
     builder.add_edge("clarify_question", "plan")
