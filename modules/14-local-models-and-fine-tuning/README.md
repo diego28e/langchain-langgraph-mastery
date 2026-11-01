@@ -1,6 +1,6 @@
 # Module 14 — Local Models & Fine-Tuning (elective)
 
-> **Part 2 — Pro (Modules 09–14)** · elective · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 14](../../COURSE_OUTLINE.md#module-14--local-models--fine-tuning-elective)
+> **Part 2 — Pro (Modules 09–15)** · elective · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 14](../../COURSE_OUTLINE.md#module-14--local-models--fine-tuning-elective)
 
 **Goals:** Run models locally for privacy/cost. Know when fine-tuning beats RAG + prompting (rarely) and how to do a small QLoRA experiment responsibly.
 

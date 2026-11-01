@@ -2,6 +2,27 @@
 
 What changed in the course, newest first. After you pull an update ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)), skim the latest entry: it says which lessons changed and whether you need to re-run anything.
 
+## 2026-10-19 · A fresh install works again, Windows fixes, re-asking through the graph, Module 15 evidence
+
+**Re-run after pulling:** reinstall once with `python -m pip install -e ".[dev]"` (it now includes Deep Agents and Gemini, and pins OpenTelemetry; with the lock, add `-c constraints/constraints-2026-10-19.txt`). Re-run Lessons 08.03 and 09.05 and Project 08 if you have them open: the approval node changed.
+
+- **Install:** a fresh `python -m pip install -e ".[dev]"` works again. OpenTelemetry stays on 1.42.x, which `langgraph-api` (Studio) requires; the wider range made pip backtrack for minutes and then fail. `[dev]` now includes `deepagents` (Module 11) and the Gemini packages (Modules 11 and 13), so one install covers every module. The lock is now `constraints/constraints-2026-10-19.txt`.
+- **Windows:** every subprocess call in the lessons and in `mastery` reads its output as UTF-8, so Lesson 10.08's release gate and Lesson 12.06's Docker helper no longer fail on a ✅ or a progress bar. `python -m mastery.evals.release_gate` prints through a pipe on Windows too. The Module 12 service runs on Postgres on Windows: `serve_in_background` uses a selector event loop, and on the command line you add `--loop asyncio:SelectorEventLoop`.
+- **Lesson 08.03 and `approval_node`:** an invalid answer goes back to the node through the graph, one `interrupt()` per run, as the LangGraph docs recommend ("Validating human input"), instead of a loop inside the node that replays every earlier answer. A state that uses it inherits `ApprovalFields`. Lesson 09.05's refund workflow asks again the same way, through its conditional edge.
+- **Module 15:** every lesson has "What just happened?" recaps. Lesson 15.02 shows what miscalibration looks like and what independent tests of `jev-1.13.0` found (dated, with sources); 15.07 adds independently measured latencies.
+- **Projects 02–06:** the TODO comments state the goal, and the code moved into collapsed "Still stuck?" hints, as in Projects 07–15. Project 14 shows progress while a local model answers.
+- **Docs and fixes:** README hours recomputed from the notebooks (Part 2 lists Modules 09–15); a Module 11 labs page (`modules/11-deep-agents/labs/README.md`); `data/README.md` lists every sample file; Lesson 12.07's trace lookup waits for a brand-new LangSmith project; `CONVENTIONS.md` documents the 🧪 and 🖥️ cell markers.
+
+## 2026-10-16 · Part 2 complete: Modules 11–15
+
+**Re-run after pulling:** nothing; these modules are new. Their packages come with `python -m pip install -e ".[dev]"` (see 2026-10-19).
+
+- **Module 11 · Deep Agents:** 12 lessons, from a mini-harness to backends and permissions, subagents, context engineering, skills and memory, human-in-the-loop, sandboxes, streaming, evaluation and dated frontier briefings; three use-case labs; Project 11, a deep research analyst.
+- **Module 12 · Production & Deployment:** readiness and SLOs, resilience and cost, async agents, a FastAPI service with runs and resumable streams, Postgres state and JWT auth, Docker and Compose, observability and incidents, and a public deployment; Project 12.
+- **Module 13 · Multimodal & Voice (elective):** documents and vision, Whisper speech-to-text, text-to-speech, the voice agent sandwich and voice architecture; Project 13, a voice support line.
+- **Module 14 · Local Models & Fine-Tuning (elective):** Ollama, Hugging Face, when to fine-tune, and a QLoRA experiment on Colab; Project 14, a local-first assistant and ticket router.
+- **Module 15 · Decision Models with Jev (optional):** seven lessons and Projects 15A–15B. Without a TypeSafe key it runs on replayed answers.
+
 ## 2026-10-16 · Project 06: chunk-level citations and a 72-question test set
 
 **Re-run after pulling:** Project 06 (starter and solution). If you already started it, compare your Steps 3–6 with the new README; the lessons are unchanged.

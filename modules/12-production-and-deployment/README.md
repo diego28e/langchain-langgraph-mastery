@@ -1,6 +1,6 @@
 # Module 12 — Production & Deployment
 
-> **Part 2 — Pro (Modules 09–14)** · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 12](../../COURSE_OUTLINE.md#module-12--production--deployment)
+> **Part 2 — Pro (Modules 09–15)** · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 12](../../COURSE_OUTLINE.md#module-12--production--deployment)
 
 **Goals:** Ship an agent as a reliable, **self-hosted** service you fully control, and put it on a **public URL**: configuration, resilience, cost control, caching, async, a FastAPI API that runs agents as background jobs (resumable streams, cancellation, a double-texting policy, idempotency keys), Postgres persistence, real auth (API keys, then JWT/OIDC) with per-user quotas, tenant isolation and data deletion, Docker + Docker Compose, OpenTelemetry traces and metrics against written SLOs, an incident runbook, safe releases (versioned prompts and models, canary, rollback), a small UI, and CI/CD. The main path is free: it runs on your machine, then on a free hosting tier. LangSmith's managed deployment (Agent Server / LangSmith Cloud) is an **optional reference** lesson (12.08), so you can compare before you choose.
 

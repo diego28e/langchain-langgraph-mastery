@@ -120,8 +120,8 @@ Every lesson notebook follows the same order, so learners (and video viewers) al
 - **Restart & Run All must pass** before every commit (with only the keys listed in the setup cell).
 - One idea per code cell. Keep cells under ~25 lines. Move longer code to `src/mastery`.
 - No hidden state: don't rely on cells executed out of order or deleted cells.
-- Every cell that costs money or calls a network API starts with a comment: `# 💸 Calls Groq (openai/gpt-oss-20b), ~1k tokens`. Free network calls use `# 🌐`.
-- **Missing keys never crash Restart & Run All.** The setup cell sets a flag (e.g. `HAVE_GROQ_KEY`); each API cell checks it and prints `⏭️ Skipped: <why>` instead of failing. The rest of the notebook still runs.
+- Every cell that costs money or calls a network API starts with a comment: `# 💸 Calls Groq (openai/gpt-oss-20b), ~1k tokens`. Free network calls use `# 🌐`, cells that run a local model (Ollama, Module 14) use `# 🖥️`, and cells that need nothing (fake models, local stand-ins) use `# 🧪 Offline`.
+- **Missing keys never crash Restart & Run All.** The setup cell sets a flag (e.g. `HAVE_GROQ_KEY`, or `HAVE_OLLAMA` for a running local model server); each API cell checks it and prints `⏭️ Skipped: <why>` instead of failing. The rest of the notebook still runs.
 - Long-running cells print progress. Expensive results are cached to `data/outputs/`.
 - Notebooks set `LANGSMITH_PROJECT` to `mNN-<slug>` in the setup cell when tracing is on.
 - Every shortcut gets a **⚠️ Production note** callout right where it is used (see §9).

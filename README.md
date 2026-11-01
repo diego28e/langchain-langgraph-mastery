@@ -26,7 +26,7 @@ You will learn to:
 - **test, evaluate, and trace** with pytest and LangSmith;
 - build long-running agents with **Deep Agents** (a full module): planning, virtual filesystems and backends, subagents, context engineering, skills and memory, sandboxed code execution, and trajectory evals;
 - **deploy a self-hosted service** with FastAPI and Docker;
-- optionally, add **voice and multimodal** input/output with Groq Whisper and Orpheus, or run **local models** and fine-tune them (two electives);
+- optionally, add **voice and multimodal** input/output with Groq Whisper and Orpheus, run **local models** and fine-tune them, or make fast, cheap judgments with a **decision model** (Jev) (three optional modules);
 - use **Jupyter** like a professional, not just as a scratchpad.
 
 Every shortcut the course takes (free tiers, preview models, local storage) comes with a **⚠️ Production note** that explains what to do in a real system ([all production notes](docs/production-notes.md)).
@@ -35,10 +35,10 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 
 | Part | Modules | What you can do at the end | Est. time |
 |---|---|---|---|
-| **Part 1 — Core** | 00–08 | Design, build, and debug agents, RAG systems, and LangGraph workflows with memory, guardrails, MCP tools, and human approval | about 150–195 h (lessons ~107–136 h + projects ~41–58 h) |
-| **Part 2 — Pro** | 09–14 | Build multi-agent systems, prove quality with evals, build long-running **deep agents**, and run agents as a self-hosted production service (plus two optional electives: voice/multimodal, and local models/fine-tuning) | about 125–160 h for the core (09–12) + 31–41 h for the electives (13–14) + 25–40 h per capstone |
+| **Part 1 — Core** | 00–08 | Design, build, and debug agents, RAG systems, and LangGraph workflows with memory, guardrails, MCP tools, and human approval | about 150–196 h (lessons ~107–137 h + projects ~42–60 h) |
+| **Part 2 — Pro** | 09–15 | Build multi-agent systems, prove quality with evals, build long-running **deep agents**, and run agents as a self-hosted production service (plus three optional modules: voice/multimodal, local models/fine-tuning, and decision models with Jev) | about 100–135 h for the core (09–12: lessons ~68–92 h + projects ~24–34 h + one Module 11 lab ~5–8 h) + 52–68 h for all three optional modules (13: ~14–19 h, 14: ~14–20 h, 15: ~24–30 h) + 25–40 h per capstone |
 
-**Plan your time.** The hours come from each notebook's own estimate. Part 1 at 6 h/week takes about 25–32 weeks; at 8 h/week, 19–24 weeks; at 10 h/week, 15–20 weeks. Experienced developers move faster through Module 00.
+**Plan your time.** The hours come from each notebook's own estimate. Part 1 at 6 h/week takes about 25–32 weeks; at 8 h/week, 19–24 weeks; at 10 h/week, 15–20 weeks. The core of Part 2 (09–12) adds about 13–17 weeks at 8 h/week. Experienced developers move faster through Module 00.
 
 ## Who it's for
 
@@ -57,7 +57,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 
 0. **Get the repo the right way:** clone it, keep `main` untouched, and do your work in a git-ignored `workspace/` folder, so course updates never collide with your notebooks ([setup/LEARNER_WORKFLOW.md](setup/LEARNER_WORKFLOW.md)).
 1. **Verify your environment** with [setup/VERIFY_ENVIRONMENT.md](setup/VERIFY_ENVIRONMENT.md) (nothing gets installed; you only check what you have), then **create the course environment** with the [Lesson 00.02 guide](modules/00-foundations/00-02-create-course-env.md). New to environments? Read [Python environments, compared](setup/PYTHON_ENVIRONMENTS_COMPARED.md) (pip, venv, conda, uv, Poetry, and more, in plain English).
-   *No local install?* Open the repo in GitHub Codespaces or a VS Code Dev Container: `.devcontainer/` installs the same stack, pinned to the tested versions in `constraints/`. Local installs can opt into the same pins with `-c constraints/constraints-2026-10-16.txt`.
+   *No local install?* Open the repo in GitHub Codespaces or a VS Code Dev Container: `.devcontainer/` installs the same stack, pinned to the tested versions in `constraints/`. Local installs can opt into the same pins with `-c constraints/constraints-2026-10-19.txt`.
 2. Copy `.env.example` to `.env` and add the keys you need for the current module (Module 00 only needs `GROQ_API_KEY`).
 3. Read the [Course Outline](COURSE_OUTLINE.md). It lists every lesson, notebook, reading list, and project spec.
 4. Work through `modules/` in order. Each module folder has a README listing its lessons.
@@ -80,7 +80,7 @@ Every shortcut the course takes (free tiers, preview models, local storage) come
 | 07 | [LangGraph Fundamentals](modules/07-langgraph-fundamentals/) | ✅ Built |
 | 08 | [LangGraph Production Features](modules/08-langgraph-production-features/) | ✅ Built |
 
-**Part 1 is complete.** Its wrap-up (what you can now build, and what to check before moving on) is in the [Module 08 README](modules/08-langgraph-production-features/README.md#part-1-complete). Part 2 starts with [Module 09 — Multi-Agent Systems](modules/09-multi-agent-systems/README.md) (✅ built; see the [outline](COURSE_OUTLINE.md#part-2--pro-modules-0914) for the rest of Part 2).
+**Part 1 is complete.** Its wrap-up (what you can now build, and what to check before moving on) is in the [Module 08 README](modules/08-langgraph-production-features/README.md#part-1-complete). Part 2 starts with [Module 09 — Multi-Agent Systems](modules/09-multi-agent-systems/README.md) (✅ built; see the [outline](COURSE_OUTLINE.md#part-2--pro-modules-0915) for the rest of Part 2).
 
 ### Part 2 — Pro
 

@@ -1,6 +1,6 @@
 # Module 10 — Testing, Evaluation & Observability
 
-> **Part 2 — Pro (Modules 09–14)** · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 10](../../COURSE_OUTLINE.md#module-10--testing-evaluation--observability)
+> **Part 2 — Pro (Modules 09–15)** · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 10](../../COURSE_OUTLINE.md#module-10--testing-evaluation--observability)
 
 **Goals:** Make quality measurable, starting from how *your* system actually fails rather than from generic metrics. Read traces and build a failure taxonomy; instrument with LangSmith and OpenTelemetry; build versioned datasets from traces, failure categories, and reviewed synthetic data, with a held-out split; write code evaluators and binary LLM judges that you have checked against your own labels; report every result with a confidence interval over repeated runs; evaluate agent trajectories and reliability (pass^k); monitor production with online evaluators and feedback; and gate CI on evals with thresholds and cost budgets.
 

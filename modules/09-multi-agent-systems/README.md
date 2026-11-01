@@ -1,6 +1,6 @@
 # Module 09 — Multi-Agent Systems
 
-> **Part 2 — Pro (Modules 09–14)** · the first module of Part 2 · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 09](../../COURSE_OUTLINE.md#module-09--multi-agent-systems)
+> **Part 2 — Pro (Modules 09–15)** · the first module of Part 2 · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 09](../../COURSE_OUTLINE.md#module-09--multi-agent-systems)
 
 **Goals:** Know the current multi-agent patterns (subagents, handoffs, skills, router, custom workflow), what each one costs in model calls, tokens, and control, and how to pick one from requirements. Build the same system two ways and measure the difference. This module uses plain `create_agent` and LangGraph; Module 10 turns your measurements into a real evaluation workflow, and Module 11 shows what a full agent harness (Deep Agents) adds on top.
 
@@ -8,7 +8,7 @@
 
 ## Welcome to Part 2 — Pro
 
-Part 1 taught you to build agents, RAG systems and production-grade LangGraph workflows. **Part 2 makes them coordinated, measured, long-running and deployed**: multi-agent systems (this module), testing and evaluation (10), Deep Agents (11), a self-hosted production service (12) and two electives: multimodal and voice (13), local models and fine-tuning (14). See the [Part 2 overview](../../COURSE_OUTLINE.md#part-2--pro-modules-0914).
+Part 1 taught you to build agents, RAG systems and production-grade LangGraph workflows. **Part 2 makes them coordinated, measured, long-running and deployed**: multi-agent systems (this module), testing and evaluation (10), Deep Agents (11), a self-hosted production service (12) and two electives: multimodal and voice (13), local models and fine-tuning (14). See the [Part 2 overview](../../COURSE_OUTLINE.md#part-2--pro-modules-0915).
 
 What changes in Part 2:
 

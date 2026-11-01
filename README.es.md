@@ -28,7 +28,7 @@ Vas a aprender a:
 - **probar, evaluar y trazar** con pytest y LangSmith;
 - construir agentes de larga duración con **Deep Agents** (un módulo completo): planificación, sistemas de archivos virtuales y *backends*, subagentes, ingeniería de contexto, *skills* y memoria, ejecución de código en *sandboxes* y evaluaciones de trayectoria;
 - **desplegar un servicio propio** con FastAPI y Docker;
-- de forma opcional, agregar **voz y entrada/salida multimodal** con Whisper y Orpheus de Groq, o usar **modelos locales** y hacerles *fine-tuning* (dos electivos);
+- de forma opcional, agregar **voz y entrada/salida multimodal** con Whisper y Orpheus de Groq, usar **modelos locales** y hacerles *fine-tuning*, o tomar decisiones rápidas y baratas con un **modelo de decisión** (Jev) (tres módulos opcionales);
 - usar **Jupyter** como profesional, no solo como borrador.
 
 Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenamiento local) viene con una **⚠️ Nota de producción** que explica qué hacer en un sistema real ([todas las notas de producción](docs/production-notes.md)).
@@ -37,10 +37,10 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 
 | Parte | Módulos | Qué vas a poder hacer al final | Tiempo estimado |
 |---|---|---|---|
-| **Parte 1 — Core** | 00–08 | Diseñar, construir y depurar agentes, sistemas RAG y flujos de LangGraph con memoria, guardrails, herramientas MCP y aprobación humana | unas 150–195 h (lecciones ~107–136 h + proyectos ~41–58 h) |
-| **Parte 2 — Pro** | 09–14 | Construir sistemas multiagente, demostrar su calidad con evaluaciones, construir **deep agents** de larga duración y operar agentes como un servicio propio en producción (más dos electivos opcionales: voz/multimodal, y modelos locales/*fine-tuning*) | unas 125–160 h para el núcleo (09–12) + 31–41 h para los electivos (13–14) + 25–40 h por proyecto final |
+| **Parte 1 — Core** | 00–08 | Diseñar, construir y depurar agentes, sistemas RAG y flujos de LangGraph con memoria, guardrails, herramientas MCP y aprobación humana | unas 150–196 h (lecciones ~107–137 h + proyectos ~42–60 h) |
+| **Parte 2 — Pro** | 09–15 | Construir sistemas multiagente, demostrar su calidad con evaluaciones, construir **deep agents** de larga duración y operar agentes como un servicio propio en producción (más tres módulos opcionales: voz/multimodal, modelos locales/*fine-tuning* y modelos de decisión con Jev) | unas 100–135 h para el núcleo (09–12: lecciones ~68–92 h + proyectos ~24–34 h + un laboratorio del Módulo 11 ~5–8 h) + 52–68 h para los tres módulos opcionales (13: ~14–19 h, 14: ~14–20 h, 15: ~24–30 h) + 25–40 h por proyecto final |
 
-**Planifica tu tiempo.** Las horas salen de la estimación de cada notebook. La Parte 1 a 6 h/semana toma unas 25–32 semanas; a 8 h/semana, 19–24 semanas; a 10 h/semana, 15–20 semanas. Si ya tienes experiencia, avanzarás más rápido por el Módulo 00.
+**Planifica tu tiempo.** Las horas salen de la estimación de cada notebook. La Parte 1 a 6 h/semana toma unas 25–32 semanas; a 8 h/semana, 19–24 semanas; a 10 h/semana, 15–20 semanas. El núcleo de la Parte 2 (09–12) suma unas 13–17 semanas a 8 h/semana. Si ya tienes experiencia, avanzarás más rápido por el Módulo 00.
 
 ## ¿Para quién es?
 
@@ -81,7 +81,7 @@ Cada atajo que toma el curso (planes gratuitos, modelos en *preview*, almacenami
 | 07 | [Fundamentos de LangGraph](modules/07-langgraph-fundamentals/) | ✅ Construido |
 | 08 | [LangGraph para producción](modules/08-langgraph-production-features/) | ✅ Construido |
 
-**La Parte 1 está completa.** Su cierre (qué puedes construir ahora y qué revisar antes de seguir) está en el [README del Módulo 08](modules/08-langgraph-production-features/README.md#part-1-complete) (en inglés). La Parte 2 empieza con el [Módulo 09 — Sistemas multiagente](modules/09-multi-agent-systems/README.md) (✅ construido; el resto de la Parte 2 está en el [temario](COURSE_OUTLINE.md#part-2--pro-modules-0914)).
+**La Parte 1 está completa.** Su cierre (qué puedes construir ahora y qué revisar antes de seguir) está en el [README del Módulo 08](modules/08-langgraph-production-features/README.md#part-1-complete) (en inglés). La Parte 2 empieza con el [Módulo 09 — Sistemas multiagente](modules/09-multi-agent-systems/README.md) (✅ construido; el resto de la Parte 2 está en el [temario](COURSE_OUTLINE.md#part-2--pro-modules-0915)).
 
 ### Parte 2 — Pro
 

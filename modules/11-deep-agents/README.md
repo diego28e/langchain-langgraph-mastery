@@ -1,6 +1,6 @@
 # Module 11 — Deep Agents
 
-> **Part 2 — Pro (Modules 09–14)** · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 11](../../COURSE_OUTLINE.md#module-11--deep-agents)
+> **Part 2 — Pro (Modules 09–15)** · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 11](../../COURSE_OUTLINE.md#module-11--deep-agents)
 
 **Goals:** Master **Deep Agents**, LangChain's open-source "batteries-included" agent harness for long-running, multi-step work. You first build a small harness yourself, so the abstraction is never magic. By the end you can design, build, secure, evaluate, and ship deep agents that plan, use a virtual filesystem with pluggable backends, delegate to subagents, manage their own context over long runs, load skills and long-term memory, pause for human approval, execute code safely in sandboxes, and stream progress to a UI. You also learn when **not** to use a harness.
 
@@ -66,11 +66,13 @@ Lessons 11.01–11.11 are the core. Lesson 11.12 holds six short, independent br
 
 ## Use-case labs
 
-- **Lab 11A — Repo Cartographer (codebase analysis & refactor planning)** (After Lesson 11.05). understanding an unfamiliar codebase and planning a safe refactor takes a senior engineer days. *Stack:* Free: Gemini free tier (`google_genai:gemini-3.6-flash`, default; analyze a **public** repo or your own course code only). Option: Groq (`gpt-oss-120b` orchestrator, `gpt-oss-20b` subagents). Paid: OpenAI benchmark for the orchestrator.
-- **Lab 11B — Sandboxed Data Analyst** (After Lesson 11.09). turning a raw CSV into a trustworthy analysis report with charts, without running model-written code on your machine. *Stack:* Free: Gemini free tier (default, public dataset only) + Docker Desktop. Option: Groq. Paid (optional): a managed sandbox provider, OpenAI benchmark.
-- **Lab 11C — Policy & Contract Review Desk (HITL compliance review)** (After Lesson 11.08). reviewing many documents against a compliance checklist is slow, and a wrong "approved" is expensive, so a human must sign off. *Stack:* Free: Gemini free tier (default; **synthetic documents only**, because free-tier prompts may be read by human reviewers). Option: Groq. Paid: OpenAI benchmark as the rubric grader, and a paid tier for any real contracts.
+Choose **1 of 3** (about 5–8 h each). Each is a brief with acceptance criteria, not a tutorial: start at [labs/README.md](labs/README.md) (where your files go, which course helpers to reuse, and a done-checklist). The full briefs are in the [course outline](../../COURSE_OUTLINE.md#lab-11a--repo-cartographer-codebase-analysis--refactor-planning).
 
-Lab files go in `labs/`.
+- **Lab 11A — Repo Cartographer (codebase analysis & refactor planning)** (after Lesson 11.05): understanding an unfamiliar codebase and planning a safe refactor takes a senior engineer days. *Stack:* Free: Gemini free tier (`google_genai:gemini-3.6-flash`, default; analyze a **public** repo or your own course code only). Option: Groq (`gpt-oss-120b` orchestrator, `gpt-oss-20b` subagents). Paid: OpenAI benchmark for the orchestrator.
+- **Lab 11B — Sandboxed Data Analyst** (after Lesson 11.09): turning a raw CSV into a trustworthy analysis report with charts, without running model-written code on your machine. *Stack:* Free: Gemini free tier (default, public dataset only) + Docker Desktop. Option: Groq. Paid (optional): a managed sandbox provider, OpenAI benchmark.
+- **Lab 11C — Policy & Contract Review Desk (HITL compliance review)** (after Lesson 11.08): reviewing many documents against a compliance checklist is slow, and a wrong "approved" is expensive, so a human must sign off. *Stack:* Free: Gemini free tier (default; **synthetic documents only**, because free-tier prompts may be read by human reviewers). Option: Groq. Paid: OpenAI benchmark as the rubric grader, and a paid tier for any real contracts.
+
+Do your lab in `workspace/11-deep-agents/labs/` ([setup/LEARNER_WORKFLOW.md](../../setup/LEARNER_WORKFLOW.md)), so course updates never touch it.
 
 ## Project
 

@@ -1,6 +1,6 @@
 # Module 13 — Multimodal & Voice (elective)
 
-> **Part 2 — Pro (Modules 09–14)** · elective (take it any time after Module 02; capstone C2 requires it) · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 13](../../COURSE_OUTLINE.md#module-13--multimodal--voice-elective)
+> **Part 2 — Pro (Modules 09–15)** · elective (take it any time after Module 02; capstone C2 requires it) · Full lesson specs, reading lists, and project acceptance criteria: [COURSE_OUTLINE.md → Module 13](../../COURSE_OUTLINE.md#module-13--multimodal--voice-elective)
 
 **Keys:** `GROQ_API_KEY` (vision, Whisper, Orpheus) and, recommended, a free `GOOGLE_API_KEY` from [AI Studio](https://aistudio.google.com/apikey) (native PDF, audio and video input, multilingual TTS). Every lesson runs offline without them. **Orpheus (13.03–13.04) needs one extra step:** an org admin must accept its terms once in the [Groq playground](https://console.groq.com/playground?model=canopylabs%2Forpheus-v1-english); until then Groq answers `400 model_terms_required` and the lessons fall back to Gemini.
 

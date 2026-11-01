@@ -2,7 +2,7 @@
 
 > Full syllabus: modules, lessons, notebooks, reading lists, Jupyter skills, research checkpoints, and project specs.
 > **Docs verified:** October 11, 2026, against LangChain v1 (`langchain` 1.4.x), LangGraph v1 (`langgraph` 1.2.x), Deep Agents 0.7.x (`deepagents` 0.7.23), LangSmith, and GroqCloud docs.
-> **Two parts:** [Part 1 — Core](#part-1--core-modules-0008) (Modules 00–08) and [Part 2 — Pro](#part-2--pro-modules-0914) (Modules 09–14).
+> **Two parts:** [Part 1 — Core](#part-1--core-modules-0008) (Modules 00–08) and [Part 2 — Pro](#part-2--pro-modules-0915) (Modules 09–15).
 
 ---
 
@@ -670,7 +670,7 @@ Jupyter is a skill thread that runs through the whole course. Each module introd
 
 ---
 
-## Part 2 — Pro (Modules 09–14)
+## Part 2 — Pro (Modules 09–15)
 
 > You can build agents, RAG systems, and LangGraph workflows. Part 2 makes them **coordinated, measured, long-running, and deployed**: multi-agent systems, testing and evaluation, a full module on Deep Agents, and a self-hosted production service, plus two electives (multimodal and voice; local models and fine-tuning).
 
