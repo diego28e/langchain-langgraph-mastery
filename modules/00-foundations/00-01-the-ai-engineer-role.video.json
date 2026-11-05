@@ -1,0 +1,82 @@
+{
+  "schemaVersion": "1.0",
+  "type": "item-group",
+  "id": "00-01-the-ai-engineer-role-video",
+  "slotKey": "00-01-video",
+  "title": "Three lines of code isn't the job",
+  "stimulus": {
+    "id": "00-01-the-ai-engineer-role-stimulus",
+    "kind": "video",
+    "media": {
+      "type": "video",
+      "url": "/media/courses/langchain-langgraph-mastery/00-01-the-ai-engineer-role/v1/video.mp4",
+      "alt": "Three lines of code isn't the job: the model, and the harness around it",
+      "poster": "/media/courses/langchain-langgraph-mastery/00-01-the-ai-engineer-role/v1/poster.jpg",
+      "tracks": [
+        { "kind": "captions", "src": "/media/courses/langchain-langgraph-mastery/00-01-the-ai-engineer-role/v1/captions.en.vtt", "srclang": "en", "label": "English" },
+        { "kind": "subtitles", "src": "/media/courses/langchain-langgraph-mastery/00-01-the-ai-engineer-role/v1/captions.es.vtt", "srclang": "es", "label": "Español", "default": true }
+      ]
+    }
+  },
+  "items": [
+    {
+      "schemaVersion": "1.0",
+      "type": "multiple-choice",
+      "id": "q-agent",
+      "title": "What an agent is",
+      "question": "According to the video, what is an agent?",
+      "mode": "single",
+      "scoringStrategy": "all-or-nothing",
+      "options": [
+        { "id": "model-plus-harness", "text": "The model, plus the harness around it", "isCorrect": true, "feedback": "Right: the model is one part; the harness is everything that makes it work in production." },
+        { "id": "bigger-model", "text": "A larger, more capable model", "isCorrect": false, "feedback": "A better model doesn't fix a retired model, a rate limit or a made-up citation." },
+        { "id": "three-lines", "text": "The three lines of code that call the model", "isCorrect": false, "feedback": "Those three lines are the easy part, as the video says." }
+      ],
+      "feedback": { "correct": "Exactly.", "incorrect": "Rewatch from 0:20, where the video names the harness." }
+    },
+    {
+      "schemaVersion": "1.0",
+      "type": "multiple-choice",
+      "id": "q-evals",
+      "title": "Made-up answers",
+      "question": "Which part of the harness catches made-up answers before your users do?",
+      "mode": "single",
+      "scoringStrategy": "all-or-nothing",
+      "options": [
+        { "id": "evals", "text": "Evals", "isCorrect": true },
+        { "id": "traces", "text": "Traces", "isCorrect": false, "feedback": "Traces show where things went wrong, after the fact." },
+        { "id": "memory", "text": "Memory", "isCorrect": false, "feedback": "Memory carries context from one step to the next." }
+      ],
+      "feedback": { "correct": "Right.", "incorrect": "Listen again from 0:35." }
+    },
+    {
+      "schemaVersion": "1.0",
+      "type": "multiple-choice",
+      "id": "q-fallbacks",
+      "title": "Staying up",
+      "question": "What keeps a retired model or a rate limit from taking your whole app down?",
+      "mode": "single",
+      "scoringStrategy": "all-or-nothing",
+      "options": [
+        { "id": "fallbacks", "text": "Fallbacks", "isCorrect": true },
+        { "id": "prompt", "text": "A better prompt", "isCorrect": false, "feedback": "The prompt shapes how the model behaves; it can't call another model." },
+        { "id": "tools", "text": "Tools", "isCorrect": false, "feedback": "Tools let the agent take action." }
+      ],
+      "feedback": { "correct": "Right.", "incorrect": "Listen again from 0:41." }
+    }
+  ],
+  "timeline": {
+    "navigation": "free",
+    "chapters": [
+      { "at": 0, "title": "Three lines of code" },
+      { "at": 7, "title": "From Friday to Monday" },
+      { "at": 19.8, "title": "The harness" },
+      { "at": 29, "title": "Piece by piece" },
+      { "at": 45.3, "title": "The actual job" }
+    ],
+    "cues": [
+      { "id": "agent", "at": 29, "title": "What an agent is", "itemIds": ["q-agent"] },
+      { "id": "harness", "at": 45.3, "title": "The harness, piece by piece", "itemIds": ["q-evals", "q-fallbacks"] }
+    ]
+  }
+}
